@@ -1,20 +1,27 @@
 import { Component } from "react";
 import axios from "axios";
 import './css/Products.css'
+import { Link } from "react-router-dom";
+
+
 
 
 class Products extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-             productVariants:[]
+             productVariants:[],   
         };
+        
     }
     
-
+    
+    
+    
     componentDidMount(){
         this.fetchProductVariants();
-    };
+    }
+
 
 
     fetchProductVariants = () => {
@@ -28,12 +35,20 @@ class Products extends Component {
     };
     
 
+    
 
     render() {
+        console.log(this.state.productVariants)
         return (
            <div className="products-container pt-4">
             {
                 this.state.productVariants.map((product) => (
+
+                    <Link className="product-details-link" key={product.id} to={
+                        `/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/`   
+                        }>
+
+
                     <div className="card  mx-2 mb-5" style={{width: "14rem"}}>
                         <img 
                         style={{width: "8rem",margin:"10px auto"}}
@@ -57,6 +72,9 @@ class Products extends Component {
                         </div>
                         
                     </div>
+
+
+                    </Link>
                 ))
             }
            </div> 

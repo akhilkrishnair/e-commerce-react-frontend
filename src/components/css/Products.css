@@ -3,3 +3,13 @@
     justify-content: center;
     flex-wrap: wrap;
 }
+
+.product-details-link{
+    text-decoration: none;
+    transition: 0.4s;
+}
+.product-details-link:hover{
+    scale: 1.04;
+    
+
+}

@@ -1,18 +1,32 @@
+import { Component } from 'react';
 import './App.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Products from './components/Products';
+import Router from './components/router/Router';
+import { BrowserRouter } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <Header/>
-      <div className='main-container'>
-        <Products/>
+
+
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+
+    <BrowserRouter>
+      <div className="App">
+
+        <Router/>
+
       </div>
-      <Footer/>
-    </div>
-  );
+    </BrowserRouter>
+      
+    );
+  }
 }
 
 export default App;
+
+
+
+

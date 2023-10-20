@@ -1,0 +1,119 @@
+.product-main-container{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.product-image-container{
+    display: flex;
+    justify-content: space-between;
+    width: 42%;
+}
+.product-image-container .current-image{
+    width: 70%;
+    padding: 15px 35px;
+}
+.product-image-container .current-image img{
+    width: 100%;
+    height: auto;
+}
+.product-image-container .available-images{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 20%;
+}
+.product-image-container .available-images .img{
+    width: 60%;
+    height: 70px;
+    padding: 5px;
+    margin: 0px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: solid 1px rgb(153, 153, 153);
+
+}
+.product-image-container .available-images .img:hover{
+    outline: solid 2px rgb(7, 82, 245);
+}
+
+.product-image-container .available-images .img img{
+    width: 80%;
+    height: auto;
+}
+
+
+.product-details-container{
+    width: 55%;
+    border-left: solid 1px gray;
+    padding: 15px;
+}
+
+.product-variant-selection{
+
+}
+
+.color-selection{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+.color-selection .color-variant{
+    width: 7%;
+    height: 63px;
+    margin-left: 10px;
+    padding: 1px;
+    border-radius: 2px;
+}
+.color-selection .color-variant:hover{
+    outline: solid 2px rgb(12, 81, 242);
+
+}
+.color-selection .color-variant img{
+    width: 100%;
+    height: auto;
+}
+
+
+.product-variant-selection .size-selection{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.product-variant-selection .size-selection .size-variant{
+    text-decoration: none;
+    color: black;
+    margin-right: 15px;
+    outline: solid 2px rgb(22, 22, 22);
+    padding: 0px 4px;
+    border-radius: 4px;
+    scale: 0.8;
+
+}
+.product-variant-selection .size-selection .size-variant:hover{
+    outline: solid 2px rgb(12, 81, 242);
+}
+.product-variant-selection .color-selection .color-variant.active{
+    outline: solid 2px rgb(12, 81, 242);
+}
+.product-variant-selection .size-selection .size-variant.active{
+    outline: solid 2px rgb(12, 81, 242);
+}
+
+
+.add-to-cart-add-to-wishlist-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 90px;
+}
+
+.add-to-cart-add-to-wishlist-container .add-to-cart button,
+.add-to-cart-add-to-wishlist-container .add-to-wishlist button{
+     width: 200px;
+}

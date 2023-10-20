@@ -1,5 +1,5 @@
 import { Component } from "react";
-
+import { Link } from "react-router-dom";
 
 class Header extends Component {
      
@@ -8,7 +8,7 @@ class Header extends Component {
             <div className="header-section">
                     <nav className="navbar bg-primary navbar-expand-lg " data-bs-theme="dark" >
                         <div className="container-fluid">
-                            <h3><a className="navbar-brand mx-5" href="#">E-Shop</a></h3>
+                            <h3><Link className="navbar-brand mx-5" to={"/"}>E-Shop</Link></h3>
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                             </button>
