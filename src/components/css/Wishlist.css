@@ -1,0 +1,26 @@
+.wishlist-product-container{
+    display: flex;
+    justify-content: space-between;
+    padding: 13px;
+    box-shadow: 0 0 5px 1px rgb(180, 178, 178);
+    margin-bottom: 10px;
+}
+
+.wishlist-product-container .wishlist-product-image{
+    width: 15%;
+    display: flex;
+    justify-content: center;
+}
+.wishlist-product-container .wishlist-product-details{
+    width: 83%;
+}
+
+.wishlist-product-image .image{
+    width: 45%;
+    height: auto;
+    
+}
+.wishlist-product-image .image img{
+    width: 100%;
+    height: auto;
+}

@@ -42,8 +42,8 @@ class Product_Details extends Component {
 
         const singleProduct = this.state.allProducts.filter((p) => {
             return p.product_color_variant.product.slug === slug && 
-                    p.product_color_variant.color.name === color && 
-                    p.size.name === size
+                   p.product_color_variant.color.name === color && 
+                   p.size.name === size
         });
 
         const colorVariant = this.state.allProducts.filter((p) => {
@@ -160,26 +160,34 @@ class Product_Details extends Component {
                                 </div>
                                 <div className="product-details-container">
                                     <h5>
-                                        {
-                                            p.product_color_variant.product.name +" ("+
+                                        {   
+                                            p.product_color_variant.color.name !== 'no-color'?
+                                            p.product_color_variant.product.name +" ("+                        
                                             p.product_color_variant.color.name+", "+
+                                            p.size.name+")":
+                                            
+                                            p.product_color_variant.product.name +" ("+                                     
                                             p.size.name+")"
+                     
                                         }
                                     </h5>
                                     <br/>
-                                    <h6>Rs.
+                                    <h6  >Rs.
                                         {
-                                            p.price-
-                                            p.price/100*p.offer
+                                            p.product_color_variant.product.orginal_price-
+                                            p.product_color_variant.product.orginal_price/100*p.offer
                                         }
-                                        <span className="ms-4 text-secondary text-decoration-line-through" >Rs.{p.price}</span>
+                                        <span className="ms-4 text-secondary text-decoration-line-through" >Rs.{p.product_color_variant.product.orginal_price}</span>
                                         <span className="ms-4 text-success">{p.offer}% off</span>
                                     </h6>
+                                    <br/><br/><br/>
   
 
                              {/* variant selection section starts */}
                                     <div className="product-variant-selection">
 
+
+                                       { p.product_color_variant.color.name !=="no-color"&&
                                         <div className="color-selection">
                                             <h6 className="me-4">Colors available : </h6>
                                             {
@@ -200,6 +208,8 @@ class Product_Details extends Component {
                                             }
 
                                         </div>
+                                        }
+
 
                                         <div className="size-selection">
                                             <h6 className="me-4">Size available : </h6>

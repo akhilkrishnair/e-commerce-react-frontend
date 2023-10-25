@@ -1,4 +1,4 @@
-.products-container{
+.products-container,.category-product-container{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -10,6 +10,27 @@
 }
 .product-details-link:hover{
     scale: 1.04;
-    
+}
 
+.categories-container{
+    width: 13%;
+    border-right: solid 1px grey;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+}
+.categories-container .each-category{
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+}
+
+
+.categories-container .each-category:hover{
+    text-decoration: underline rgb(53, 102, 238);
+}
+
+
+.products-container{
+    width: 86%;
 }

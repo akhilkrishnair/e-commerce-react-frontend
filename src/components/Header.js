@@ -1,7 +1,38 @@
-import { Component } from "react";
+import axios from "axios";
+import React,{ Component } from "react";
 import { Link } from "react-router-dom";
 
 class Header extends Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            currentUser : false,
+            email:""
+        }
+    }
+
+    componentDidMount (){
+        axios.get('http://127.0.0.1:8000/api/user/profile/',
+        ).then((res) => {
+            this.setState({currentUser:true})
+            this.setState({email:res.data.email})
+        }).catch((res) => {
+            this.setState({currentUser:false})
+        })
+    }
+    
+
+    logOutReq = ()=>{
+        axios.get('http://127.0.0.1:8000/api/user/logout/')
+        .then((res) => {
+            this.setState({currentUser:false})
+            window.location.href = '/'
+        }).catch((res) =>{
+           console.log(res)
+        });
+    }
+
+
      
     render() { 
         return (
@@ -15,18 +46,30 @@ class Header extends Component {
                             <div className="collapse navbar-collapse ms-3" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" href="#">Home</a>
+                                <Link className="nav-link active" aria-current="page" to={'/'} >Home</Link>
                                 </li>
                                 
                                 <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    My Account
+                                    User
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">Action</a></li>
-                                    <li><a className="dropdown-item" href="#">Another action</a></li>
+                                    {
+                                        this.state.currentUser?
+                                            <>
+                                                <li><Link className="dropdown-item" >Hi {this.state.email}</Link></li>
+                                                <li><Link className="dropdown-item" onClick={this.logOutReq} >Log out</Link></li>
+                                                <li><Link className="dropdown-item" to={'/user/dashbord/'} >Wishlist</Link></li>
+
+                                            </>:
+                                            <>
+                                                <li><Link className="dropdown-item" to={"/user/registration"} >Register</Link></li>
+                                                <li><Link className="dropdown-item"  to={"/user/login/"}>Log in</Link></li>
+                                            </>
+                                        
+                                    }
                                     <li><hr className="dropdown-divider"/></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                    <li><Link className="dropdown-item" href="#">Something else here</Link></li>
                                 </ul>
                                 </li>
                             </ul>
