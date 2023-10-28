@@ -1,26 +1,29 @@
 import { Component } from "react";
-import axios from "axios";
-import './css/Wishlist.css';
+import axios from "axios";   
 import { Link } from "react-router-dom";
 
-class Wishlist extends Component {
+
+
+
+class Orders extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            wishlistProducts:[]
-         };
+        this.state = {
+            orderProducts:[]
+        }
     }
+
 
     componentDidMount(){
-        this.fetchWishlist();
+        this.fetchOrders();
     }
 
-    fetchWishlist(){
-        axios.get('http://127.0.0.1:8000/api/wishlists/',
+    fetchOrders(){
+        axios.get('http://127.0.0.1:8000/api/orders/',
         {withCredentials:true}
         )
         .then((res)=>{
-            this.setState({wishlistProducts:res.data})
+            this.setState({orderProducts:res.data})
             console.log(res.data)
         })
         .catch((error)=> {
@@ -29,13 +32,14 @@ class Wishlist extends Component {
     };
 
 
+
     render() {
         return (
             <>
-                <h4 className="text-center mb-5">Wishlist</h4>
+                <h4 className="text-center mb-5" >Orders</h4>
                 {   
-                    this.state.wishlistProducts&&
-                    this.state.wishlistProducts.map((p)=>(                       
+                    this.state.orderProducts&&
+                    this.state.orderProducts.map((p)=>(                       
                         <div key={p.id} className="wishlist-product-container">
                             <Link 
                             to={`/${p.product_variant.product_color_variant.product.category.slug}/${p.product_variant.product_color_variant.product.slug}/${p.product_variant.product_color_variant.color.name}/${p.product_variant.size.name}/`}
@@ -67,15 +71,15 @@ class Wishlist extends Component {
                                         }                                       
                                     
                                 </h6>
+                                <p>Order ID : {p.order_id}</p>
                             </div>
                       </div>
                     ))
                     
                 }
             </>
-            
         );
     }
 }
 
-export default Wishlist;
+export default Orders;

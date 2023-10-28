@@ -1,0 +1,23 @@
+
+
+.profile-main-container .profile-details-section{
+    display: flex;
+    flex-direction: column;
+    padding: 80px 15px 40px;
+}
+
+.profile-details-section .profile-pic{
+    width: 210px;
+    height: 210px;
+    outline: rgb(48, 144, 239) solid 5px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.profile-details-section .profile-pic img{
+    width: 100%;
+    height: auto;
+}
+.profile-details-section .user-order-address .each-order-address{
+    border: solid 1px grey;
+    padding: 10px 20px;
+}

@@ -1,8 +1,9 @@
 .wishlist-product-container{
     display: flex;
     justify-content: space-between;
-    padding: 13px;
-    box-shadow: 0 0 5px 1px rgb(180, 178, 178);
+    padding: 16px 10px;
+    /* box-shadow: 0 0 5px 1px rgb(180, 178, 178); */
+    border: solid 1px grey;
     margin-bottom: 10px;
 }
 

@@ -34,3 +34,7 @@
 .products-container{
     width: 86%;
 }
+.products-container .each-product-container .card-body{
+    display: flex;
+    flex-direction: column-reverse;
+}

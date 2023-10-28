@@ -54,20 +54,22 @@ class Router extends Component {
                         {this.state.currentUser ?
                         window.location.pathname==='/user/login/'?
                         window.location.pathname='/':window.location.pathname
-                         : (
+                         : 
                             <Route
                                 path="/user/login/"
                                 element={<Login current_user={this.state.currentUser} login_data={this.logInData} />}
                             />
-                        )}
+                        }
 
                         <Route path="/user/dashbord/" element={<Dashbord/>} />
+                        <Route path="/user/dashbord/:menu/" element={<Dashbord/>} />
+
 
                         
                         <Route path="/:category/:slug/:color/:size/" element={<Product_Details />} />
                     </Routes>
                 </div>
-                <Footer />`{" "}
+                <Footer />
             </>
         );
     }

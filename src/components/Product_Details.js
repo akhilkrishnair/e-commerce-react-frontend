@@ -37,6 +37,7 @@ class Product_Details extends Component {
 
     
     render() {
+        
 
         const {slug,color,size} = this.props;
 
@@ -273,4 +274,3 @@ function UserDetailWrapper() {
   
 export default UserDetailWrapper;
 
-// export default Product_Details;

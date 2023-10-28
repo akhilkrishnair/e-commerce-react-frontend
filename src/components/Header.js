@@ -22,15 +22,7 @@ class Header extends Component {
     }
     
 
-    logOutReq = ()=>{
-        axios.get('http://127.0.0.1:8000/api/user/logout/')
-        .then((res) => {
-            this.setState({currentUser:false})
-            window.location.href = '/'
-        }).catch((res) =>{
-           console.log(res)
-        });
-    }
+   
 
 
      
@@ -44,22 +36,18 @@ class Header extends Component {
                             <span className="navbar-toggler-icon"></span>
                             </button>
                             <div className="collapse navbar-collapse ms-3" id="navbarSupportedContent">
-                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to={'/'} >Home</Link>
-                                </li>
+                            <ul className="ms-5 navbar-nav me-auto mb-2 mb-lg-0">
                                 
                                 <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    User
+                                    Dashbord
                                 </a>
                                 <ul className="dropdown-menu">
                                     {
                                         this.state.currentUser?
                                             <>
                                                 <li><Link className="dropdown-item" >Hi {this.state.email}</Link></li>
-                                                <li><Link className="dropdown-item" onClick={this.logOutReq} >Log out</Link></li>
-                                                <li><Link className="dropdown-item" to={'/user/dashbord/'} >Wishlist</Link></li>
+                                                <li><Link className="dropdown-item" to={'/user/dashbord/profile/'} >Profile</Link></li>
 
                                             </>:
                                             <>
@@ -72,6 +60,19 @@ class Header extends Component {
                                     <li><Link className="dropdown-item" href="#">Something else here</Link></li>
                                 </ul>
                                 </li>
+                                <li className="nav-item ms-3">
+                                <Link className="nav-link active" aria-current="page" to={'/'} >Home</Link>
+                                </li>
+
+                                {
+                                    this.state.currentUser&&
+                                        <li className="nav-item ms-3">
+                                            <Link className="nav-link active" aria-current="page" to={'/user/cart'} >Cart</Link>
+                                        </li>
+
+                                }
+
+
                             </ul>
                             <form className="d-flex" role="search">
                                 <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>

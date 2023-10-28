@@ -75,7 +75,7 @@ class Products extends Component {
                             key={product.id}
                             to={`/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/`}
                         >
-                            <div className="card  mx-2 mb-5" style={{ width: "14rem" }}>
+                            <div className="each-product-container card  mx-2 mb-5" style={{ width: "14rem" ,height:"360px"}}>
                                 <img
                                     style={{ width: "8rem", margin: "10px auto" }}
                                     src={
