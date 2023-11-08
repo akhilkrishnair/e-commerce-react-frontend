@@ -7,7 +7,9 @@ class Header extends Component {
         super(props)
         this.state = {
             currentUser : false,
-            email:""
+            email:"",
+            first_name:"",
+            last_name:"",
         }
     }
 
@@ -16,6 +18,9 @@ class Header extends Component {
         ).then((res) => {
             this.setState({currentUser:true})
             this.setState({email:res.data.email})
+            this.setState({first_name:res.data.first_name})
+            this.setState({last_name:res.data.last_name})
+
         }).catch((res) => {
             this.setState({currentUser:false})
         })
@@ -46,7 +51,15 @@ class Header extends Component {
                                     {
                                         this.state.currentUser?
                                             <>
-                                                <li><Link className="dropdown-item" >Hi {this.state.email}</Link></li>
+                                                <li>
+                                                    <Link className="dropdown-item" >Hi  
+                                                        {
+                                                            this.state.first_name && this.state.last_name?
+                                                            " "+this.state.first_name+" "+this.state.last_name:
+                                                            " "+this.state.email
+                                                        }
+                                                    </Link>
+                                                </li>
                                                 <li><Link className="dropdown-item" to={'/user/dashbord/profile/'} >Profile</Link></li>
 
                                             </>:

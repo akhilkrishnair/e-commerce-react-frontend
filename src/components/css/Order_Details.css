@@ -1,0 +1,65 @@
+.order-details-main-container{
+    width: 85%;
+    margin: auto;
+    padding: 15px;
+}
+.order-product-image-container{
+    width: 20%;
+}
+.order-product-details-container{
+    width: 68%;
+    padding: 20px;
+}
+.order-details-main-container .order-product-container{
+    display: flex;
+    padding: 20px;
+}
+.order-product-image-container .order-product-image {
+    display: block;
+    width: 50%;
+    height: auto;
+}
+.order-product-image-container .order-product-image img{
+    width: 100%;
+    height: auto;
+}
+
+.order-product-details-container .order-status-progress{
+    padding: 10px 30px;
+}
+
+.order-status-progress .status-progress-bar{
+    height: 8px;
+    width: 100%;
+    border-radius: 5px;
+    background-color: rgb(180, 178, 178);
+}
+
+.order-status-progress .status-conditions{
+    display: flex;
+    justify-content: space-between;
+}
+.order-status-progress .status-conditions span{
+    font-size: 5px;
+}
+
+.status-progress-bar .custom-progress-bar{
+    height: 100%;
+    background-color: rgb(184, 184, 184);
+}
+
+.status-progress-bar .custom-progress-bar.packed{
+    height: 100%;
+    width: 31%;
+    background-color: rgb(14, 151, 14);
+}
+.status-progress-bar .custom-progress-bar.shipped{
+    height: 100%;
+    width: 61%;
+    background-color: rgb(14, 151, 14);
+}
+.status-progress-bar .custom-progress-bar.out-for-delivery{
+    height: 100%;
+    width: 100%;
+    background-color: rgb(14, 151, 14);
+}

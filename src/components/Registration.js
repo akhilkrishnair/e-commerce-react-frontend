@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./css/registration.css";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 class Registration extends Component {
     constructor(props) {
@@ -10,6 +11,9 @@ class Registration extends Component {
             first_name: "",
             last_name: "",
             password: "",
+            password2:"",
+            errorEmail:null,
+            errorPassword:null,
         };
     }
 
@@ -25,15 +29,32 @@ class Registration extends Component {
             first_name:this.state.first_name,
             last_name:this.state.last_name,
             password:this.state.password,
+            password2:this.state.password2,
         };
 
 
         axios.post('http://127.0.0.1:8000/api/user/registration/',registrationData)
         .then((response) => {
-            console.log(response.data)
-            window.location="/"
+            axios.post('http://127.0.0.1:8000/api/user/login/',{
+                email:registrationData.email,
+                password:registrationData.password,
+            })
+            .then((response) => {
+                console.log(response);
+                window.location.href = '/'
+            }).catch((error)=>{
+                console.log(error.response.data)
+            })
+                
         }).catch((error) => {
-            console.log(error)
+            console.log(error.response.data)
+            if (error.response.data.email){
+                this.setState({errorEmail:error.response.data})
+                this.setState({errorPassword:null})
+            }else if(error.response.data.non_field_errors){
+                this.setState({errorPassword:error.response.data})
+                this.setState({errorEmail:null})
+            }
         })
 
 
@@ -52,7 +73,16 @@ class Registration extends Component {
                                             <h2 className="text-uppercase text-center mb-5">Create an account</h2>
 
                                             <form onSubmit={this.handleSubmit} >
-                                                <div className="form-outline mb-2">
+                                                <div className="form-outline mb-3">
+                                                    <label className="form-label" htmlFor="form3Example3cg">
+                                                        Your Email 
+                                                        <span className="text-danger ms-4" >
+                                                            {
+                                                                this.state.errorEmail?
+                                                                "*"+ this.state.errorEmail.email:null
+                                                            }
+                                                        </span>
+                                                    </label>
                                                     <input
                                                         type="email"
                                                         name="email"
@@ -61,12 +91,12 @@ class Registration extends Component {
                                                         onChange={this.handleChange}
                                                         className="form-control form-control-sm"
                                                     />
-                                                    <label className="form-label" htmlFor="form3Example3cg">
-                                                        Your Email
-                                                    </label>
                                                 </div>
 
-                                                <div className="form-outline mb-2">
+                                                <div className="form-outline mb-3">
+                                                    <label className="form-label" htmlFor="form3Example1cg">
+                                                        First Name 
+                                                    </label>
                                                     <input
                                                         name="first_name"
                                                         type="text"
@@ -75,12 +105,12 @@ class Registration extends Component {
                                                         onChange={this.handleChange}
                                                         className="form-control form-control-sm"
                                                     />
-                                                    <label className="form-label" htmlFor="form3Example1cg">
-                                                        First Name
-                                                    </label>
                                                 </div>
 
-                                                <div className="form-outline mb-2">
+                                                <div className="form-outline mb-3">
+                                                    <label className="form-label" htmlFor="form3Example4cg">
+                                                        Last Name
+                                                    </label>
                                                     <input
                                                         name="last_name"
                                                         type="text"
@@ -89,12 +119,12 @@ class Registration extends Component {
                                                         onChange={this.handleChange}
                                                         className="form-control form-control-sm"
                                                     />
-                                                    <label className="form-label" htmlFor="form3Example4cg">
-                                                        Last Name
-                                                    </label>
                                                 </div>
 
-                                                <div className="form-outline mb-2">
+                                                <div className="form-outline mb-3">
+                                                    <label className="form-label" htmlFor="form3Example4cdg">
+                                                        your password
+                                                    </label>
                                                     <input
                                                         name="password"
                                                         type="password"
@@ -103,10 +133,29 @@ class Registration extends Component {
                                                         onChange={this.handleChange}
                                                         className="form-control form-control-sm"
                                                     />
-                                                    <label className="form-label" htmlFor="form3Example4cdg">
-                                                        your password
-                                                    </label>
                                                 </div>
+                                                <div className="form-outline mb-3">
+                                                    <label className="form-label" htmlFor="form3Example6cdg">
+                                                        confirm password
+
+                                                    </label>
+                                                    <input
+                                                        name="password2"
+                                                        type="password"
+                                                        id="form3Example6cdg"
+                                                        value={this.state.password2}
+                                                        onChange={this.handleChange}
+                                                        className="form-control form-control-sm"
+                                                    />
+                                                </div>
+                                                <span className="text-danger ms-4" >
+                                                    {
+                                                        this.state.errorPassword?
+                                                        "*"+ this.state.errorPassword.non_field_errors:null
+                                                    }
+                                                 </span>
+
+
 
                                                 <div className="form-check d-flex justify-content-center mb-2">
                                                     <input
@@ -134,9 +183,9 @@ class Registration extends Component {
 
                                                 <p className="text-center text-muted mt-5 mb-0">
                                                     Have already an account?{" "}
-                                                    <a href="#!" className="fw-bold text-body">
+                                                    <Link to={"/user/login/"} className="fw-bold text-body">
                                                         <u>Login here</u>
-                                                    </a>
+                                                    </Link>
                                                 </p>
                                             </form>
                                         </div>

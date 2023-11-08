@@ -1,19 +1,19 @@
 import React,{ Component } from "react";
-import { NavLink} from "react-router-dom";
+import { NavLink, useParams} from "react-router-dom";
 import axios from "axios";
 import Wishlist from "./Wishlist";
 import './css/Dashbord.css';
 import Orders from "./Orders";
 import Profile from "./Profile";
+import { useNavigate } from "react-router-dom";
 
 
 class Dashbord extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            menuComponent:[]
-        };
+        
     }
+
 
     logOutReq = ()=>{
         axios.get('http://127.0.0.1:8000/api/user/logout/')
@@ -41,17 +41,20 @@ class Dashbord extends Component {
     render() {
        
         const elem = document.getElementsByClassName('menu-component')
-        if(window.location.pathname === '/user/dashbord/wishlist/' && document.getElementsByClassName('menu-component')[1]){
-           elem[1].hidden = false
+        if(window.location.pathname == '/user/dashbord/wishlist/' ){
+           this.menuCompFun("Wishlist")
         }
 
-        if(window.location.pathname === '/user/dashbord/orders/' && document.getElementsByClassName('menu-component')[2]){
-            elem[2].hidden = false
+        if(window.location.pathname == '/user/dashbord/orders/' ){
+            this.menuCompFun("Orders")
         }
 
-        if(window.location.pathname === '/user/dashbord/profile/' && document.getElementsByClassName('menu-component')[0]){
-            elem[0].hidden = false
+        if(window.location.pathname == '/user/dashbord/profile/' ){
+            this.menuCompFun("Profile")
         }
+
+        const {menu} = this.props.dash_param
+        console.log(menu)
 
 
         return (
@@ -78,7 +81,7 @@ class Dashbord extends Component {
                     className="dashbord-link" >
                         Order
                     </NavLink>
-
+                    <hr/>
                     <div
                     onClick={this.logOutReq}  
                     className="dashbord-link" >
@@ -88,25 +91,38 @@ class Dashbord extends Component {
                 </div>
 
                 <div className="section-details-view">
+                            
                     {
-                        <>  
-                           <div hidden={false} className='menu-component Profile' value='Profile'>
-                                <Profile />
-                           </div>
+                    menu=='profile'&&
+                        <div hidden={false} className='menu-component Profile' value='Profile'>
+                            <Profile />
+                        </div>
 
-                           <div hidden={true}  className='menu-component Wishlist' value='Wishlist'>
-                                <Wishlist />
-                           </div>
+                    }  
 
-                           <div hidden={true} className='menu-component Orders' value='Orders'>
-                                <Orders />
-                           </div>
-                        </>
-                    }
+                    {
+                    menu=='wishlist'&&
+                        <div hidden={false}  className='menu-component Wishlist' value='Wishlist'>
+                            <Wishlist />
+                        </div>
+
+                    } 
+
+                    {
+                    menu=='orders'&&
+                        <div hidden={false} className='menu-component Orders' value='Orders'>
+                            <Orders />
+                        </div>
+                    } 
                 </div>
             </div>
         );
     }
 }
 
-export default Dashbord;
+export default function DashbordWithNavigation() {
+    useNavigate();
+    const dash_param = useParams();
+    return <Dashbord dash_param={dash_param} />;
+}
+

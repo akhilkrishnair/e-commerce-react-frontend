@@ -73,6 +73,10 @@ class Orders extends Component {
                                 </h6>
                                 <p>Order ID : {p.order_id}</p>
                             </div>
+
+                            <Link to={`/user/dashbord/orders/${p.order_id}/`} className="btn btn-primary h-25">
+                                Details
+                            </Link>
                       </div>
                     ))
                     

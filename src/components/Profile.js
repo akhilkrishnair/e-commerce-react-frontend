@@ -24,8 +24,12 @@ class Profile extends Component {
         axios.get('http://127.0.0.1:8000/api/order-address/',{
             withCredentials:true
         }).then((res) => {
-            this.setState({orderAddress:res.data});
-            this.setState({profile:res.data[0].user})
+            if (res.data[0]){
+
+                this.setState({orderAddress:res.data});
+                this.setState({profile:res.data[0].user})
+            }
+            
         }).then((err) => {
             console.log(err);
         })
@@ -42,17 +46,21 @@ class Profile extends Component {
                 <div className="profile-details-section">
            
                     {
-                        profile.profile_image&&
+                        profile.profile_image?
                         <div className="profile-pic">
                             <img src={profile.profile_image} />
+                        </div>:
+                        <div className="profile-pic">
+                            <img src=""/>
                         </div>
+
                     }
 
                     <div className="profile-name-email"><br/><br/>
                         {
                             profile.first_name && profile.last_name ?
                             <h6>{`${profile.first_name} ${profile.last_name}`}</h6>
-                            :<h6>{`${profile.email}`}</h6>
+                            :profile.email&&<h6>{`${profile.email}`}</h6>
                         }
 
                     </div>

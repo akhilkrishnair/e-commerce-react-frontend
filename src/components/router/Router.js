@@ -9,6 +9,7 @@ import Registration from "../Registration";
 import Login from "../Login";
 import { Routes, Route } from "react-router-dom";
 import Dashbord from "../Dashbord";
+import Order_Details from "../Order_Details";
 
 class Router extends Component {
     constructor(props) {
@@ -66,7 +67,8 @@ class Router extends Component {
 
 
                         
-                        <Route path="/:category/:slug/:color/:size/" element={<Product_Details />} />
+                        <Route path="/:category/:slug/:color/:size/" element={<Product_Details/>} />
+                        <Route path="/user/dashbord/orders/:order_id/" element={<Order_Details/>} />
                     </Routes>
                 </div>
                 <Footer />
