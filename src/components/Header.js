@@ -10,6 +10,7 @@ class Header extends Component {
             email:"",
             first_name:"",
             last_name:"",
+            user_id:null
         }
     }
 
@@ -20,11 +21,27 @@ class Header extends Component {
             this.setState({email:res.data.email})
             this.setState({first_name:res.data.first_name})
             this.setState({last_name:res.data.last_name})
+            this.setState({user_id:res.data.id})
 
         }).catch((res) => {
             this.setState({currentUser:false})
         })
     }
+    
+
+    componentDidUpdate(){
+        if (
+            !this.state.currentUser&&
+            window.location.href==='http://127.0.0.1:3000/user/cart/'||
+            window.location.href==='http://127.0.0.1:3000/user/dashbord/'||
+            window.location.href==='http://127.0.0.1:3000/user/dashbord/wishlist/'||
+            window.location.href==='http://127.0.0.1:3000/user/dashbord/orders/'||
+            window.location.href==='http://127.0.0.1:3000/user/dashbord/profile/'
+            ){
+            window.location.href='/'
+        }
+    }
+ 
     
 
    
@@ -80,7 +97,7 @@ class Header extends Component {
                                 {
                                     this.state.currentUser&&
                                         <li className="nav-item ms-3">
-                                            <Link className="nav-link active" aria-current="page" to={'/user/cart'} >Cart</Link>
+                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart</Link>
                                         </li>
 
                                 }

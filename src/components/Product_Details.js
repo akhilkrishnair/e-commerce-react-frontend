@@ -1,29 +1,79 @@
 import axios from "axios";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import './css/product_details.css';
 
 
-
-class Product_Details extends Component {
+class Product_Details extends PureComponent {
     
     constructor(props){
         super(props)
         this.state = {
-            allProducts:[]
+            allProducts:[],
+            singleProduct:[],
+            colorVariant:[],
+            sizeVariant:[],
+            inCart:false,
+            inWishlist:false,
+            csrf_token:"",
+            currentUser:false
         };
-    }
+    };
 
     componentDidMount(){
+        this.fetchUser();
         this.fetchProduct();
-    }
+        this.setState({csrf_token:this.getCookie("csrftoken")});
+
+    };
+
+
+    componentDidUpdate(prevValue){
+        if (this.props !== prevValue){           
+            this.filterProductVariant();
+        };
+    }; 
+
+    fetchUser(){
+        axios.get('http://127.0.0.1:8000/api/user/profile/',
+        ).then((res) => {
+            this.setState({currentUser:true})
+        }).catch((error) => {
+            this.setState({currentUser:false})
+        })
+
+    };
+
+    filterProductVariant(){
+        const {slug,color,size} = this.props;
+        const singleProduct = this.state.allProducts.filter((p) => {
+            return p.product_color_variant.product.slug === slug && 
+                    p.product_color_variant.color.name === color && 
+                    p.size.name === size
+        });
+        this.setState({singleProduct:singleProduct});
+
+        const colorVariant = this.state.allProducts.filter((p) => {
+            return p.product_color_variant.product.slug === slug && 
+                    p.size.name === size                   
+        }).sort();
+        this.setState({colorVariant:colorVariant});
+
+        const sizeVariant = this.state.allProducts.filter((p) => {
+            return p.product_color_variant.product.slug === slug && 
+                    p.product_color_variant.color.name === color                  
+        }).sort((a,b) => a.size.name[0]-b.size.name[0]) ;
+        this.setState({sizeVariant:sizeVariant});
+    };
 
     
     fetchProduct(){
         axios
         .get('http://127.0.0.1:8000/api/product-variants/')
         .then((response) => {
-            this.setState({allProducts:response.data})
+            this.setState({allProducts:response.data});
+            this.filterProductVariant();
+
         })
         .catch((error) => {
             console.log("eerroorr "+error)
@@ -33,41 +83,134 @@ class Product_Details extends Component {
     changeImage(e){
         let current_img = document.getElementsByClassName("current-image")[0].children[0]       
         current_img.src = e.target.src   
-    }
+    };
+  
+    getCookie (cookieName){
+        const cookies = document.cookie.split(';');
+        
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+      
+          // Check if the cookie starts with the specified name
+          if (cookie.startsWith(cookieName + '=')) {
+            // Return the value of the cookie
+            return cookie.substring(cookieName.length + 1);
+          }
+        }
+      
+        // Return null if the cookie is not found
+        return null;
+    };
+
+    
+    addToCart(product_variant_id){
+        const addCartData = {
+            product_variant:product_variant_id,
+        };
+    
+        axios.post('http://127.0.0.1:8000/api/cart/add-cart/',
+        addCartData,
+        {
+            headers:{
+                'X-CSRFToken':this.state.csrf_token,               
+            },        
+        }
+        )
+        .then((res)=>{
+            console.log(res)
+            this.fetchCart();
+        })
+        .catch((error)=>{
+            console.log(error.response.data[0])
+        });
+
+    };
+
+
+    addToWishlist(product_variant_id){
+       
+        const wishlistData = {            
+            product_variant:product_variant_id,
+        };
+    
+        axios.post('http://127.0.0.1:8000/api/wishlist/add/',
+        wishlistData,
+        {
+            headers:{
+                'X-CSRFToken':this.state.csrf_token
+            }
+        }
+        
+        ).then((res)=>{
+            console.log(res)
+            this.fetchWishlist()
+        }).catch((err) => {
+            console.log(err)
+        })
+    };
+
+
+    fetchCart(){
+        const {singleProduct} = this.state
+        
+        axios.post('http://127.0.0.1:8000/api/cart/in-cart/',
+            {
+                product_variant:singleProduct[0]&& singleProduct[0].id
+            },{
+                headers:{
+                    'X-CSRFToken':this.state.csrf_token
+                }
+            }
+        )
+        .then((res)=>{
+            this.setState({inCart:res.data.incart});
+           
+        }).catch((error)=>{
+            console.log(error)
+        });
+    };
+
+
+    fetchWishlist(){
+        const {singleProduct} = this.state
+        
+        axios.post('http://127.0.0.1:8000/api/wishlist/in-wishlist/',
+            {
+                product_variant:singleProduct[0]&& singleProduct[0].id
+            },{
+                headers:{
+                    'X-CSRFToken':this.state.csrf_token
+                }
+            }
+        )
+        .then((res)=>{
+            this.setState({inWishlist:res.data.in_wishlist});
+           
+        }).catch((error)=>{
+            console.log(error)
+        });
+    };
+
+
 
     
     render() {
-        
-
-        const {slug,color,size} = this.props;
-
-        const singleProduct = this.state.allProducts.filter((p) => {
-            return p.product_color_variant.product.slug === slug && 
-                   p.product_color_variant.color.name === color && 
-                   p.size.name === size
-        });
-
-        const colorVariant = this.state.allProducts.filter((p) => {
-            return p.product_color_variant.product.slug === slug && 
-                    p.size.name === size                   
-        }).sort();
-
-        const sizeVariant = this.state.allProducts.filter((p) => {
-            return p.product_color_variant.product.slug === slug && 
-                    p.product_color_variant.color.name === color                  
-        }).sort((a,b) => a.size.name[0]-b.size.name[0]) ;
-        
-
+        if(this.state.currentUser){
+            this.fetchCart()
+            this.fetchWishlist()
+        }
         return (
-            <>
-            
-                
+            <>               
                 <div className="product-main-container mt-5">
+                    
+                    {
+                        this.state.singleProduct.length===0&&<h4 className="text-center" >Loading .....</h4>
+                    }
                 {   
-                    singleProduct && singleProduct.map((p) => (
+                    this.state.singleProduct && this.state.singleProduct.map((p) => (
                         
                            <>
-                                <div className="product-image-container">
+                                <div key={p.id} className="product-image-container">
                                     <div className="current-image">
                                         <img 
                                            src={
@@ -192,7 +335,7 @@ class Product_Details extends Component {
                                         <div className="color-selection">
                                             <h6 className="me-4">Colors available : </h6>
                                             {
-                                                colorVariant && colorVariant.map((cv => (
+                                                this.state.colorVariant && this.state.colorVariant.map((cv => (
                                                     <NavLink className="color-variant" key={cv.id} value={cv.product_color_variant.color.name} to={
                                                         `/${cv.product_color_variant.product.category.slug}/${cv.product_color_variant.product.slug}/${cv.product_color_variant.color.name}/${cv.size.name}/`
                                                         } >
@@ -215,10 +358,11 @@ class Product_Details extends Component {
                                         <div className="size-selection">
                                             <h6 className="me-4">Size available : </h6>
                                             {
-                                                sizeVariant && sizeVariant.map((sv => (
+                                                this.state.sizeVariant && this.state.sizeVariant.map((sv => (
                                                     <NavLink className="size-variant" key={sv.id}
                                                     to={
-                                                        `/${sv.product_color_variant.product.category.slug}/${sv.product_color_variant.product.slug}/${sv.product_color_variant.color.name}/${sv.size.name}/` 
+                                                        `/${sv.product_color_variant.product.category.slug}/${sv.product_color_variant.product.slug}/${sv.product_color_variant.color.name}/${sv.size.name}/`
+                                    
                                                     }
                                                     >
                                                         {sv.size.name}
@@ -232,12 +376,48 @@ class Product_Details extends Component {
                                     </div>
 
                                     <div className="add-to-cart-add-to-wishlist-container">
-                                        <div className="add-to-cart me-3">
-                                              <button className="btn btn-success" >Add to Cart</button>
-                                        </div>
-                                        <div className="add-to-wishlist">
-                                            <button className="btn btn-primary">Add to Wishlist</button>
-                                        </div>
+
+                                        {
+                                            this.state.currentUser?
+                                            <>
+                                                {
+                                                    this.state.inCart?
+                                                        <div className="add-to-cart me-3">
+                                                            <NavLink to={'/user/cart/'} className="btn btn-success" >Already in cart Go to Cart</NavLink>
+                                                        </div>:
+
+                                                        <div className="add-to-cart me-3">
+                                                            <button className="btn btn-success" onClick={()=> this.addToCart(p.id)} >Add to Cart</button>
+                                                        </div>                    
+                                                }
+                                            </>
+                                            :
+                                            <div className="add-to-cart me-3">
+                                                <button className="btn btn-success" >Add to Cart</button>
+                                            </div>                    
+
+                                        }
+
+                                        { 
+                                            this.state.currentUser?
+                                                <>
+                                                    {
+                                                        this.state.inWishlist?
+                                                        <div className="add-to-wishlist">
+                                                            <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary">Already in Wishlist View</NavLink>
+                                                        </div>:
+                                                        <div className="add-to-wishlist">
+                                                            <button className="btn btn-primary" onClick={()=> this.addToWishlist(p.id)} >Add to Wishlist</button>
+                                                        </div>                                
+                                                    }
+                                                </>:
+                                                    <div className="add-to-wishlist">
+                                                        <button className="btn btn-primary" >Add to Wishlist</button>
+                                                    </div>                                                                               
+                                           
+                                        }
+                                            
+
                                     </div>
 
                                 </div>
@@ -253,8 +433,8 @@ class Product_Details extends Component {
                 
                     <div className="container mt-4">
                     {
-                        singleProduct[0]&& 
-                        singleProduct[0].product_color_variant.product.description
+                        this.state.singleProduct[0]&& 
+                        this.state.singleProduct[0].product_color_variant.product.description
                     }
                         
                     </div>
@@ -270,7 +450,7 @@ function UserDetailWrapper() {
     const { category,slug,color,size } = useParams();
   
     return <Product_Details category={category} slug={slug} color={color} size={size} />;
-}
+};
   
 export default UserDetailWrapper;
 

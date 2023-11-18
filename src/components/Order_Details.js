@@ -57,17 +57,17 @@ class Order_Details extends Component {
                 <div className="order-product-container">
                     <div className="order-product-image-container">
                         <Link 
-                        to={
-                            singleOrder&&
-                            `/${singleOrder.product_variant.product_color_variant.product.category.slug}/${singleOrder.product_variant.product_color_variant.product.slug}/${singleOrder.product_variant.product_color_variant.color.name}/${singleOrder.product_variant.size.name}/`
-                        } 
-                        className="order-product-image">
-                            <img
-                                src={
-                                    singleOrder && singleOrder.product_variant.product_color_variant.image1||
-                                    singleOrder && singleOrder.product_variant.product_color_variant.product.image_main
-                                }
-                            />
+                            to={
+                                singleOrder&&
+                                `/${singleOrder.product_variant.product_color_variant.product.category.slug}/${singleOrder.product_variant.product_color_variant.product.slug}/${singleOrder.product_variant.product_color_variant.color.name}/${singleOrder.product_variant.size.name}/`
+                            } 
+                            className="order-product-image">
+                                <img
+                                    src={
+                                        singleOrder && singleOrder.product_variant.product_color_variant.image1||
+                                        singleOrder && singleOrder.product_variant.product_color_variant.product.image_main
+                                    }
+                                />
                         </Link >
                     </div>
                     <div className="order-product-details-container">
@@ -148,10 +148,11 @@ class Order_Details extends Component {
                 </div>
             </div>
         );
-    }
-}
+    };
+};
 
-export default function OrdersDetailParam() {
+function OrdersDetailParam() {
     const { order_id } = useParams();
     return <Order_Details order_id={order_id} />;
 }
+export default OrdersDetailParam;

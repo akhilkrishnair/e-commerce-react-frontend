@@ -11,7 +11,9 @@ import { useNavigate } from "react-router-dom";
 class Dashbord extends Component {
     constructor(props) {
         super(props);
-        
+        this.state={
+            currentUser:false,
+        }
     }
 
 
@@ -20,10 +22,12 @@ class Dashbord extends Component {
         .then((res) => {
             this.setState({currentUser:false})
             window.location.href = '/'
+            // this.props.navigate('/',{replace:true})
         }).catch((res) =>{
            console.log(res)
         });
     }
+
 
     
     menuCompFun(e){
@@ -54,7 +58,8 @@ class Dashbord extends Component {
         }
 
         const {menu} = this.props.dash_param
-        console.log(menu)
+        console.log(this.props.navigate)
+ 
 
 
         return (
@@ -121,8 +126,8 @@ class Dashbord extends Component {
 }
 
 export default function DashbordWithNavigation() {
-    useNavigate();
+    const navigate = useNavigate();
     const dash_param = useParams();
-    return <Dashbord dash_param={dash_param} />;
+    return <Dashbord navigate={navigate} dash_param={dash_param} />;
 }
 

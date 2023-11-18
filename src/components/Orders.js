@@ -9,7 +9,8 @@ class Orders extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            orderProducts:[]
+            orderProducts:null,
+            checkedData:false
         }
     }
 
@@ -19,16 +20,16 @@ class Orders extends Component {
     }
 
     fetchOrders(){
-        axios.get('http://127.0.0.1:8000/api/orders/',
-        {withCredentials:true}
-        )
+        axios.get('http://127.0.0.1:8000/api/orders/')
         .then((res)=>{
             this.setState({orderProducts:res.data})
+            this.setState({checkedData:true})
             console.log(res.data)
         })
         .catch((error)=> {
             console.log(error)
-        })
+            this.setState({checkedData:true})
+        });
     };
 
 
@@ -80,6 +81,14 @@ class Orders extends Component {
                       </div>
                     ))
                     
+                }
+                {
+                    !this.state.checkedData&&
+                    <h6>Loading .....</h6>
+                }
+                {
+                    this.state.orderProducts&&this.state.orderProducts.length ===0&&
+                    <h6>You have not ordered anything</h6>
                 }
             </>
         );

@@ -15,22 +15,21 @@ class Profile extends Component {
     
     componentDidMount(){
         this.fetchOrderAddress();
-    }
+    };
 
 
 
 
     fetchOrderAddress(){
-        axios.get('http://127.0.0.1:8000/api/order-address/',{
-            withCredentials:true
-        }).then((res) => {
+        axios.get('http://127.0.0.1:8000/api/order-address/')
+        .then((res) => {
             if (res.data[0]){
 
                 this.setState({orderAddress:res.data});
                 this.setState({profile:res.data[0].user})
             }
             
-        }).then((err) => {
+        }).catch((err) => {
             console.log(err);
         })
     }
@@ -49,10 +48,7 @@ class Profile extends Component {
                         profile.profile_image?
                         <div className="profile-pic">
                             <img src={profile.profile_image} />
-                        </div>:
-                        <div className="profile-pic">
-                            <img src=""/>
-                        </div>
+                        </div>:null
 
                     }
 
@@ -66,15 +62,18 @@ class Profile extends Component {
                     </div>
 
                     <div className="user-order-address"><br/><br/>
-                    <h5>Order Address</h5><br/>
+                    
                          {
                             orderAddress&&orderAddress.map((oa,index)=>(
-                                <div className="each-order-address">
-                                    <h6>Address {index+1}</h6>
-                                    <div>{oa.full_name}</div>
-                                    <div>{oa.mobile}</div>
-                                    <div>{oa.state}, {oa.city_district_town}, {oa.pincode}</div>
-                                </div>
+                                <>
+                                    <h5>Order Address</h5><br/>
+                                    <div className="each-order-address">
+                                        <h6>Address {index+1}</h6>
+                                        <div>{oa.full_name}</div>
+                                        <div>{oa.mobile}</div>
+                                        <div>{oa.state}, {oa.city_district_town}, {oa.pincode}</div>
+                                    </div>
+                                </>
                             ))
                          }
                     </div>

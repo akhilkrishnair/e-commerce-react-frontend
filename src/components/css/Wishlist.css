@@ -25,3 +25,11 @@
     width: 100%;
     height: auto;
 }
+
+.trash-btn-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    color: rgb(200, 9, 9);
+}

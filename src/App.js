@@ -5,10 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.xsrfCookieName = "csrftoken"
+axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.withCredentials = true
-
 
 
 class App extends Component {

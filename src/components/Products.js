@@ -50,7 +50,7 @@ class Products extends Component {
         };
     };
 
-    render() {        
+    render() {  
         return (
             <div className="category-product-container">
                 <div className="categories-container">

@@ -10,6 +10,10 @@ import Login from "../Login";
 import { Routes, Route } from "react-router-dom";
 import Dashbord from "../Dashbord";
 import Order_Details from "../Order_Details";
+import Cart from "../Cart";
+import Empty_Page from "../Empty_Page";
+
+
 
 class Router extends Component {
     constructor(props) {
@@ -52,23 +56,31 @@ class Router extends Component {
                         <Route path="/user/registration/" element={<Registration />} />
 
 
-                        {this.state.currentUser ?
-                        window.location.pathname==='/user/login/'?
-                        window.location.pathname='/':window.location.pathname
-                         : 
+                        {!this.state.currentUser&&
                             <Route
                                 path="/user/login/"
                                 element={<Login current_user={this.state.currentUser} login_data={this.logInData} />}
                             />
                         }
+                        {   
+                            this.state.currentUser&&
+                            <Route path="/user/dashbord/" element={<Dashbord/>} />
+                        }
+                        {
+                            this.state.currentUser&&
+                            <Route path="/user/dashbord/:menu/" element={<Dashbord/>} />
+                        }
+                        {
+                            this.state.currentUser&&
+                            <Route path="/user/cart/" element={<Cart/>} />
+                        }
+                        {
+                            this.state.currentUser&&
+                            <Route path="/user/dashbord/orders/:order_id/" element={<Order_Details/>} />
+                        }
 
-                        <Route path="/user/dashbord/" element={<Dashbord/>} />
-                        <Route path="/user/dashbord/:menu/" element={<Dashbord/>} />
-
-
-                        
-                        <Route path="/:category/:slug/:color/:size/" element={<Product_Details/>} />
-                        <Route path="/user/dashbord/orders/:order_id/" element={<Order_Details/>} />
+                        <Route path="/:category/:slug/:color/:size/" element={<Product_Details current_user={this.state.currentUser} />} />
+                        <Route path="/*" element={<Empty_Page/>} />
                     </Routes>
                 </div>
                 <Footer />
