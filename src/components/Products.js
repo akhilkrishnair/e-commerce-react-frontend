@@ -96,8 +96,8 @@ class Products extends Component {
                                             ")"}
                                     </h6>
                                     <h6 className="card-title">Rs.{
-                                            product.product_color_variant.product.orginal_price-
-                                            product.product_color_variant.product.orginal_price/100*product.offer                                    
+                                            product.price-
+                                            product.price/100*product.offer                                    
                                         }
                                     </h6>
                                 </div>
