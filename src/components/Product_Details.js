@@ -328,7 +328,7 @@ class Product_Details extends PureComponent {
                                             p.price-
                                             p.price/100*p.offer
                                         }
-                                        <span className="ms-4 text-secondary text-decoration-line-through" >Rs.{p.product_color_variant.product.orginal_price}</span>
+                                        <span className="ms-4 text-secondary text-decoration-line-through" >Rs.{p.price}</span>
                                         <span className="ms-4 text-success">{p.offer}% off</span>
                                     </h6>
                                     <br/><br/><br/>
