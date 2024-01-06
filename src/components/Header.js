@@ -1,5 +1,5 @@
 import axios from "axios";
-import React,{ Component } from "react";
+import { Component } from "react";
 import { Link } from "react-router-dom";
 
 class Header extends Component {
@@ -10,7 +10,7 @@ class Header extends Component {
             email:"",
             first_name:"",
             last_name:"",
-            user_id:null
+            user_id:null,
         }
     }
 
@@ -27,6 +27,8 @@ class Header extends Component {
             this.setState({currentUser:false})
         })
     }
+
+ 
     
 
     componentDidUpdate(){
@@ -40,6 +42,8 @@ class Header extends Component {
             ){
             window.location.href='/'
         }
+      
+
     }
  
     
@@ -97,7 +101,7 @@ class Header extends Component {
                                 {
                                     this.state.currentUser&&
                                         <li className="nav-item ms-3">
-                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart</Link>
+                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart <span className="p-1" >{this.props.cart_count&&this.props.cart_count}</span> </Link>
                                         </li>
 
                                 }
@@ -116,5 +120,6 @@ class Header extends Component {
         );
     }
 }
- 
+
+
 export default Header;

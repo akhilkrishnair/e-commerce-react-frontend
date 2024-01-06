@@ -20,9 +20,7 @@ class Cart extends Component {
     fetchCart() {
         axios
             .get("http://127.0.0.1:8000/api/cart/")
-            .then((res) => {
-                console.log(res);
-                
+            .then((res) => {                
                 this.setState({ cart: res.data });
                 this.setState({ cartChecked: true });
             })
@@ -103,6 +101,7 @@ class Cart extends Component {
         ).then((res)=>{
             console.log(res)
             this.fetchCart()
+            this.props.cart_counter();
         })
         .catch((err)=>{
             console.log(err)
@@ -166,10 +165,12 @@ class Cart extends Component {
                                                             </p>
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                            <button onClick={()=> this.decreamentCart(cp.id)} className="btn btn-link px-2">
-                                                                <i className="fa fa-minus"></i>
-                                                            </button>
-
+                                                            {
+                                                                cp.quantity>1&&
+                                                                    <button onClick={()=> this.decreamentCart(cp.id)} className="btn btn-link px-2">
+                                                                        <i className="fa fa-minus"></i>
+                                                                    </button>                        
+                                                            }
                                                             <label
                                                                 id="form1"
                                                                     
@@ -215,9 +216,9 @@ class Cart extends Component {
 
                                     <div className="card">
                                         <div className="card-body">
-                                            <button type="button" className="btn btn-warning btn-block btn-lg">
+                                            <Link to={'/user/order/checkout/'} className="btn btn-warning btn-block btn-lg">
                                                 Proceed to Pay
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

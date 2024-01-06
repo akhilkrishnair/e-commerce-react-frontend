@@ -22,43 +22,17 @@ class Dashbord extends Component {
         .then((res) => {
             this.setState({currentUser:false})
             window.location.href = '/'
-            // this.props.navigate('/',{replace:true})
         }).catch((res) =>{
            console.log(res)
         });
     }
 
 
-    
-    menuCompFun(e){
-        const menuCom = document.getElementsByClassName('menu-component')
-        for(let mc=0; mc<menuCom.length; mc++){
-            if (menuCom[mc].classList[1] === `${e}`){
-                menuCom[mc].hidden = false
-            }else{
-                menuCom[mc].hidden = true
-            }
-        }
-    }
-
 
     render() {
        
-        const elem = document.getElementsByClassName('menu-component')
-        if(window.location.pathname == '/user/dashbord/wishlist/' ){
-           this.menuCompFun("Wishlist")
-        }
-
-        if(window.location.pathname == '/user/dashbord/orders/' ){
-            this.menuCompFun("Orders")
-        }
-
-        if(window.location.pathname == '/user/dashbord/profile/' ){
-            this.menuCompFun("Profile")
-        }
 
         const {menu} = this.props.dash_param
-        console.log(this.props.navigate)
  
 
 
@@ -68,20 +42,17 @@ class Dashbord extends Component {
 
                     <NavLink
                     to={'/user/dashbord/profile/'}
-                    onClick={()=>this.menuCompFun("Profile")} 
                     className="dashbord-link" >
                         Profile
                     </NavLink >
 
                     <NavLink 
-                    onClick={()=>this.menuCompFun("Wishlist")} 
                     to={'/user/dashbord/wishlist/'} 
                     className="dashbord-link" >
                         Wishlist
                     </NavLink>
 
                     <NavLink 
-                    onClick={()=>this.menuCompFun("Orders")} 
                     to={'/user/dashbord/orders/'} 
                     className="dashbord-link" >
                         Order

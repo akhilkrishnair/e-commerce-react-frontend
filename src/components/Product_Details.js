@@ -3,7 +3,6 @@ import { PureComponent } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import './css/product_details.css';
 
-
 class Product_Details extends PureComponent {
     
     constructor(props){
@@ -16,7 +15,8 @@ class Product_Details extends PureComponent {
             inCart:false,
             inWishlist:false,
             csrf_token:"",
-            currentUser:false
+            currentUser:false,
+            cartCount:null,
         };
     };
 
@@ -102,6 +102,8 @@ class Product_Details extends PureComponent {
         return null;
     };
 
+   
+
     
     addToCart(product_variant_id){
         const addCartData = {
@@ -117,12 +119,12 @@ class Product_Details extends PureComponent {
         }
         )
         .then((res)=>{
-            console.log(res)
             this.fetchCart();
+            this.props.cartCount();
         })
         .catch((error)=>{
             console.log(error.response.data[0])
-        });
+        })
 
     };
 
@@ -199,9 +201,13 @@ class Product_Details extends PureComponent {
             this.fetchCart()
             this.fetchWishlist()
         }
+        
+
         return (
             <>               
                 <div className="product-main-container mt-5">
+                    
+    
                     
                     {
                         this.state.singleProduct.length===0&&<h4 className="text-center" >Loading .....</h4>
@@ -385,10 +391,12 @@ class Product_Details extends PureComponent {
                                                         <div className="add-to-cart me-3">
                                                             <NavLink to={'/user/cart/'} className="btn btn-success" >Already in cart Go to Cart</NavLink>
                                                         </div>:
-
+                                                        
                                                         <div className="add-to-cart me-3">
                                                             <button className="btn btn-success" onClick={()=> this.addToCart(p.id)} >Add to Cart</button>
-                                                        </div>                    
+                                                        </div> 
+                                                        
+                                                                          
                                                 }
                                             </>
                                             :
@@ -446,10 +454,9 @@ class Product_Details extends PureComponent {
     };
 };
 
-function UserDetailWrapper() {
+function UserDetailWrapper({cart_counter}) {
     const { category,slug,color,size } = useParams();
-  
-    return <Product_Details category={category} slug={slug} color={color} size={size} />;
+    return <Product_Details cartCount={cart_counter} category={category} slug={slug} color={color} size={size} />;
 };
   
 export default UserDetailWrapper;
