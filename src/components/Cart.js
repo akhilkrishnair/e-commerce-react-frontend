@@ -185,8 +185,8 @@ class Cart extends Component {
                                                             <h6 className="mb-0">
                                                                 Rs.
                                                                 {
-                                                                    cp.product_variant.product_color_variant.product.orginal_price-
-                                                                    cp.product_variant.product_color_variant.product.orginal_price/100*cp.product_variant.offer
+                                                                    cp.product_variant.price-
+                                                                    cp.product_variant.price/100*cp.product_variant.offer
                                                                 }
                                                             </h6>
                                                         </div>

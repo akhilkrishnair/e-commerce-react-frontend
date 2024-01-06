@@ -32,6 +32,7 @@ class Product_Details extends PureComponent {
         if (this.props !== prevValue){           
             this.filterProductVariant();
         };
+        console.log(prevValue, this.props)
     }; 
 
     fetchUser(){
@@ -324,8 +325,8 @@ class Product_Details extends PureComponent {
                                     <br/>
                                     <h6  >Rs.
                                         {
-                                            p.product_color_variant.product.orginal_price-
-                                            p.product_color_variant.product.orginal_price/100*p.offer
+                                            p.price-
+                                            p.price/100*p.offer
                                         }
                                         <span className="ms-4 text-secondary text-decoration-line-through" >Rs.{p.product_color_variant.product.orginal_price}</span>
                                         <span className="ms-4 text-success">{p.offer}% off</span>
