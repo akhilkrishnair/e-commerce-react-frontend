@@ -1,9 +1,9 @@
-import { Component } from "react";
+import { PureComponent } from "react";
 import axios from "axios";
 import "./css/Products.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 
-class Products extends Component {
+class Products extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,7 +16,13 @@ class Products extends Component {
     componentDidMount() {
         this.fetchCategory();
         this.fetchProductVariants();
+    }
 
+    componentDidUpdate(prevValue){
+        if (this.props !== prevValue){
+            this.filterByCategory();
+            console.log('updated ',prevValue, this.props)
+        }
     }
 
     fetchProductVariants = () => {
@@ -42,15 +48,19 @@ class Products extends Component {
 
     filterByCategory (pc=null){
         let productFilter = null
-        if (pc!=null){
+        const {category} = this.props
+        if (category){
             productFilter = this.state.productVariants.filter((pv)=>{                
-                return pv.product_color_variant.product.category.slug===pc
+                return pv.product_color_variant.product.category.slug=== category
             });
+            console.log('filter area ', category)
             this.setState({productsStateFilter:productFilter});
         };
     };
 
-    render() {  
+    render() { 
+        console.log(this.props)
+         
         return (
             <div className="category-product-container">
                 <div className="categories-container">
@@ -110,4 +120,8 @@ class Products extends Component {
     }
 }
 
-export default Products;
+export default function FilterHandler(){
+    const {category} = useParams();
+    return <Products category={category} />
+};
+

@@ -10,7 +10,8 @@ class Header extends Component {
             email:"",
             first_name:"",
             last_name:"",
-            user_id:null
+            user_id:null,
+            searchItems:""
         }
     }
 
@@ -41,7 +42,12 @@ class Header extends Component {
             window.location.href='/'
         }
     }
- 
+   
+
+    searchItems =(e)=> {
+        const {name,value} = e.target;
+        this.setState({[name]:value});
+    }
     
 
    
@@ -105,8 +111,13 @@ class Header extends Component {
 
                             </ul>
                             <form className="d-flex" role="search">
-                                <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                                <button className="btn btn-outline-light" type="submit">Search</button>
+                                <input className="form-control me-2" name="searchItems" 
+                                type="search" placeholder="Search" aria-label="Search"
+                                onChange={this.searchItems}/>
+                                <Link 
+                                    className="btn btn-outline-light" 
+                                    type="submit"
+                                    to={'/'}>Search</Link>
                             </form>
                             </div>
                         </div>

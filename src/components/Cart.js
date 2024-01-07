@@ -28,7 +28,7 @@ class Cart extends Component {
             })
             .catch((error) => {
                 console.log(error);
-                this.setState({ cartChecked: true });
+                this.setState({ cartChecked: false });
             });
     }
 

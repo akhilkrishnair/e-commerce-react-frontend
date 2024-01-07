@@ -27,7 +27,6 @@ class Router extends Component {
 
     logInData = (data) => {
         const { email, password, currentUser } = data;
-        console.log("Router ", currentUser);
         this.setState({ currentUser: currentUser });
         this.setState({ email: email });
         this.setState({ password: password });
