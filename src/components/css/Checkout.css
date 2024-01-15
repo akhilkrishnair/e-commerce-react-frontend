@@ -1,0 +1,32 @@
+.checkout-main-container{
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    padding: 10px;
+    width: 80%;
+}
+
+.checkout-main-container .order-address-container{
+    width: 65%;
+
+}
+.checkout-main-container .order-details{
+    width: 32%;
+}
+
+.checkout-main-container .order-address-container,
+.checkout-main-container .order-details{
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0 0 2px 1px #bdbdbd;
+}
+
+.order-address-container .select-address .each-address {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: solid 1px rgb(205, 203, 203);
+}
+.select-address .each-address .address{
+    margin-left: -180px;
+}

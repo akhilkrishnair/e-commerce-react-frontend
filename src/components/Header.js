@@ -1,5 +1,5 @@
 import axios from "axios";
-import React,{ Component } from "react";
+import { Component } from "react";
 import { Link } from "react-router-dom";
 
 class Header extends Component {
@@ -11,7 +11,7 @@ class Header extends Component {
             first_name:"",
             last_name:"",
             user_id:null,
-            searchItems:""
+            searchItems:"",
         }
     }
 
@@ -28,6 +28,8 @@ class Header extends Component {
             this.setState({currentUser:false})
         })
     }
+
+ 
     
 
     componentDidUpdate(){
@@ -41,12 +43,19 @@ class Header extends Component {
             ){
             window.location.href='/'
         }
+      
+
     }
    
 
     searchItems =(e)=> {
         const {name,value} = e.target;
         this.setState({[name]:value});
+        console.log(this.state.searchItems)
+    }
+    
+    searchItemSend = () => {
+        this.props.product_search(this.state.searchItems)
     }
     
 
@@ -59,7 +68,14 @@ class Header extends Component {
             <div className="header-section">
                     <nav className="navbar bg-primary navbar-expand-lg " data-bs-theme="dark" >
                         <div className="container-fluid">
-                            <h3><Link className="navbar-brand mx-5" to={"/"}>E-Shop</Link></h3>
+                            <h3>
+                                <Link className="navbar-brand mx-5" 
+                                   to={"/"}
+                                   
+                                >
+                                    E-Shop
+                                </Link>
+                            </h3>
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                             </button>
@@ -103,7 +119,7 @@ class Header extends Component {
                                 {
                                     this.state.currentUser&&
                                         <li className="nav-item ms-3">
-                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart</Link>
+                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart <span className="p-1" >{this.props.cart_count&&this.props.cart_count}</span> </Link>
                                         </li>
 
                                 }
@@ -113,11 +129,13 @@ class Header extends Component {
                             <form className="d-flex" role="search">
                                 <input className="form-control me-2" name="searchItems" 
                                 type="search" placeholder="Search" aria-label="Search"
-                                onChange={this.searchItems}/>
+                                onChange={this.searchItems}
+                                />
                                 <Link 
                                     className="btn btn-outline-light" 
                                     type="submit"
-                                    to={'/'}>Search</Link>
+                                    onClick={this.searchItemSend}
+                                    to={'/search'}>Search</Link>
                             </form>
                             </div>
                         </div>
@@ -127,5 +145,6 @@ class Header extends Component {
         );
     }
 }
- 
+
+
 export default Header;

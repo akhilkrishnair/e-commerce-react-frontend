@@ -48,20 +48,43 @@ class Products extends PureComponent {
 
     filterByCategory (pc=null){
         let productFilter = null
-        const {category} = this.props
+        let search_items = null
+        const {category,search_item} = this.props
         if (category){
             productFilter = this.state.productVariants.filter((pv)=>{                
-                return pv.product_color_variant.product.category.slug=== category
+                return pv.product_color_variant.product.category.slug === category
             });
-            console.log('filter area ', category)
             this.setState({productsStateFilter:productFilter});
         };
+        console.log(this.props)
+
+        if (category==="search"){
+            let category_name = ""
+            let name = ""
+            search_items = this.state.productVariants.filter((sp)=>{
+                name = sp.product_color_variant.product.slug.slice(0,4)
+                category_name = sp.product_color_variant.product.category.slug.slice(0,4)
+                if (category_name.length>0){
+                    return category_name === search_item.slice(0,4)
+                }
+                return name === search_item.slice(0,4)                
+            });
+            this.setState({productsStateFilter:search_items})
+        } 
+        if (!category){
+            this.setState({productsStateFilter:this.state.productVariants})
+        }  
     };
 
     render() { 
-        console.log(this.props)
+        const {search_item,category} = this.props
          
         return (
+            <>
+            {
+                search_item&&category==='search'&&
+                <h4 className="text-center mb-3" >searched for "{this.props.search_item}"</h4>
+            }
             <div className="category-product-container">
                 <div className="categories-container">
                 {   
@@ -116,12 +139,14 @@ class Products extends PureComponent {
                     ))}
                 </div>
             </div>
+            </>
         );
     }
 }
 
-export default function FilterHandler(){
+export default function FilterHandler({search_item}){
     const {category} = useParams();
-    return <Products category={category} />
+    console.log("func ",search_item)
+    return <Products search_item={search_item} category={category} />
 };
 

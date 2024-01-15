@@ -4,7 +4,6 @@ import "./Router.css";
 import Header from "../Header";
 import Footer from "../Footer";
 import Products from "../Products";
-import Product_Details from "../Product_Details";
 import Registration from "../Registration";
 import Login from "../Login";
 import { Routes, Route } from "react-router-dom";
@@ -12,7 +11,8 @@ import Dashbord from "../Dashbord";
 import Order_Details from "../Order_Details";
 import Cart from "../Cart";
 import Empty_Page from "../Empty_Page";
-
+import UserDetailWrapper from "../Product_Details";
+import Checkout from "../Checkout";
 
 
 class Router extends Component {
@@ -22,8 +22,17 @@ class Router extends Component {
             currentUser: false,
             email: "",
             password: "",
+            cartCount:null,
+            searchItems:""
+            
         };
     }
+    productSearchManage = (key_words_obj) => {
+        // setting the value to searchItem state
+        this.setState({searchItems:key_words_obj});
+    };
+
+    
 
     logInData = (data) => {
         const { email, password, currentUser } = data;
@@ -32,26 +41,41 @@ class Router extends Component {
         this.setState({ password: password });
     };
 
+    cartCount=()=>{
+        axios.get('http://127.0.0.1:8000/api/cart/count/',
+        ).then((res) => {
+            this.setState({cartCount:res.data});
+        }).catch((err) => {
+            console.log(err);
+        })
+    };
+
+
+
     componentDidMount() {
         axios
-            .get("http://127.0.0.1:8000/api/user/profile/")
-            .then((res) => {
-                this.setState({ currentUser: true });
-            })
-            .catch((res) => {
-                console.log(res);
-                this.setState({ currentUser: false });
-            });
+        .get("http://127.0.0.1:8000/api/user/profile/")
+        .then((res) => {
+            this.setState({ currentUser: true });
+            this.cartCount();
+        })
+        .catch((res) => {
+            console.log(res);
+            this.setState({ currentUser: false });
+        });
+       
+            
     }
 
-    render() {
+    render() { 
         return (
-            <>
-                <Header current_user={this.state.currentUser} />
+            <>  
+                    <Header product_search={this.productSearchManage} current_user={this.state.currentUser} cart_count={this.state.cartCount} />
+               
                 <div className="main-container">
                     <Routes>
-                        <Route path="/" element={<Products />} />
-                        <Route path="/:category/" element={<Products />} />
+                        <Route path="/" element={<Products search_item={this.state.searchItems} />} />
+                        <Route path="/:category/" element={<Products search_item={this.state.searchItems} />} />
                         <Route path="/user/registration/" element={<Registration />} />
 
 
@@ -61,26 +85,24 @@ class Router extends Component {
                                 element={<Login current_user={this.state.currentUser} login_data={this.logInData} />}
                             />
                         }
-                        {   
-                            this.state.currentUser&&
-                            <Route path="/user/dashbord/" element={<Dashbord/>} />
-                        }
                         {
                             this.state.currentUser&&
                             <Route path="/user/dashbord/:menu/" element={<Dashbord/>} />
                         }
                         {
                             this.state.currentUser&&
-                            <Route path="/user/cart/" element={<Cart/>} />
+                            <Route path="/user/cart/" element={<Cart cart_counter={this.cartCount} />} />
                         }
                         {
                             this.state.currentUser&&
                             <Route path="/user/dashbord/orders/:order_id/" element={<Order_Details/>} />
                         }
-
-                        <Route path="/:category/:slug/:color/:size/" element={<Product_Details current_user={this.state.currentUser} />} />
+                        
+                             <Route path="/:category/:slug/:color/:size/" element={<UserDetailWrapper current_user={this.state.currentUser} cart_counter={this.cartCount} />} />
                         <Route path="/*" element={<Empty_Page/>} />
-                    </Routes>
+
+                        <Route path="/user/order/checkout/" element={<Checkout/>} />
+                       </Routes>
                 </div>
                 <Footer />
             </>
