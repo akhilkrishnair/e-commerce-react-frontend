@@ -136,7 +136,7 @@ class Product_Details extends PureComponent {
             product_variant:product_variant_id,
         };
     
-        axios.post('http://127.0.0.1:8000/api/wishlist/add?search_param=hello im searching',
+        axios.post('http://127.0.0.1:8000/api/wishlist/add/',
         wishlistData,
         {
             headers:{
