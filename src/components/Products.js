@@ -10,6 +10,8 @@ class Products extends PureComponent {
             productVariants: [],
             productCategories:[],
             productsStateFilter:[],
+            currentPage:1,
+            itemPerPage:4,
         };
     }
 
@@ -76,20 +78,43 @@ class Products extends PureComponent {
         }  
     };
 
+    changePage = (page)=>{
+        this.setState({currentPage:page});
+    }
+
     render() { 
         const {search_item,category} = this.props
-         
+        const {productCategories,
+            productsStateFilter,
+            itemPerPage,
+            currentPage}  = this.state
+        let pages =  Math.round(productsStateFilter.length/itemPerPage)
+        const pages_decimal_num = productsStateFilter.length/itemPerPage
+
+        if (pages<pages_decimal_num){
+            pages+=1
+        }
+        
+        const current_page_last_index = currentPage*itemPerPage
+        const current_page_first_index = current_page_last_index-itemPerPage
+        console.log('pages ', pages,currentPage)
+        const all_pages = [] 
+        for (let i=1; i<=pages; i++){
+            all_pages.push(i)
+        }
+        const productsFiltered = productsStateFilter.slice(current_page_first_index,current_page_last_index)
+        
         return (
             <>
             {
                 search_item&&category==='search'&&
-                <h4 className="text-center mb-3" >searched for "{this.props.search_item}"</h4>
+                <h4 className="text-center mb-3" >searched for "{search_item}"</h4>
             }
             <div className="category-product-container">
                 <div className="categories-container">
                 {   
-                    this.state.productCategories&&
-                    this.state.productCategories.map((pc)=>(
+                    productCategories&&
+                    productCategories.map((pc)=>(
                         <NavLink to={`/${pc.slug}/`} className="each-category" onClick={()=> this.filterByCategory(pc.slug)} >
                             <p>
                                 {pc.name}
@@ -101,8 +126,8 @@ class Products extends PureComponent {
                 </div>
                 <div className="products-container pt-4">
                     {
-                    this.state.productsStateFilter&&
-                    this.state.productsStateFilter.map((product) => (
+                    productsFiltered&&
+                    productsFiltered.map((product) => (
                         <Link
                             className="product-details-link"
                             key={product.id}
@@ -139,6 +164,49 @@ class Products extends PureComponent {
                     ))}
                 </div>
             </div>
+
+            <div className="d-flex justify-content-center" aria-label="...">
+                <ul className="pagination">
+                    {
+                        <li className="page-item">
+                            <Link 
+                            className="page-link"
+                            onClick={()=>this.changePage(
+                                currentPage!==1?
+                                currentPage-1:currentPage
+                                )}>
+                                Previous
+                            </Link>
+                        </li>
+                    }
+
+                    {
+                        all_pages.map((page)=>(
+                            <li className="page-item">
+                                <Link 
+                                className={`page-link ${currentPage===page?'active':''}`} 
+                                onClick={()=>this.changePage(page)}>
+                                    {page}
+                                </Link>
+                            </li>
+                        ))
+                    }
+
+                    {
+                        <li className="page-item">
+                            <Link 
+                            className="page-link" 
+                            onClick={()=> this.changePage(
+                                currentPage!==pages?
+                                currentPage+1:currentPage
+                                )}>
+                                Next
+                            </Link>
+                        </li>
+                    }
+                </ul>
+            </div>
+
             </>
         );
     }
