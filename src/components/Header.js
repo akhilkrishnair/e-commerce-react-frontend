@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Component } from "react";
 import { Link } from "react-router-dom";
+import { FaCartArrowDown } from "react-icons/fa";
 
 class Header extends Component {
     constructor(props){
@@ -119,7 +120,12 @@ class Header extends Component {
                                 {
                                     this.state.currentUser&&
                                         <li className="nav-item ms-3">
-                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >Cart <span className="p-1" >{this.props.cart_count&&this.props.cart_count}</span> </Link>
+                                            <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >
+                                                Cart 
+                                                <span className="p-1" >
+                                                    <FaCartArrowDown/> {this.props.cart_count&&this.props.cart_count}
+                                                </span> 
+                                            </Link>
                                         </li>
 
                                 }
@@ -135,7 +141,7 @@ class Header extends Component {
                                     className="btn btn-outline-light" 
                                     type="submit"
                                     onClick={this.searchItemSend}
-                                    to={'/search'}>Search</Link>
+                                    to={`/search/?query=${this.state.searchItems}`}>Search</Link>
                             </form>
                             </div>
                         </div>

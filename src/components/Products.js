@@ -12,6 +12,7 @@ class Products extends PureComponent {
             productsStateFilter:[],
             currentPage:1,
             itemPerPage:4,
+            click:0,
         };
     }
 
@@ -21,11 +22,23 @@ class Products extends PureComponent {
     }
 
     componentDidUpdate(prevValue){
+        const {category,search_item} = this.props
         if (this.props !== prevValue){
             this.filterByCategory();
             console.log('updated ',prevValue, this.props)
         }
-    }
+        if (category === 'search' && search_item !== prevValue.search_item){
+            axios
+            .get(`http://127.0.0.1:8000/api/product-variants/?query=${search_item}`)
+            .then((res) => {
+                this.setState({productsStateFilter:res.data});
+                console.log(this.state.productsStateFilter)
+                console.log(res.data)
+            }).catch((error)=> {
+                console.log(error);
+            });
+        }
+    };
 
     fetchProductVariants = () => {
         axios
@@ -50,9 +63,8 @@ class Products extends PureComponent {
 
     filterByCategory (pc=null){
         let productFilter = null
-        let search_items = null
-        const {category,search_item} = this.props
-        if (category){
+        const {category} = this.props
+        if (category!=='search'){
             productFilter = this.state.productVariants.filter((pv)=>{                
                 return pv.product_color_variant.product.category.slug === category
             });
@@ -60,19 +72,7 @@ class Products extends PureComponent {
         };
         console.log(this.props)
 
-        if (category==="search"){
-            let category_name = ""
-            let name = ""
-            search_items = this.state.productVariants.filter((sp)=>{
-                name = sp.product_color_variant.product.slug.slice(0,4)
-                category_name = sp.product_color_variant.product.category.slug.slice(0,4)
-                if (category_name.length>0){
-                    return category_name === search_item.slice(0,4)
-                }
-                return name === search_item.slice(0,4)                
-            });
-            this.setState({productsStateFilter:search_items})
-        } 
+     
         if (!category){
             this.setState({productsStateFilter:this.state.productVariants})
         }  
@@ -87,23 +87,23 @@ class Products extends PureComponent {
         const {productCategories,
             productsStateFilter,
             itemPerPage,
-            currentPage}  = this.state
+            currentPage,
+            click}  = this.state
         let pages =  Math.round(productsStateFilter.length/itemPerPage)
         const pages_decimal_num = productsStateFilter.length/itemPerPage
 
         if (pages<pages_decimal_num){
             pages+=1
         }
-        
+
         const current_page_last_index = currentPage*itemPerPage
         const current_page_first_index = current_page_last_index-itemPerPage
-        console.log('pages ', pages,currentPage)
         const all_pages = [] 
         for (let i=1; i<=pages; i++){
             all_pages.push(i)
         }
         const productsFiltered = productsStateFilter.slice(current_page_first_index,current_page_last_index)
-        
+        console.log(click)
         return (
             <>
             {
@@ -171,6 +171,7 @@ class Products extends PureComponent {
                         <li className="page-item">
                             <Link 
                             className="page-link"
+                            to={`/search/?query=${search_item}`}
                             onClick={()=>this.changePage(
                                 currentPage!==1?
                                 currentPage-1:currentPage
@@ -196,9 +197,11 @@ class Products extends PureComponent {
                         <li className="page-item">
                             <Link 
                             className="page-link" 
+                            to={`/search/?query=${search_item}`}
                             onClick={()=> this.changePage(
                                 currentPage!==pages?
                                 currentPage+1:currentPage
+                                
                                 )}>
                                 Next
                             </Link>

@@ -9,6 +9,7 @@ class Login extends Component {
             currentUser:false,
             email:"",
             password:"",
+            error:null,
          };
     }
     
@@ -38,7 +39,9 @@ class Login extends Component {
             window.location.href = '/'
         })
         .catch((error) => {
-            console.log(error)
+            this.setState({currentUser:false})
+            this.setState({error:error.response.data})
+            console.log(error.response.data)
         })
     };
     
@@ -55,8 +58,11 @@ class Login extends Component {
                         <div className="card shadow-2-strong" >
                         <form className="card-body p-5 text-center login-form" onSubmit={this.handleSubmit} >
 
-                            <h3 className="mb-5">Sign in</h3>
-
+                            <h3 className="mb-4">Sign in</h3>
+                            {   
+                                <p className="text-danger "> &nbsp;{this.state.error&&`* ${this.state.error.message}`}</p>
+                            }
+                            
                             <div className="form-outline mb-2">
                             <input name="email" value={this.state.email} onChange={this.handleChange} type="email" id="typeEmailX-2" className="form-control form-control-sm" />
                             <label className="form-label" htmlFor="typeEmailX-2">Email</label>
