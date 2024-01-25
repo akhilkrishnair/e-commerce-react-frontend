@@ -16,19 +16,17 @@ class Cart extends Component {
         this.fetchCart();
         this.setState({csrf_token:this.getCookie('csrftoken')})
     }
+    componentDidUpdate(prevValue,current){
+        console.log('prev ',prevValue,'current ',current)
+    }
 
     fetchCart() {
-        axios
-            .get("http://127.0.0.1:8000/api/cart/")
-            .then((res) => {                
-                this.setState({ cart: res.data });
-                this.setState({ cartChecked: true });
-            })
-            .catch((error) => {
-                console.log(error);
-                this.setState({ cartChecked: false });
-            });
-    }
+        this.setState({cartChecked:this.props.cart_checked})
+        this.setState({cart:this.props.cart_items})
+        this.props.fetch_cart().then((res)=>{
+            this.setState({cart:res})
+        })
+}
 
     getCookie (cookieName){
         const cookies = document.cookie.split(';');
@@ -48,7 +46,7 @@ class Cart extends Component {
     };
    
 
-    increamentCart(cart_id,product_variant_id){
+    increamentCart=(cart_id,product_variant_id)=>{
         
         axios.post('http://127.0.0.1:8000/api/cart/increament-qty/',
          {
@@ -62,7 +60,7 @@ class Cart extends Component {
          }
         ).then((res)=>{
             console.log(res)
-            this.fetchCart()
+            this.fetchCart();
         })
         .catch((err)=>{
             console.log(err)
@@ -81,7 +79,7 @@ class Cart extends Component {
          }
         ).then((res)=>{
             console.log(res)
-            this.fetchCart()
+            this.fetchCart();
         })
         .catch((err)=>{
             console.log(err)

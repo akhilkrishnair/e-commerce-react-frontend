@@ -28,5 +28,27 @@
     border: solid 1px rgb(205, 203, 203);
 }
 .select-address .each-address .address{
-    margin-left: -180px;
+    margin-left: 10px;
+    width: 100%;
+}
+.select-address .each-address .address-edit-btn{
+    cursor: pointer;
+    color: rgb(15, 111, 221);
+}
+
+.checkout-main-container .order-details{
+    height: 330px;
+}
+
+
+/* order details section starts */
+
+.item-details .amount-container,
+.item-details .discount-container,
+.item-details .delivery-charge-container,
+.item-details .total-amount-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-weight: 20px;
 }

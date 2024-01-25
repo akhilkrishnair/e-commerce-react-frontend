@@ -169,15 +169,14 @@ class Products extends PureComponent {
                 <ul className="pagination">
                     {
                         <li className="page-item">
-                            <Link 
+                            <button 
                             className="page-link"
-                            to={`/search/?query=${search_item}`}
                             onClick={()=>this.changePage(
                                 currentPage!==1?
                                 currentPage-1:currentPage
                                 )}>
                                 Previous
-                            </Link>
+                            </button>
                         </li>
                     }
 
@@ -195,16 +194,15 @@ class Products extends PureComponent {
 
                     {
                         <li className="page-item">
-                            <Link 
+                            <button 
                             className="page-link" 
-                            to={`/search/?query=${search_item}`}
                             onClick={()=> this.changePage(
                                 currentPage!==pages?
                                 currentPage+1:currentPage
                                 
                                 )}>
                                 Next
-                            </Link>
+                            </button>
                         </li>
                     }
                 </ul>

@@ -20,19 +20,38 @@ class Router extends Component {
         super(props);
         this.state = {
             currentUser: false,
+            userProfile:null,
             email: "",
             password: "",
+            cartChecked:false,
+            cartItems:null,
             cartCount:null,
             searchItems:""
             
         };
     }
+
     productSearchManage = (key_words_obj) => {
         // setting the value to searchItem state
         this.setState({searchItems:key_words_obj});
     };
 
-    
+    fetchCart =()=> {
+        const cart =  axios
+            .get("http://127.0.0.1:8000/api/cart/")
+            .then((res) => {                
+                this.setState({ cartItems: res.data });
+                this.setState({cartChecked:true});
+                return res.data                
+            })
+            .catch((error) => {
+                console.log(error);
+                this.setState({ cartChecked: false });
+            });
+        
+        return cart
+           
+    }
 
     logInData = (data) => {
         const { email, password, currentUser } = data;
@@ -57,12 +76,15 @@ class Router extends Component {
         .get("http://127.0.0.1:8000/api/user/profile/")
         .then((res) => {
             this.setState({ currentUser: true });
+            this.setState({userProfile:res.data})
             this.cartCount();
         })
         .catch((res) => {
             console.log(res);
             this.setState({ currentUser: false });
         });
+
+        this.fetchCart();
        
             
     }
@@ -91,7 +113,7 @@ class Router extends Component {
                         }
                         {
                             this.state.currentUser&&
-                            <Route path="/user/cart/" element={<Cart cart_counter={this.cartCount} />} />
+                            <Route path="/user/cart/" element={<Cart cart_counter={this.cartCount} fetch_cart={this.fetchCart} cart_checked={this.state.cartChecked} cart_items={this.state.cartItems}  />} />
                         }
                         {
                             this.state.currentUser&&
@@ -101,7 +123,7 @@ class Router extends Component {
                              <Route path="/:category/:slug/:color/:size/" element={<UserDetailWrapper current_user={this.state.currentUser} cart_counter={this.cartCount} />} />
                         <Route path="/*" element={<Empty_Page/>} />
 
-                        <Route path="/user/order/checkout/" element={<Checkout/>} />
+                        <Route path="/user/order/checkout/" element={<Checkout user_profile={this.state.userProfile} fetch_cart={this.fetchCart} cart_items={this.state.cartItems}  />} />
                        </Routes>
                 </div>
                 <Footer />
