@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import axios from "axios";
 import "./Router.css";
 import Header from "../Header";
@@ -13,9 +13,14 @@ import Cart from "../Cart";
 import Empty_Page from "../Empty_Page";
 import UserDetailWrapper from "../Product_Details";
 import Checkout from "../Checkout";
+import { access_token } from "../../App";
+import ForgotPassword from "../Forgot_Password";
+import ResetPassword from "../Reset_password";
+import EmailVerificationWithParam from "../Email_verification";
 
 
-class Router extends Component {
+
+class Router extends PureComponent{
     constructor(props) {
         super(props);
         this.state = {
@@ -31,13 +36,39 @@ class Router extends Component {
         };
     }
 
+    componentDidMount() {
+        if (access_token){
+            this.fetchProfile();
+            this.fetchCart();             
+        }
+    };
+
     productSearchManage = (key_words_obj) => {
         // setting the value to searchItem state
         this.setState({searchItems:key_words_obj});
     };
 
-    fetchCart =()=> {
-        const cart =  axios
+    fetchProfile = () => {
+        axios
+        .get("http://127.0.0.1:8000/api/user/profile/")
+        .then((res) => {
+            if (res.status===200){
+                this.setState({ currentUser: true });
+                this.setState({userProfile:res.data})
+                this.cartCount();
+                return res
+            }
+            this.setState({currentUser:false})
+        })
+        .catch((error) => {
+            console.log(error);
+            this.setState({ currentUser: false });
+        });
+
+    }
+
+    fetchCart = async ()=> {
+        const cart = await  axios
             .get("http://127.0.0.1:8000/api/cart/")
             .then((res) => {                
                 this.setState({ cartItems: res.data });
@@ -69,37 +100,29 @@ class Router extends Component {
         })
     };
 
+    setCurrentUser = (user)=>{
+        this.setState({currentUser:user})
+    };
 
 
-    componentDidMount() {
-        axios
-        .get("http://127.0.0.1:8000/api/user/profile/")
-        .then((res) => {
-            this.setState({ currentUser: true });
-            this.setState({userProfile:res.data})
-            this.cartCount();
-        })
-        .catch((res) => {
-            console.log(res);
-            this.setState({ currentUser: false });
-        });
-
-        this.fetchCart();
-       
-            
-    }
 
     render() { 
         return (
             <>  
-                    <Header product_search={this.productSearchManage} current_user={this.state.currentUser} cart_count={this.state.cartCount} />
+                    <Header 
+                        product_search={this.productSearchManage}
+                        set_current_user = {this.setCurrentUser}
+                        current_user={this.state.currentUser} 
+                        cart_count={this.state.cartCount} />
                
                 <div className="main-container">
                     <Routes>
                         <Route path="/" element={<Products search_item={this.state.searchItems} />} />
                         <Route path="/:category/" element={<Products search_item={this.state.searchItems} />} />
                         <Route path="/user/registration/" element={<Registration />} />
-
+                        <Route path="/user/forgot-password/" element={<ForgotPassword/>} />
+                        <Route path="/user/reset-password/:userId/:token/" element={<ResetPassword/>}/>
+                        <Route path="/user/:uidb64/email-verification/:token/" element={<EmailVerificationWithParam/>}/>
 
                         {!this.state.currentUser&&
                             <Route
@@ -109,11 +132,11 @@ class Router extends Component {
                         }
                         {
                             this.state.currentUser&&
-                            <Route path="/user/dashbord/:menu/" element={<Dashbord/>} />
+                            <Route path="/user/dashbord/:menu/" element={<Dashbord  />} />
                         }
                         {
                             this.state.currentUser&&
-                            <Route path="/user/cart/" element={<Cart cart_counter={this.cartCount} fetch_cart={this.fetchCart} cart_checked={this.state.cartChecked} cart_items={this.state.cartItems}  />} />
+                            <Route path="/user/cart/" element={<Cart cart_counter={this.cartCount} fetch_cart={this.fetchCart} cart_checked={this.state.cartChecked} />} />
                         }
                         {
                             this.state.currentUser&&
@@ -123,8 +146,16 @@ class Router extends Component {
                              <Route path="/:category/:slug/:color/:size/" element={<UserDetailWrapper current_user={this.state.currentUser} cart_counter={this.cartCount} />} />
                         <Route path="/*" element={<Empty_Page/>} />
 
-                        <Route path="/user/order/checkout/" element={<Checkout user_profile={this.state.userProfile} fetch_cart={this.fetchCart} cart_items={this.state.cartItems}  />} />
-                       </Routes>
+                         {
+                            this.state.cartCount&&
+                            <Route path="/user/order/checkout/" 
+                                element={<Checkout 
+                                user_profile={this.state.userProfile} 
+                                fetch_cart={this.fetchCart} 
+                                cart_items={this.state.cartItems}
+                                cart_counter={this.cartCount}  />} />
+                        }
+                    </Routes>
                 </div>
                 <Footer />
             </>

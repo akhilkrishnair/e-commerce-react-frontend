@@ -1,7 +1,12 @@
-import axios from "axios";
-import { PureComponent } from "react";
-import { NavLink, useParams } from "react-router-dom";
 import './css/product_details.css';
+import axios from "axios";
+import React ,{ PureComponent } from "react";
+import { Link, NavLink, useParams } from "react-router-dom";
+import {Swiper,SwiperSlide} from 'swiper/react';
+import { Navigation,  Mousewheel } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { access_token,baseUrl } from '../App';
 
 class Product_Details extends PureComponent {
     
@@ -14,36 +19,29 @@ class Product_Details extends PureComponent {
             sizeVariant:[],
             inCart:false,
             inWishlist:false,
-            csrf_token:"",
             currentUser:false,
             cartCount:null,
+            loaderAddCart:false,
+            loaderAddWishlist:false
         };
     };
 
     componentDidMount(){
-        this.fetchUser();
         this.fetchProduct();
-        this.setState({csrf_token:this.getCookie("csrftoken")});
-
     };
 
 
-    componentDidUpdate(prevValue){
-        if (this.props !== prevValue){           
+    componentDidUpdate(prevProps,prevState){
+        if (this.props !== prevProps){           
             this.filterProductVariant();
         };
-        console.log(prevValue, this.props)
+        if (this.state !== prevState && access_token){
+            this.fetchCart();
+            this.fetchWishlist();
+        };
+
     }; 
 
-    fetchUser(){
-        axios.get('http://127.0.0.1:8000/api/user/profile/',
-        ).then((res) => {
-            this.setState({currentUser:true})
-        }).catch((error) => {
-            this.setState({currentUser:false})
-        })
-
-    };
 
     filterProductVariant(){
         const {slug,color,size} = this.props;
@@ -70,7 +68,7 @@ class Product_Details extends PureComponent {
     
     fetchProduct(){
         axios
-        .get('http://127.0.0.1:8000/api/product-variants/')
+        .get(baseUrl+'product-variants/')
         .then((response) => {
             this.setState({allProducts:response.data});
             this.filterProductVariant();
@@ -83,141 +81,97 @@ class Product_Details extends PureComponent {
 
     changeImage(e){
         let current_img = document.getElementsByClassName("current-image")[0].children[0]       
-        current_img.src = e.target.src   
+        current_img.src = e.target.src  
     };
   
-    getCookie (cookieName){
-        const cookies = document.cookie.split(';');
-        
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-      
-          // Check if the cookie starts with the specified name
-          if (cookie.startsWith(cookieName + '=')) {
-            // Return the value of the cookie
-            return cookie.substring(cookieName.length + 1);
-          }
-        }
-      
-        // Return null if the cookie is not found
-        return null;
-    };
-
-   
-
     
-    addToCart(product_variant_id){
+    addToCart = (product_variant_id) => {
+        this.setState({loaderAddCart:true})
         const addCartData = {
             product_variant:product_variant_id,
         };
     
-        axios.post('http://127.0.0.1:8000/api/cart/add-cart/',
-        addCartData,
-        {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token,               
-            },        
-        }
+        axios.post(baseUrl+'cart/add-cart/',
+        addCartData
         )
         .then((res)=>{
             this.fetchCart();
             this.props.cartCount();
         })
         .catch((error)=>{
-            console.log(error.response.data[0])
+            console.log(error)
+            this.setState({loaderAddCart:false})
         })
-
     };
 
 
-    addToWishlist(product_variant_id){
-       
+    addToWishlist = (product_variant_id) => {
+        this.setState({loaderAddWishlist:true})
         const wishlistData = {            
             product_variant:product_variant_id,
         };
     
-        axios.post('http://127.0.0.1:8000/api/wishlist/add/',
-        wishlistData,
-        {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token
-            }
-        }
-        
+        axios.post(baseUrl+'wishlist/add/',
+        wishlistData        
         ).then((res)=>{
-            console.log(res)
             this.fetchWishlist()
         }).catch((err) => {
-            console.log(err)
+            this.setState({loaderAddWishlist:false})
         })
     };
 
 
-    fetchCart(){
+    fetchCart = async () =>{
         const {singleProduct} = this.state
         
-        axios.post('http://127.0.0.1:8000/api/cart/in-cart/',
-            {
-                product_variant:singleProduct[0]&& singleProduct[0].id
-            },{
-                headers:{
-                    'X-CSRFToken':this.state.csrf_token
-                }
-            }
+        await axios.post(baseUrl+'cart/in-cart/',
+            {product_variant:singleProduct[0]&& singleProduct[0].id}           
         )
         .then((res)=>{
-            this.setState({inCart:res.data.incart});
-           
+            this.setState({inCart:res.data.incart});          
         }).catch((error)=>{
             console.log(error)
+        }).then(() => {
+            this.setState({loaderAddCart:false})
         });
     };
 
 
-    fetchWishlist(){
+    fetchWishlist = async () => {
         const {singleProduct} = this.state
         
-        axios.post('http://127.0.0.1:8000/api/wishlist/in-wishlist/',
-            {
-                product_variant:singleProduct[0]&& singleProduct[0].id
-            },{
-                headers:{
-                    'X-CSRFToken':this.state.csrf_token
-                }
-            }
+        await axios.post(baseUrl+'wishlist/in-wishlist/',
+            { product_variant:singleProduct[0]&& singleProduct[0].id}
         )
         .then((res)=>{
-            this.setState({inWishlist:res.data.in_wishlist});
-           
+            this.setState({inWishlist:res.data.in_wishlist});           
         }).catch((error)=>{
             console.log(error)
-        });
+        }).then(()=>{
+            this.setState({loaderAddWishlist:false})
+        })
     };
 
 
 
     
-    render() {
-        if(this.state.currentUser){
-            this.fetchCart()
-            this.fetchWishlist()
-        }
-        
+    render() {       
 
         return (
             <>               
-                <div className="product-main-container mt-5">
-                    
-    
+                <div className="product-main-container">   
                     
                     {
-                        this.state.singleProduct.length===0&&<h4 className="text-center" >Loading .....</h4>
+                        this.state.singleProduct.length===0&&
+                        <div className=" loader-element" >
+                            <div className='loader'></div>
+                        </div>
                     }
                 {   
                     this.state.singleProduct && this.state.singleProduct.map((p) => (
                         
-                           <>
-                                <div key={p.id} className="product-image-container">
+                           <React.Fragment key={p.id}>
+                                <div  className="product-image-container">
                                     <div className="current-image">
                                         <img 
                                            src={
@@ -228,86 +182,154 @@ class Product_Details extends PureComponent {
                                            alt={p.product_color_variant.product.slug}
                                         />
                                     </div>
-                                    <div className="available-images">
+
+                                    <Swiper className="available-images"
+                                            direction={'vertical'}
+                                            cssMode={true}
+                                            slidesPerView={5}
+                                            loop={false}
+                                            navigation={true}
+                                            modules={[Navigation, Mousewheel]}
+                                            >
                                         {
                                             p.product_color_variant.image1?
-                                            <div  className="img">
+                                            <SwiperSlide  className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image1
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image2?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image2
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image3?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image3
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image4?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image4
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image5?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image5
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image6?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image6
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
                                         {
                                             p.product_color_variant.image7?
-                                            <div className="img">
+                                            <SwiperSlide className="img">
                                             <img className="img-src" onMouseOver={(event) => this.changeImage(event)}
                                                 src={
                                                     p.product_color_variant.image7
                                                 }
                                                 alt={p.product_color_variant.product.slug}
                                             />
-                                            </div>:null
+                                            </SwiperSlide>:null
                                         }
 
+                                    </Swiper>
+
+                                      {/* add to cart add to wishlist button section starts */}
+                                    <div className="add-to-cart-add-to-wishlist-container">
+
+                                        {
+                                            access_token?
+                                            <>
+                                                 {
+                                                    this.state.loaderAddCart?
+                                                    <div className="add-to-cart-loader btn btn-success">
+                                                        <div className=" loader-in-button "></div>
+                                                    </div>:  
+                                                    this.state.inCart?
+                                                    <div className="add-to-cart ">
+                                                        <NavLink to={'/user/cart/'} className="btn btn-success p-3" >&#x2714; &nbsp; View Cart</NavLink>
+                                                    </div> :
+                                                    <div className="add-to-cart ">
+                                                        <button className="btn btn-success p-3" onClick={()=> this.addToCart(p.id)} >Add to Cart</button>
+                                                    </div> 
+                                                } 
+                                                
+                                                
+                                                                                                  
+                                            </>
+                                            :
+                                            <div className="add-to-cart ">
+                                                <Link to={'/user/login/'} className="btn btn-success p-3" >Add to Cart</Link>
+                                            </div>                    
+
+                                        }
+
+                                        { 
+                                            access_token?
+                                                <>
+                                                    
+                                                    {this.state.inWishlist&&
+                                                    <div className="add-to-wishlist">
+                                                        <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary p-3">&#x2714; &nbsp; View Wishlist</NavLink>
+                                                    </div>}
+
+                                                    { this.state.loaderAddWishlist&&
+                                                    <div className="add-to-wishlist-loader btn btn-primary">
+                                                        <div className=" loader-in-button "></div>
+                                                    </div>}   
+
+                                                    { !this.state.inWishlist&&!this.state.loaderAddWishlist&&
+                                                    <div className="add-to-wishlist">
+                                                        <button className="btn btn-primary p-3" onClick={()=> this.addToWishlist(p.id)} >Add to Wishlist</button>
+                                                    </div>}                                
+                                                    
+                                                </>:
+                                                    <div className="add-to-wishlist">
+                                                        <Link to={'/user/login/'} className="btn btn-primary p-3" >Add to Wishlist</Link>
+                                                    </div>                                                                               
+                                           
+                                        }
+                                            
+
                                     </div>
+
                                 </div>
                                 <div className="product-details-container">
                                     <h5>
@@ -381,74 +403,33 @@ class Product_Details extends PureComponent {
                                         </div>
 
                                     </div>
+                             
 
-                                    <div className="add-to-cart-add-to-wishlist-container">
 
-                                        {
-                                            this.state.currentUser?
-                                            <>
-                                                {
-                                                    this.state.inCart?
-                                                        <div className="add-to-cart me-3">
-                                                            <NavLink to={'/user/cart/'} className="btn btn-success" >&#x2714; &nbsp; View Cart</NavLink>
-                                                        </div>:
-                                                        
-                                                        <div className="add-to-cart me-3">
-                                                            <button className="btn btn-success" onClick={()=> this.addToCart(p.id)} >Add to Cart</button>
-                                                        </div> 
-                                                        
-                                                                          
-                                                }
-                                            </>
-                                            :
-                                            <div className="add-to-cart me-3">
-                                                <button className="btn btn-success" >Add to Cart</button>
-                                            </div>                    
+                                    <div className="product-description-container mt-5" >
+                                        <h5 className="text-center">Product Description</h5>
+                                        
+                                            <div className="container mt-4">
+                                            {
+                                                this.state.singleProduct[0]&& 
+                                                this.state.singleProduct[0].product_color_variant.product.description
+                                            }
+                                                
+                                            </div>
 
-                                        }
-
-                                        { 
-                                            this.state.currentUser?
-                                                <>
-                                                    {
-                                                        this.state.inWishlist?
-                                                        <div className="add-to-wishlist">
-                                                            <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary">&#x2714; &nbsp; View Wishlist</NavLink>
-                                                        </div>:
-                                                        <div className="add-to-wishlist">
-                                                            <button className="btn btn-primary" onClick={()=> this.addToWishlist(p.id)} >Add to Wishlist</button>
-                                                        </div>                                
-                                                    }
-                                                </>:
-                                                    <div className="add-to-wishlist">
-                                                        <button className="btn btn-primary" >Add to Wishlist</button>
-                                                    </div>                                                                               
-                                           
-                                        }
-                                            
-
+                                    
                                     </div>
 
+
                                 </div>
-                            </>
+                            </React.Fragment>
                            ))
                            
                         }
             
               </div>
               <hr/>
-              <div className="product-description-container mt-5" >
-                <h5 className="text-center">Product Description</h5>
-                
-                    <div className="container mt-4">
-                    {
-                        this.state.singleProduct[0]&& 
-                        this.state.singleProduct[0].product_color_variant.product.description
-                    }
-                        
-                    </div>
-            
-              </div>
+              
 
             </>
         );

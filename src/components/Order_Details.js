@@ -3,6 +3,8 @@ import { Component } from "react";
 import { useParams } from "react-router";
 import "./css/Order_Details.css";
 import { Link } from "react-router-dom";
+import { baseUrl } from "../App";
+
 
 class Order_Details extends Component {
     constructor(props) {
@@ -18,7 +20,7 @@ class Order_Details extends Component {
 
     fetchOrders() {
         axios
-            .get("http://127.0.0.1:8000/api/orders/", { withCredentials: true })
+            .get(baseUrl+"orders/", { withCredentials: true })
             .then((res) => {
                 console.log(res.data);
                 this.setState({ orders: res.data });
@@ -92,10 +94,12 @@ class Order_Details extends Component {
                         </p>
 
                         <div className="order-status-progress">
-                            <p>{singleOrder&&singleOrder.status} </p>
+                            <p className={singleOrder&&singleOrder.status === 'Delivered'?'fw-bold text-success':'fw-bold'}>
+                                {singleOrder&&singleOrder.status} 
+                            </p>
 
                             {
-                                singleOrder&&singleOrder.status == 'Pending'&&
+                                singleOrder&&singleOrder.status === 'Pending'&&
 
                                     <div className="status-progress-bar">
                                         <div className="custom-progress-bar">
@@ -104,7 +108,7 @@ class Order_Details extends Component {
                                     </div>
                             }
                             {
-                                singleOrder&&singleOrder.status == 'Packed'&&
+                                singleOrder&&singleOrder.status === 'Packed'&&
 
                                     <div className="status-progress-bar">
                                         <div className="custom-progress-bar packed">
@@ -113,7 +117,7 @@ class Order_Details extends Component {
                                     </div>
                             }
                             {
-                                singleOrder&&singleOrder.status == 'Shipped'&&
+                                singleOrder&&singleOrder.status === 'Shipped'&&
 
                                     <div className="status-progress-bar">
                                         <div className="custom-progress-bar shipped">
@@ -122,22 +126,23 @@ class Order_Details extends Component {
                                     </div>
                             }
                             {
-                                singleOrder&&singleOrder.status == 'Out For Delivery'&&
+                                singleOrder&&singleOrder.status === 'Out For Delivery'||
+                                singleOrder&&singleOrder.status === 'Delivered'?
 
                                     <div className="status-progress-bar">
                                         <div className="custom-progress-bar out-for-delivery">
 
                                         </div>
-                                    </div>
+                                    </div>:null
                             }
 
 
 
-                                   <div className="status-conditions">
-                                        <span>Pending</span>
-                                        <span>Packed</span>
-                                        <span>Shipped</span>
-                                        <span>Out for Delivery</span>
+                                    <div className="status-conditions">
+                                        <span className={singleOrder&&singleOrder.status === 'Pending'?'text-success':null} >Pending</span>
+                                        <span className={singleOrder&&singleOrder.status === 'Packed'?'text-success':null} >Packed</span>
+                                        <span className={singleOrder&&singleOrder.status === 'Shipped'?'text-success':null} >Shipped</span>
+                                        <span className={singleOrder&&singleOrder.status === 'Out For Delivery'?'text-success':null} >Out for Delivery</span>
                                        
                                     </div>
 

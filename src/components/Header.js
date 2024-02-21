@@ -2,6 +2,9 @@ import axios from "axios";
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaCartArrowDown } from "react-icons/fa";
+import '../components/css/Header.css';
+import { access_token,baseUrl } from "../App";
+
 
 class Header extends Component {
     constructor(props){
@@ -17,17 +20,22 @@ class Header extends Component {
     }
 
     componentDidMount (){
-        axios.get('http://127.0.0.1:8000/api/user/profile/',
-        ).then((res) => {
-            this.setState({currentUser:true})
-            this.setState({email:res.data.email})
-            this.setState({first_name:res.data.first_name})
-            this.setState({last_name:res.data.last_name})
-            this.setState({user_id:res.data.id})
-
-        }).catch((res) => {
-            this.setState({currentUser:false})
-        })
+        if(access_token){
+            axios.get(baseUrl+'user/profile/',
+            ).then((res) => {
+                this.setState({currentUser:true})
+                this.setState({email:res.data.email})
+                this.setState({first_name:res.data.first_name})
+                this.setState({last_name:res.data.last_name})
+                this.setState({user_id:res.data.id})
+                this.props.set_current_user(true)
+    
+    
+            }).catch((err) => {
+                this.setState({currentUser:false})
+                this.props.set_current_user(false)
+            })
+        }
     }
 
  
@@ -52,7 +60,6 @@ class Header extends Component {
     searchItems =(e)=> {
         const {name,value} = e.target;
         this.setState({[name]:value});
-        console.log(this.state.searchItems)
     }
     
     searchItemSend = () => {
@@ -92,13 +99,13 @@ class Header extends Component {
                                         this.state.currentUser?
                                             <>
                                                 <li>
-                                                    <Link className="dropdown-item" >Hi  
+                                                    <span className="dropdown-item" >Hi  
                                                         {
                                                             this.state.first_name && this.state.last_name?
                                                             " "+this.state.first_name+" "+this.state.last_name:
                                                             " "+this.state.email
                                                         }
-                                                    </Link>
+                                                    </span>
                                                 </li>
                                                 <li><Link className="dropdown-item" to={'/user/dashbord/profile/'} >Profile</Link></li>
 
@@ -109,8 +116,6 @@ class Header extends Component {
                                             </>
                                         
                                     }
-                                    <li><hr className="dropdown-divider"/></li>
-                                    <li><Link className="dropdown-item" href="#">Something else here</Link></li>
                                 </ul>
                                 </li>
                                 <li className="nav-item ms-3">

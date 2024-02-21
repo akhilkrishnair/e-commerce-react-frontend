@@ -52,3 +52,19 @@
     margin-top: 10px;
     font-weight: 20px;
 }
+
+/* payment method section starts */
+.payment-method-container .payment-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 5px ;
+    margin-bottom: 8px;
+    border: solid 1px rgb(187, 183, 183);
+}
+
+.payment-method-container .payment-container .payment{
+    width: 100%;
+    margin-left: 10px;
+}

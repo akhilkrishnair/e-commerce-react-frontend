@@ -1,7 +1,7 @@
 import { Component } from "react";
 import axios from "axios";   
 import { Link } from "react-router-dom";
-
+import { access_token,baseUrl } from "../App";
 
 
 
@@ -16,18 +16,18 @@ class Orders extends Component {
 
 
     componentDidMount(){
-        this.fetchOrders();
+        if(access_token){
+            this.fetchOrders();
+        }
     }
 
     fetchOrders(){
-        axios.get('http://127.0.0.1:8000/api/orders/')
+        axios.get(baseUrl+'orders/')
         .then((res)=>{
             this.setState({orderProducts:res.data})
             this.setState({checkedData:true})
-            console.log(res.data)
         })
         .catch((error)=> {
-            console.log(error)
             this.setState({checkedData:true})
         });
     };

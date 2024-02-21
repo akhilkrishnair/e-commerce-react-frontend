@@ -1,6 +1,10 @@
 import { PureComponent } from "react";
 import './css/Checkout.css';
 import axios from "axios";
+import PaymentComponent from "./Payment";
+import { baseUrl } from "../App";
+import { Navigate } from "react-router-dom";
+
 
 const address_data = {
     id:null,
@@ -21,19 +25,22 @@ class Checkout extends PureComponent {
     constructor(props) {
         super(props);
         this.state = { 
-            csrf_token:"",
             orderAddress:null,
             updatingAddress:null,
             addAddressForm:false,
             updateAddressBtn:false,
             addressSubmiting:true,
             cartItems:null,
+            outOfStock:false,
             amount:null,
             discount:null,
             totalAmount:null,
             address:{...address_data},
-            // copy_of_address_data:{...address_data}
-
+            orderData:{
+                selectedOrderAddressId:null,
+                selectedPaymentMethod:null,
+            },
+            orderSuccess:null,
         };
     }
 
@@ -41,7 +48,6 @@ class Checkout extends PureComponent {
 
     componentDidMount(){
         this.fetchOrderAddress();
-        this.setState({csrf_token:this.getCookie('csrftoken')});
         this.fetchCart();
     }
 
@@ -65,7 +71,7 @@ class Checkout extends PureComponent {
     };
 
     fetchOrderAddress(){
-        axios.get('http://127.0.0.1:8000/api/order-address/')
+        axios.get(baseUrl+'order-address/')
         .then((res)=>{
             this.setState({orderAddress:res.data})
         })
@@ -80,6 +86,9 @@ class Checkout extends PureComponent {
         let total_amount = 0
 
         this.state.cartItems&&this.state.cartItems.forEach((element) => {
+            if (element.product_variant.stock < element.quantity){
+                this.setState({outOfStock:true})
+            } 
             calc_discount += ((element.product_variant.price/100)*element.product_variant.offer)*element.quantity
             calc_amount += (element.quantity * element.product_variant.price)
         });
@@ -88,24 +97,6 @@ class Checkout extends PureComponent {
         this.setState({discount:calc_discount})
         this.setState({totalAmount:total_amount})
     }
-
-    getCookie (cookieName){
-        const cookies = document.cookie.split(';');
-        
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-      
-          // Check if the cookie starts with the specified name
-          if (cookie.startsWith(cookieName + '=')) {
-            // Return the value of the cookie
-            return cookie.substring(cookieName.length + 1);
-          }
-        }
-      
-        // Return null if the cookie is not found
-        return null;
-    };
-
 
     // this function is called in the update switch case of showHideAddAddress function
     updateAddress = (address_id)=>{
@@ -175,13 +166,9 @@ class Checkout extends PureComponent {
                 switch(action){
                     case 'create':
                         axios.
-                        post("http://127.0.0.1:8000/api/order-address/",
-                        addressData,
-                        {
-                            headers:{
-                                'X-CSRFToken':this.state.csrf_token
-                            },
-                        }).then((response)=>{
+                        post(baseUrl+"order-address/",
+                        addressData 
+                        ).then((response)=>{
                             console.log(response.data)
                             this.setState({addAddressForm:false})
                             this.resetState();
@@ -194,13 +181,9 @@ class Checkout extends PureComponent {
                     
                     case 'update':
                         axios.
-                        put(`http://127.0.0.1:8000/api/order-address/${id}/`,
-                        addressData,
-                        {
-                            headers:{
-                                'X-CSRFToken':this.state.csrf_token
-                            }
-                        }).then((response)=>{
+                        put(baseUrl+`order-address/${id}/`,
+                        addressData
+                        ).then((response)=>{
                             console.log(response.data)
                             this.setState({addAddressForm:false})
                             this.setState({updateAddressBtn:false})
@@ -214,12 +197,7 @@ class Checkout extends PureComponent {
     
                     case 'delete':
                         axios.
-                        delete(`http://127.0.0.1:8000/api/order-address/${id}/`,
-                        {
-                            headers:{
-                                'X-CSRFToken':this.state.csrf_token
-                            }
-                        }
+                        delete(baseUrl+`order-address/${id}/`,
                         ).then((response)=>{
                             console.log(response.data)
                             this.setState({addAddressForm:false})
@@ -237,8 +215,46 @@ class Checkout extends PureComponent {
 
     };
 
+    orderAddressIdSave = (address_id) => {
+        let id = this.state.orderData
+        id.selectedOrderAddressId = address_id
+        this.setState({...this.state.orderData, orderData:id})
+    };
+
+
+    outOfStockHandle = (message) => {
+        if (message){
+            this.setState({outOfStock:true})
+        }
+    }
+
+
+    paymentMethodSelectionHandle = (payment_method) => {
+        let payment = this.state.orderData
+        payment.selectedPaymentMethod = payment_method
+        this.setState({...this.state.orderData, payment})
+    };
+
+
+    cashOnDeliveryHandle = () => {
+
+        const data = {
+            order_address_id:this.state.orderData.selectedOrderAddressId
+        }
+        console.log(data)
+
+        axios.
+        post(baseUrl+"order/cash-on-delivery/",data)
+        .then((res) => {
+            console.log(res)
+            this.props.cart_counter();
+            this.setState({orderSuccess:"/user/dashbord/orders/"})
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
     render() {
-        console.log("render ",this.state)
         const {orderAddress,
             addAddressForm,
             updateAddressBtn,
@@ -246,7 +262,15 @@ class Checkout extends PureComponent {
             cartItems,
             amount,
             discount,
-            totalAmount} = this.state
+            totalAmount,
+            orderData,
+            outOfStock,
+            orderSuccess} = this.state
+
+            if (orderSuccess){
+                return <Navigate to={orderSuccess} />
+            }
+
         return (
             <>
                 <div className="checkout-main-container">
@@ -255,8 +279,8 @@ class Checkout extends PureComponent {
                             <h4 className="bg-primary text-light ps-4 py-2 mb-3" >Select Address</h4>
                             {   
                                 !addAddressForm&&orderAddress&&orderAddress.map((oa)=>(
-                                    <div className="each-address mb-2">
-                                        <input type="radio" name="order-address"/>
+                                    <div key={oa.id} className="each-address mb-2">
+                                        <input onClick={()=>this.orderAddressIdSave(oa.id)} type="radio" name="order-address"/>
                                         <div className="address">
                                             <div>
                                             {
@@ -470,54 +494,98 @@ class Checkout extends PureComponent {
                             </div>
                         }
                         <h4 className="bg-primary text-light ps-4 py-2 mb-3 mt-4" >Payment method</h4>
+                        
+
+                        {
+                            !outOfStock&&orderData.selectedOrderAddressId&&
+                            <div className="payment-method-container">
+                                <div className="payment-container">
+                                    <input 
+                                    type="radio" 
+                                    name="payment-method"
+                                    onClick={()=>this.paymentMethodSelectionHandle("razorpay")} />
+                                    <div className="payment">
+                                        <div>Razorpay Card/Net-Banking</div>
+                                    </div>
+                                    {
+                                        orderData.selectedPaymentMethod === "razorpay"&&
+                                        <PaymentComponent 
+                                        cart_items={cartItems} 
+                                        order_address_id={orderData.selectedOrderAddressId}
+                                        fetch_cart={this.props.fetch_cart}
+                                        cart_counter={this.props.cart_counter}
+                                        out_of_stock_handle={this.outOfStockHandle} />
+                                    }
+                                </div>
+
+                                <div className="payment-container">
+                                    <input 
+                                    type="radio" 
+                                    name="payment-method"
+                                    onClick={()=>this.paymentMethodSelectionHandle("cash-on-delivery")} />
+                                    <div className="payment" >
+                                        <div>Cash on delivery</div>
+                                    </div>
+                                    {
+                                        orderData.selectedPaymentMethod === "cash-on-delivery"&&
+                                        <button 
+                                            className="btn btn-primary w-50"
+                                            onClick={this.cashOnDeliveryHandle} >
+                                            Place order
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
 
 
                     </div>
                     <div className="order-details">
                         <h5>Order details</h5>
-                        
-                        <div className="item-details">
-                            <div className="amount-container">
-                                <div className="amount-title">
-                                Amount ({cartItems&&cartItems.length>1?cartItems.length+" items":"1 item"})
-                                
+                        {
+                            !outOfStock?
+                            <div className="item-details">
+                                <div className="amount-container">
+                                    <div className="amount-title">
+                                    Amount ({cartItems&&cartItems.length>1?cartItems.length+" items":"1 item"})
+                                    
+                                    </div>
+                                    <div className="amount">
+                                        Rs.{amount&&amount}
+                                    </div>
                                 </div>
-                                <div className="amount">
-                                    Rs.{amount&&amount}
+                                <div className="discount-container">
+                                    <div className="discount-title">
+                                    Discount
+                                    </div>
+                                    <div className="discount">
+                                        -Rs.{discount&&discount}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="discount-container">
-                                <div className="discount-title">
-                                 Discount
+                                <div className="delivery-charge-container">
+                                    <div className="title">
+                                        Delivery Charge
+                                    </div>
+                                    <div className="delivery-amount">
+                                        50
+                                    </div>
                                 </div>
-                                <div className="discount">
-                                    -Rs.{discount&&discount}
+                                <hr/>
+                                <div className="total-amount-container">
+                                    <h6 className="title">
+                                        Total amount
+                                    </h6>
+                                    <h6 className="total-amount">
+                                        Rs.{totalAmount&&totalAmount}
+                                    </h6>
                                 </div>
-                            </div>
-                            <div className="delivery-charge-container">
-                                <div className="title">
-                                    Delivery Charge
-                                </div>
-                                <div className="delivery-amount">
-                                    50
-                                </div>
-                            </div>
-                            <hr/>
-                            <div className="total-amount-container">
-                                <h6 className="title">
-                                    Total amount
-                                </h6>
-                                <h6 className="total-amount">
-                                    Rs.{totalAmount&&totalAmount}
-                                </h6>
-                            </div>
-                            <hr/>
-                            <div className="checkout-btn btn btn-warning w-100 fw-bold">
-                                PLACE ORDER
-                            </div>
+                                <hr/>
+                            </div>:
 
-
-                        </div>
+                            <div className="item-details">
+                                Some item out of stock check cart
+                            </div>
+                         }
 
                     </div>
                 </div>

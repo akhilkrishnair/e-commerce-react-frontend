@@ -1,5 +1,4 @@
-.registration-background{
-}
+
 .card-radius{
     border-radius: 15px;
 }
@@ -9,6 +8,47 @@
 label{
     font-size: 16px;
 }
+
+
+.register-submit-btn{
+  margin: auto;
+  width: 40%;
+  height: 40px;
+  border: none;
+  border-radius: 25px;
+  background-color: #0c49ac;
+  color: white;
+  padding: 6px;
+  font-weight: 500;
+  font-size: large;
+  transition: 0.2s linear;
+}
+
+.register-submit-btn:hover{
+background-color: #1c61d0;
+box-shadow: 4px 0px 0px 10px;
+}
+
+
+
+
+/* loader animation */
+
+.register-submit-btn .loader {
+
+border: 4px solid #f3f3f3;
+border-top: 4px solid #3498db;
+border-radius: 50%;
+width: 25px;
+height: 25px;
+animation: spin 2s linear infinite;
+}
+
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 
 

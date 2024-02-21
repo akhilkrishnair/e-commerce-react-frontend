@@ -8,7 +8,7 @@ class Empty_Page extends Component {
     }
     render() {
         return (
-            <div className="empty-page">
+            <div className="empty-page h-100vh">
                 <p className="text-center my-5" >Page not found</p>
             </div>
         );

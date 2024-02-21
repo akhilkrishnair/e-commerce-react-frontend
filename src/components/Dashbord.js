@@ -6,6 +6,7 @@ import './css/Dashbord.css';
 import Orders from "./Orders";
 import Profile from "./Profile";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../App";
 
 
 class Dashbord extends Component {
@@ -13,17 +14,25 @@ class Dashbord extends Component {
         super(props);
         this.state={
             currentUser:false,
+            loading:false
         }
     }
 
 
     logOutReq = ()=>{
-        axios.get('http://127.0.0.1:8000/api/user/logout/')
+        this.setState({loading:true})        
+        axios.post(baseUrl+'user/logout/',
+        {refresh_token:localStorage.getItem('refresh_token')}
+        )
         .then((res) => {
             this.setState({currentUser:false})
+            console.log(res)
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('access_token')
             window.location.href = '/'
         }).catch((res) =>{
            console.log(res)
+           this.setState({loading:false})
         });
     }
 
@@ -58,11 +67,19 @@ class Dashbord extends Component {
                         Order
                     </NavLink>
                     <hr/>
-                    <div
-                    onClick={this.logOutReq}  
-                    className="dashbord-link" >
-                        Logout
-                    </div>
+
+                    {
+                        !this.state.loading?
+                        <div
+                            onClick={this.logOutReq}  
+                            className="dashbord-link" >
+                            Logout
+                        </div>:
+                        <div 
+                            className="dashbord-link loader-container" >
+                            <div className="loader"></div>                            
+                        </div>
+                    }
 
                 </div>
 

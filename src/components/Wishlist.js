@@ -2,6 +2,8 @@ import { Component } from "react";
 import axios from "axios";
 import './css/Wishlist.css';
 import { Link } from "react-router-dom";
+import { access_token, baseUrl } from "../App";
+
 
 class Wishlist extends Component {
     constructor(props) {
@@ -9,17 +11,17 @@ class Wishlist extends Component {
         this.state = { 
             wishlistProducts:null,
             checkedData:false,
-            csrf_token:"",
          };
     }
 
     componentDidMount(){
-        this.fetchWishlist();
-        this.setState({csrf_token:this.getCookie('csrftoken')});
+        if(access_token){
+            this.fetchWishlist();
+        }
     }
 
-    fetchWishlist(){
-        axios.get('http://127.0.0.1:8000/api/wishlist/')
+    fetchWishlist = () => {
+        axios.get(baseUrl+'wishlist/')
         .then((res)=>{
             this.setState({wishlistProducts:res.data})
             this.setState({checkedData:true})
@@ -31,37 +33,13 @@ class Wishlist extends Component {
         })
     };
 
-    getCookie (cookieName){
-        const cookies = document.cookie.split(';');
-        
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-      
-          // Check if the cookie starts with the specified name
-          if (cookie.startsWith(cookieName + '=')) {
-            // Return the value of the cookie
-            return cookie.substring(cookieName.length + 1);
-          }
-        }
-      
-        // Return null if the cookie is not found
-        return null;
-    };
-   
-
 
 
     deleteWishlist(wishlist_id){
-        axios.post('http://127.0.0.1:8000/api/wishlist/delete/',
-        {wishlist_id:wishlist_id},
-        {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token
-            }
-        }
+        axios.post(baseUrl+'wishlist/delete/',
+        {wishlist_id:wishlist_id}
         )
         .then((res)=>{
-            console.log(res)
             this.fetchWishlist();
         })
         .catch((error)=>{

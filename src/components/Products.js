@@ -2,6 +2,8 @@ import { PureComponent } from "react";
 import axios from "axios";
 import "./css/Products.css";
 import { Link, NavLink, useParams } from "react-router-dom";
+import { baseUrl } from "../App";
+
 
 class Products extends PureComponent {
     constructor(props) {
@@ -11,8 +13,7 @@ class Products extends PureComponent {
             productCategories:[],
             productsStateFilter:[],
             currentPage:1,
-            itemPerPage:4,
-            click:0,
+            itemPerPage:6,
         };
     }
 
@@ -25,15 +26,13 @@ class Products extends PureComponent {
         const {category,search_item} = this.props
         if (this.props !== prevValue){
             this.filterByCategory();
-            console.log('updated ',prevValue, this.props)
         }
         if (category === 'search' && search_item !== prevValue.search_item){
             axios
-            .get(`http://127.0.0.1:8000/api/product-variants/?query=${search_item}`)
+            .get(`${baseUrl}product-variants/?query=${search_item}`)
             .then((res) => {
                 this.setState({productsStateFilter:res.data});
-                console.log(this.state.productsStateFilter)
-                console.log(res.data)
+                this.setState({currentPage:1})
             }).catch((error)=> {
                 console.log(error);
             });
@@ -42,7 +41,7 @@ class Products extends PureComponent {
 
     fetchProductVariants = () => {
         axios
-            .get("http://127.0.0.1:8000/api/product-variants/")
+            .get(baseUrl+"product-variants/")
             .then((response) => {
                 this.setState({ productVariants: response.data });
                 this.setState({productsStateFilter:response.data});
@@ -53,7 +52,7 @@ class Products extends PureComponent {
     };
 
     fetchCategory = () => {
-        axios.get('http://127.0.0.1:8000/api/categories/')
+        axios.get(baseUrl+'categories/')
         .then((res) => {
              this.setState({productCategories:res.data})
         }).catch((error)=>{
@@ -70,7 +69,6 @@ class Products extends PureComponent {
             });
             this.setState({productsStateFilter:productFilter});
         };
-        console.log(this.props)
 
      
         if (!category){
@@ -87,10 +85,9 @@ class Products extends PureComponent {
         const {productCategories,
             productsStateFilter,
             itemPerPage,
-            currentPage,
-            click}  = this.state
-        let pages =  Math.round(productsStateFilter.length/itemPerPage)
-        const pages_decimal_num = productsStateFilter.length/itemPerPage
+            currentPage}  = this.state
+        let pages =  Math.round(productsStateFilter&&productsStateFilter.length/itemPerPage)
+        const pages_decimal_num = productsStateFilter&&productsStateFilter.length/itemPerPage
 
         if (pages<pages_decimal_num){
             pages+=1
@@ -102,20 +99,17 @@ class Products extends PureComponent {
         for (let i=1; i<=pages; i++){
             all_pages.push(i)
         }
-        const productsFiltered = productsStateFilter.slice(current_page_first_index,current_page_last_index)
-        console.log(click)
+        const productsFiltered = productsStateFilter&&productsStateFilter.slice(current_page_first_index,current_page_last_index)
         return (
             <>
-            {
-                search_item&&category==='search'&&
-                <h4 className="text-center mb-3" >searched for "{search_item}"</h4>
-            }
+
             <div className="category-product-container">
+
                 <div className="categories-container">
                 {   
                     productCategories&&
                     productCategories.map((pc)=>(
-                        <NavLink to={`/${pc.slug}/`} className="each-category" onClick={()=> this.filterByCategory(pc.slug)} >
+                        <NavLink key={pc.id} to={`/${pc.slug}/`} className="each-category" onClick={()=> this.filterByCategory(pc.slug)} >
                             <p>
                                 {pc.name}
                             </p>
@@ -125,11 +119,17 @@ class Products extends PureComponent {
                    
                 </div>
                 <div className="products-container pt-4">
+
+                {
+                    search_item&&category==='search'&&
+                    <h4 className="text-center mb-5 w-100" >searched for "{search_item}"</h4>
+                }
+
                     {
                     productsFiltered&&
                     productsFiltered.map((product) => (
                         <Link
-                            className="product-details-link"
+                            className="product-details-link mt-3" 
                             key={product.id}
                             to={`/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/`}
                         >
@@ -182,12 +182,12 @@ class Products extends PureComponent {
 
                     {
                         all_pages.map((page)=>(
-                            <li className="page-item">
-                                <Link 
+                            <li key={page} className="page-item">
+                                <button 
                                 className={`page-link ${currentPage===page?'active':''}`} 
                                 onClick={()=>this.changePage(page)}>
                                     {page}
-                                </Link>
+                                </button>
                             </li>
                         ))
                     }
@@ -215,7 +215,6 @@ class Products extends PureComponent {
 
 export default function FilterHandler({search_item}){
     const {category} = useParams();
-    console.log("func ",search_item)
     return <Products search_item={search_item} category={category} />
 };
 

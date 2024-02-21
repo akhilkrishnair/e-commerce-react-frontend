@@ -1,110 +1,74 @@
 import axios from "axios";
-import { Component } from "react";
+import { PureComponent } from "react";
 import { Link } from "react-router-dom";
+import { baseUrl } from "../App";
 
-class Cart extends Component {
+class Cart extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             cart: [],
             cartChecked: false,
-            csrf_token:"",
         };
-    }
+    };
 
     componentDidMount() {
         this.fetchCart();
-        this.setState({csrf_token:this.getCookie('csrftoken')})
-    }
-    componentDidUpdate(prevValue,current){
-        console.log('prev ',prevValue,'current ',current)
-    }
+    };
+
 
     fetchCart() {
-        this.setState({cartChecked:this.props.cart_checked})
-        this.setState({cart:this.props.cart_items})
         this.props.fetch_cart().then((res)=>{
-            this.setState({cart:res})
-        })
-}
-
-    getCookie (cookieName){
-        const cookies = document.cookie.split(';');
-        
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-      
-          // Check if the cookie starts with the specified name
-          if (cookie.startsWith(cookieName + '=')) {
-            // Return the value of the cookie
-            return cookie.substring(cookieName.length + 1);
-          }
-        }
-      
-        // Return null if the cookie is not found
-        return null;
+            this.setState({cart:res});
+            this.setState({cartChecked:this.props.cart_checked});
+        });
     };
+
    
 
     increamentCart=(cart_id,product_variant_id)=>{
         
-        axios.post('http://127.0.0.1:8000/api/cart/increament-qty/',
+        axios.post(baseUrl+'cart/increament-qty/',
          {
            cart_id:cart_id,
            product_variant_id:product_variant_id,  
-         },
-         {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token
-            }
          }
         ).then((res)=>{
-            console.log(res)
             this.fetchCart();
         })
         .catch((err)=>{
             console.log(err)
         })
-    }
+    };
+
 
     decreamentCart(cart_id){       
-        axios.post('http://127.0.0.1:8000/api/cart/decreament-qty/',
+        axios.post(baseUrl+'cart/decreament-qty/',
          {
            cart_id:cart_id,
-         },
-         {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token
-            }
          }
         ).then((res)=>{
-            console.log(res)
             this.fetchCart();
         })
         .catch((err)=>{
             console.log(err)
         })
-    }
+    };
+
 
     deleteCart(cart_id){       
-        axios.post('http://127.0.0.1:8000/api/cart/delete-cart/',
+        axios.post(baseUrl+'cart/delete-cart/',
          {
            cart_id:cart_id,
-         },
-         {
-            headers:{
-                'X-CSRFToken':this.state.csrf_token
-            }
          }
         ).then((res)=>{
-            console.log(res)
             this.fetchCart()
             this.props.cart_counter();
         })
         .catch((err)=>{
             console.log(err)
         })
-    }
+    };
 
 
     render() {
@@ -132,7 +96,8 @@ class Cart extends Component {
 
                                     {
                                         this.state.cart.map((cp) => (
-                                            <div className="card rounded-3 mb-4">
+                                            
+                                            <div key={cp.id} className="card rounded-3 mb-4">
                                                 <div className="card-body p-4">
                                                     <div className="row d-flex justify-content-between align-items-center">
                                                         <Link 
@@ -163,21 +128,36 @@ class Cart extends Component {
                                                             </p>
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                            {
-                                                                cp.quantity>1&&
-                                                                    <button onClick={()=> this.decreamentCart(cp.id)} className="btn btn-link px-2">
-                                                                        <i className="fa fa-minus"></i>
-                                                                    </button>                        
-                                                            }
-                                                            <label
-                                                                id="form1"
-                                                                    
-                                                                className="form-control form-control-sm text-center w-50"
-                                                            >{cp.quantity}</label>
+                                                        
 
-                                                            <button onClick={()=> this.increamentCart(cp.id,cp.product_variant.id)} className="btn btn-link px-2">
-                                                                <i className="fa fa-plus"></i>
-                                                            </button>
+                                                            {
+                                                                cp.product_variant.stock < cp.quantity?
+                                                                <label
+                                                                    id="form1"                        
+                                                                    className="form-control form-control-sm text-center w-50 text-danger">
+                                                                    Out of stock
+                                                                </label>:
+                                                                <>
+                                                                    {                           
+                                                                        cp.quantity>1&&
+                                                                        <button onClick={()=> this.decreamentCart(cp.id)} className="btn btn-link px-2">
+                                                                            <i className="fa fa-minus"></i>
+                                                                        </button>                        
+                                                                    }
+                                                                    <label
+                                                                        id="form1"                        
+                                                                        className="form-control form-control-sm text-center w-50">
+                                                                        {cp.quantity}
+                                                                    </label>                                        
+                                                                    {
+                                                                        cp.quantity < 10&&
+                                                                        <button onClick={()=> this.increamentCart(cp.id,cp.product_variant.id)} className="btn btn-link px-2">
+                                                                            <i className="fa fa-plus"></i>
+                                                                        </button>
+                                                                    }
+                                                                </>
+                                                            }
+
                                                         </div>
                                                         <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                                             <h6 className="mb-0">
@@ -202,7 +182,7 @@ class Cart extends Component {
                                         <div className="card-body p-4 d-flex flex-row">
                                             <div className="form-outline flex-fill">
                                                 <input type="text" id="form1" className="form-control form-control-lg" />
-                                                <label className="form-label" for="form1">
+                                                <label className="form-label" htmlFor="form1">
                                                     Discound code
                                                 </label>
                                             </div>

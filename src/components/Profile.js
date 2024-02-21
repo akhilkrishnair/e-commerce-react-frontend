@@ -1,33 +1,48 @@
-import { Component } from "react";
+import { PureComponent } from "react";
 import './css/Profile.css';
 import axios from "axios";
+import { access_token, baseUrl } from "../App";
 
-
-class Profile extends Component {
+class Profile extends PureComponent {
     constructor(props) {
         super(props);
         this.state = { 
-            profile:[],
+            profile:null,
             orderAddress:[]
         };
     }
     
-    
+    componentWillUnmount(prevProps,prevState){
+         if (prevState !== this.state){
+            this.fetchProfile();
+            this.fetchOrderAddress();
+         }
+    }
     componentDidMount(){
-        this.fetchOrderAddress();
+        if(access_token){
+            this.fetchProfile();
+            this.fetchOrderAddress();
+        }
     };
 
 
+    fetchProfile = () => {
+        axios.get(baseUrl+'user/profile/')
+        .then((res) => {
+            this.setState({profile:res.data})
+            console.log(res)
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
 
-
-    fetchOrderAddress(){
-        axios.get('http://127.0.0.1:8000/api/order-address/')
+    fetchOrderAddress = () => {
+        axios.get(baseUrl+'order-address/')
         .then((res) => {
             if (res.data[0]){
-
                 this.setState({orderAddress:res.data});
-                this.setState({profile:res.data[0].user})
             }
+            console.log(res)
             
         }).catch((err) => {
             console.log(err);
@@ -45,18 +60,29 @@ class Profile extends Component {
                 <div className="profile-details-section">
            
                     {
-                        profile.profile_image?
+                        profile?
                         <div className="profile-pic">
-                            <img src={profile.profile_image} />
+                            <img src={profile.profile_image[1]==="m"?
+                                "http://127.0.0.1:8000/"+profile.profile_image:
+                                profile.profile_image
+                            } />
                         </div>:null
 
                     }
 
                     <div className="profile-name-email"><br/><br/>
                         {
-                            profile.first_name && profile.last_name ?
-                            <h6>{`${profile.first_name} ${profile.last_name}`}</h6>
-                            :profile.email&&<h6>{`${profile.email}`}</h6>
+                            profile&&
+                            <h6>                                   
+                                {`Hello ${profile.first_name} ${profile.last_name}`}
+                            </h6>
+                        }
+
+                        {
+                            profile&&
+                            <h6>Email :                                    
+                                {profile.email}
+                            </h6>
                         }
 
                     </div>

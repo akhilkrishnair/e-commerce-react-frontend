@@ -40,7 +40,8 @@
     justify-content: space-between;
 }
 .order-status-progress .status-conditions span{
-    font-size: 5px;
+    font-size: 15px;
+    font-weight: 500;
 }
 
 .status-progress-bar .custom-progress-bar{

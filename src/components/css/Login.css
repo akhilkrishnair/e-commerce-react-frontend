@@ -1,0 +1,42 @@
+.forgot-password{
+    color: rgb(42, 130, 237);
+    text-decoration: none;
+}
+
+.login-submit-btn{
+    margin: auto;
+    width: 40%;
+    height: 40px;
+    border: none;
+    border-radius: 25px;
+    background-color: #0c49ac;
+    color: white;
+    padding: 6px;
+    font-weight: 500;
+    transition: 0.2s linear;
+}
+
+.login-submit-btn:hover{
+  background-color: #1c61d0;
+  box-shadow: 4px 0px 0px 10px;
+}
+
+
+
+
+/* loader animation */
+
+.login-submit-btn .loader {
+  margin-left: 43%;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  animation: spin 2s linear infinite;
+}
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
