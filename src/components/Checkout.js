@@ -3,7 +3,7 @@ import './css/Checkout.css';
 import axios from "axios";
 import PaymentComponent from "./Payment";
 import { baseUrl } from "../App";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
 
 const address_data = {
@@ -47,6 +47,7 @@ class Checkout extends PureComponent {
     
 
     componentDidMount(){
+        window.scrollTo(0,0)
         this.fetchOrderAddress();
         this.fetchCart();
     }
@@ -62,7 +63,15 @@ class Checkout extends PureComponent {
         initial_address = {...address_data}
         console.log("initial ",initial_address)
         this.setState({...this.state.address,address:initial_address})
+        
+        this.selectedAddressClose();
     };
+
+    selectedAddressClose = () => {
+        let id = this.state.orderData
+        id.selectedOrderAddressId = null
+        this.setState({...this.state.orderData, orderData:id})
+    }
 
     fetchCart = () => {
         this.props.fetch_cart().then((res)=>{
@@ -115,6 +124,8 @@ class Checkout extends PureComponent {
             case 'add':
                 this.setState({addAddressForm:true,updateAddressBtn:false});
                 this.setState({updatingAddress:null})
+                this.selectedAddressClose();
+
                 break;            
             case 'close':
                 if (this.state.address.full_name){
@@ -248,7 +259,7 @@ class Checkout extends PureComponent {
         .then((res) => {
             console.log(res)
             this.props.cart_counter();
-            this.setState({orderSuccess:"/user/dashbord/orders/"})
+            this.setState({orderSuccess:"/user/order/success/"})
         }).catch((err) => {
             console.log(err)
         })
@@ -273,322 +284,324 @@ class Checkout extends PureComponent {
 
         return (
             <>
-                <div className="checkout-main-container">
-                    <div className="order-address-container">
-                        <div className="select-address">
-                            <h4 className="bg-primary text-light ps-4 py-2 mb-3" >Select Address</h4>
-                            {   
-                                !addAddressForm&&orderAddress&&orderAddress.map((oa)=>(
-                                    <div key={oa.id} className="each-address mb-2">
-                                        <input onClick={()=>this.orderAddressIdSave(oa.id)} type="radio" name="order-address"/>
-                                        <div className="address">
-                                            <div>
-                                            {
-                                               `
-                                                   ${oa.full_name}, ${oa.mobile}                                                  
-                                               `
-                                            }
+
+                    <div className="checkout-main-container">
+                        <div className="order-address-container">
+                            <div className="select-address">
+                                <h4 className="bg-primary text-light ps-4 py-2 mb-3" >Select Address</h4>
+                                {   
+                                    !addAddressForm&&orderAddress&&orderAddress.map((oa)=>(
+                                        <div key={oa.id} className="each-address mb-2">
+                                            <input onClick={()=>this.orderAddressIdSave(oa.id)} type="radio" name="order-address"/>
+                                            <div className="address">
+                                                <div>
+                                                {
+                                                `
+                                                    ${oa.full_name}, ${oa.mobile}                                                  
+                                                `
+                                                }
+                                                </div>
+                                                {
+                                                    `
+                                                    ${oa.address}
+                                                    `
+                                                }
                                             </div>
-                                            {
-                                                `
-                                                   ${oa.address}
-                                                `
-                                            }
+                                            <span 
+                                            onClick={()=>this.showHideAddAddress('update',oa.id)} 
+                                            className="address-edit-btn" 
+                                            >
+                                                Edit
+                                            </span>
                                         </div>
-                                        <span 
-                                        onClick={()=>this.showHideAddAddress('update',oa.id)} 
-                                        className="address-edit-btn" 
-                                        >
-                                            Edit
-                                        </span>
+                                    ))
+                                }
+
+                            </div>
+
+                            {   
+                                !addAddressForm&&
+                                <div 
+                                className="create-update-new-address btn btn-sm btn-success mt-2"
+                                onClick={()=>this.showHideAddAddress('add')}>
+                                        Add new address
+                                </div>
+                            }
+                            
+                            
+                            {
+                                addAddressForm&&
+                                <div className="row mt-3">
+                                        <div className=" mb-4">
+                                            <div className="card mb-4">
+                                            <div className="card-header py-2">
+                                                <h5 className="mb-0">Add new address</h5>
+                                            </div>
+                                            <div className="card-body">
+                                                <form >
+                                                {/* <!-- 2 column grid layout with text inputs for the first and last names --> */}
+                                                <div className="row mb-3">
+                                                    <div className="col">
+                                                    <div className="form-outline">
+                                                        <input 
+                                                        onChange={this.onChangeAddressAdd}
+                                                        value={address.full_name}
+                                                        name="full_name" 
+                                                        type="text" 
+                                                        id="form7Example1" 
+                                                        className="form-control form-control-sm" />
+                                                        <label className="form-label" for="form7Example1">Full name</label>
+                                                    </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                
+                                                {/* <!-- Number input --> */}
+                                                <div className="row">
+                                                    <div className="col">                       
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.mobile}
+                                                    name="mobile"
+                                                    type="number" 
+                                                    id="form7Example6" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example6">Phone</label>
+                                                </div>
+                                                </div>  
+
+
+                                                {/* <!-- Text input --> */}
+                                                <div className="col">
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.city_district_town}
+                                                    name="city_district_town"
+                                                    type="text" 
+                                                    id="form7Example4" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example4">City/ District/ Town</label>
+                                                </div>
+                                                </div>
+                                                </div>
+
+                                                {/* <!-- Text input --> */}
+                                                <div className="row">
+                                                    <div className="col">                       
+
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd}
+                                                    value={address.locality}
+                                                    name="locality" 
+                                                    type="text" 
+                                                    id="form7Example3" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example3">Locality </label>
+                                                </div>
+                                                </div>
+
+                                                {/* <!-- Landmark input --> */}
+                                                <div className="col">
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.landmark}
+                                                    name="landmark"
+                                                    type="text" 
+                                                    id="form7Example5" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example5">Landmark</label>
+                                                </div>
+                                                </div>
+                                                </div>
+
+                                                {/* <!-- PIN input --> */}
+
+                                                <div className="row">
+                                                    <div className="col">                       
+
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.pincode}
+                                                    name="pincode"
+                                                    type="number" 
+                                                    id="form7Example5" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example5">PIN</label>
+                                                </div>
+                                                </div>
+
+                                                {/* <!-- State input --> */}
+                                                <div className="col">
+                                                <div className="form-outline mb-3">
+                                                    <input 
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.state}
+                                                    name="state"
+                                                    type="text" 
+                                                    id="form7Example5" 
+                                                    className="form-control form-control-sm" />
+                                                    <label className="form-label" for="form7Example5">State</label>
+                                                </div>
+                                                </div>
+                                                </div>
+
+
+
+
+                                                {/* <!-- Message input --> */}
+                                                <div className="form-outline mb-3">
+                                                    <textarea
+                                                    onChange={this.onChangeAddressAdd} 
+                                                    value={address.address}
+                                                    name="address" 
+                                                    className="form-control form-control-sm" 
+                                                    id="form7Example7" 
+                                                    rows="4"></textarea>
+                                                    <label className="form-label" for="form7Example7">Address</label>
+                                                </div>
+
+                                                {/* <!-- Checkbox --> */}
+                                                {
+                                                    !updateAddressBtn?
+                                                    <span
+                                                    onClick={() => this.addressSubmit('create')} 
+                                                    className="btn btn-sm btn-success"
+                                                    >Save Address</span>:
+                                                    
+                                                    <>
+                                                    <span
+                                                    onClick={() => this.addressSubmit('update')} 
+                                                    className="btn btn-sm btn-success"
+                                                    >Update Address</span>
+                                                    {
+                                                        orderAddress.length > 1 &&
+                                                        <span
+                                                        onClick={() => this.addressSubmit('delete')} 
+                                                        className="btn btn-sm btn-danger float-end"
+                                                        >Delete Address</span>
+                                                    }
+                                                    </>
+
+                                                }
+
+                                                </form>
+                                            </div>
+                                            </div>
+                                        </div>                            
                                     </div>
-                                ))
+                            }
+
+
+                            {   
+                                addAddressForm&&
+                                <div 
+                                className="create-update-new-address btn btn-sm btn-dark mt-2"
+                                onClick={()=>this.showHideAddAddress('close')}>
+                                        Close
+                                </div>
+                            }
+                            <h4 className="bg-primary text-light ps-4 py-2 mb-3 mt-4" >Payment method</h4>
+                            
+
+                            {
+                                !outOfStock&&orderData.selectedOrderAddressId&&
+                                <div className="payment-method-container">
+                                    <div className="payment-container">
+                                        <input 
+                                        type="radio" 
+                                        name="payment-method"
+                                        onClick={()=>this.paymentMethodSelectionHandle("razorpay")} />
+                                        <div className="payment">
+                                            <div>Razorpay Card/Net-Banking</div>
+                                        </div>
+                                        {
+                                            orderData.selectedPaymentMethod === "razorpay"&&
+                                            <PaymentComponent 
+                                            cart_items={cartItems} 
+                                            order_address_id={orderData.selectedOrderAddressId}
+                                            fetch_cart={this.props.fetch_cart}
+                                            cart_counter={this.props.cart_counter}
+                                            out_of_stock_handle={this.outOfStockHandle} />
+                                        }
+                                    </div>
+
+                                    <div className="payment-container">
+                                        <input 
+                                        type="radio" 
+                                        name="payment-method"
+                                        onClick={()=>this.paymentMethodSelectionHandle("cash-on-delivery")} />
+                                        <div className="payment" >
+                                            <div>Cash on delivery</div>
+                                        </div>
+                                        {
+                                            orderData.selectedPaymentMethod === "cash-on-delivery"&&
+                                            <button 
+                                                className="btn btn-primary w-50"
+                                                onClick={this.cashOnDeliveryHandle} >
+                                                Place order
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+
+                        </div>
+                        <div className="order-details">
+                            <h5>Order details</h5>
+                            {
+                                !outOfStock?
+                                <div className="item-details">
+                                    <div className="amount-container">
+                                        <div className="amount-title">
+                                        Amount ({cartItems&&cartItems.length>1?cartItems.length+" items":"1 item"})
+                                        
+                                        </div>
+                                        <div className="amount">
+                                            Rs.{amount&&amount}
+                                        </div>
+                                    </div>
+                                    <div className="discount-container">
+                                        <div className="discount-title">
+                                        Discount
+                                        </div>
+                                        <div className="discount">
+                                            -Rs.{discount&&discount}
+                                        </div>
+                                    </div>
+                                    <div className="delivery-charge-container">
+                                        <div className="title">
+                                            Delivery Charge
+                                        </div>
+                                        <div className="delivery-amount">
+                                            50
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div className="total-amount-container">
+                                        <h6 className="title">
+                                            Total amount
+                                        </h6>
+                                        <h6 className="total-amount">
+                                            Rs.{totalAmount&&totalAmount}
+                                        </h6>
+                                    </div>
+                                    <hr/>
+                                </div>:
+
+                                <div className="item-details">
+                                    Some items out of stock check cart
+                                </div>
                             }
 
                         </div>
-
-                        {   
-                            !addAddressForm&&
-                            <div 
-                            className="create-update-new-address btn btn-sm btn-success mt-2"
-                            onClick={()=>this.showHideAddAddress('add')}>
-                                    Add new address
-                            </div>
-                        }
-                        
-                        
-                        {
-                            addAddressForm&&
-                            <div className="row mt-3">
-                                    <div className=" mb-4">
-                                        <div className="card mb-4">
-                                        <div className="card-header py-2">
-                                            <h5 className="mb-0">Add new address</h5>
-                                        </div>
-                                        <div className="card-body">
-                                            <form >
-                                            {/* <!-- 2 column grid layout with text inputs for the first and last names --> */}
-                                            <div className="row mb-3">
-                                                <div className="col">
-                                                <div className="form-outline">
-                                                    <input 
-                                                    onChange={this.onChangeAddressAdd}
-                                                    value={address.full_name}
-                                                    name="full_name" 
-                                                    type="text" 
-                                                    id="form7Example1" 
-                                                    className="form-control form-control-sm" />
-                                                    <label className="form-label" for="form7Example1">Full name</label>
-                                                </div>
-                                                </div>
-                                                
-                                            </div>
-                                            
-                                            {/* <!-- Number input --> */}
-                                            <div className="row">
-                                                <div className="col">                       
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.mobile}
-                                                name="mobile"
-                                                type="number" 
-                                                id="form7Example6" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example6">Phone</label>
-                                            </div>
-                                            </div>  
-
-
-                                            {/* <!-- Text input --> */}
-                                            <div className="col">
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.city_district_town}
-                                                name="city_district_town"
-                                                type="text" 
-                                                id="form7Example4" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example4">City/ District/ Town</label>
-                                            </div>
-                                            </div>
-                                            </div>
-
-                                            {/* <!-- Text input --> */}
-                                            <div className="row">
-                                                <div className="col">                       
-
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd}
-                                                value={address.locality}
-                                                name="locality" 
-                                                type="text" 
-                                                id="form7Example3" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example3">Locality </label>
-                                            </div>
-                                            </div>
-
-                                            {/* <!-- Landmark input --> */}
-                                            <div className="col">
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.landmark}
-                                                name="landmark"
-                                                type="text" 
-                                                id="form7Example5" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example5">Landmark</label>
-                                            </div>
-                                            </div>
-                                            </div>
-
-                                            {/* <!-- PIN input --> */}
-
-                                            <div className="row">
-                                                <div className="col">                       
-
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.pincode}
-                                                name="pincode"
-                                                type="number" 
-                                                id="form7Example5" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example5">PIN</label>
-                                            </div>
-                                            </div>
-
-                                            {/* <!-- State input --> */}
-                                            <div className="col">
-                                            <div className="form-outline mb-3">
-                                                <input 
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.state}
-                                                name="state"
-                                                type="text" 
-                                                id="form7Example5" 
-                                                className="form-control form-control-sm" />
-                                                <label className="form-label" for="form7Example5">State</label>
-                                            </div>
-                                            </div>
-                                            </div>
-
-
-
-
-                                            {/* <!-- Message input --> */}
-                                            <div className="form-outline mb-3">
-                                                <textarea
-                                                onChange={this.onChangeAddressAdd} 
-                                                value={address.address}
-                                                name="address" 
-                                                className="form-control form-control-sm" 
-                                                id="form7Example7" 
-                                                rows="4"></textarea>
-                                                <label className="form-label" for="form7Example7">Address</label>
-                                            </div>
-
-                                            {/* <!-- Checkbox --> */}
-                                            {
-                                                !updateAddressBtn?
-                                                <span
-                                                onClick={() => this.addressSubmit('create')} 
-                                                className="btn btn-sm btn-success"
-                                                >Save Address</span>:
-                                                
-                                                <>
-                                                <span
-                                                onClick={() => this.addressSubmit('update')} 
-                                                className="btn btn-sm btn-success"
-                                                >Update Address</span>
-                                                {
-                                                    orderAddress.length > 1 &&
-                                                    <span
-                                                    onClick={() => this.addressSubmit('delete')} 
-                                                    className="btn btn-sm btn-danger float-end"
-                                                    >Delete Address</span>
-                                                }
-                                                </>
-
-                                            }
-
-                                            </form>
-                                        </div>
-                                        </div>
-                                    </div>                            
-                                </div>
-                        }
-
-
-                        {   
-                            addAddressForm&&
-                            <div 
-                            className="create-update-new-address btn btn-sm btn-dark mt-2"
-                            onClick={()=>this.showHideAddAddress('close')}>
-                                    Close
-                            </div>
-                        }
-                        <h4 className="bg-primary text-light ps-4 py-2 mb-3 mt-4" >Payment method</h4>
-                        
-
-                        {
-                            !outOfStock&&orderData.selectedOrderAddressId&&
-                            <div className="payment-method-container">
-                                <div className="payment-container">
-                                    <input 
-                                    type="radio" 
-                                    name="payment-method"
-                                    onClick={()=>this.paymentMethodSelectionHandle("razorpay")} />
-                                    <div className="payment">
-                                        <div>Razorpay Card/Net-Banking</div>
-                                    </div>
-                                    {
-                                        orderData.selectedPaymentMethod === "razorpay"&&
-                                        <PaymentComponent 
-                                        cart_items={cartItems} 
-                                        order_address_id={orderData.selectedOrderAddressId}
-                                        fetch_cart={this.props.fetch_cart}
-                                        cart_counter={this.props.cart_counter}
-                                        out_of_stock_handle={this.outOfStockHandle} />
-                                    }
-                                </div>
-
-                                <div className="payment-container">
-                                    <input 
-                                    type="radio" 
-                                    name="payment-method"
-                                    onClick={()=>this.paymentMethodSelectionHandle("cash-on-delivery")} />
-                                    <div className="payment" >
-                                        <div>Cash on delivery</div>
-                                    </div>
-                                    {
-                                        orderData.selectedPaymentMethod === "cash-on-delivery"&&
-                                        <button 
-                                            className="btn btn-primary w-50"
-                                            onClick={this.cashOnDeliveryHandle} >
-                                            Place order
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        }
-
-
                     </div>
-                    <div className="order-details">
-                        <h5>Order details</h5>
-                        {
-                            !outOfStock?
-                            <div className="item-details">
-                                <div className="amount-container">
-                                    <div className="amount-title">
-                                    Amount ({cartItems&&cartItems.length>1?cartItems.length+" items":"1 item"})
-                                    
-                                    </div>
-                                    <div className="amount">
-                                        Rs.{amount&&amount}
-                                    </div>
-                                </div>
-                                <div className="discount-container">
-                                    <div className="discount-title">
-                                    Discount
-                                    </div>
-                                    <div className="discount">
-                                        -Rs.{discount&&discount}
-                                    </div>
-                                </div>
-                                <div className="delivery-charge-container">
-                                    <div className="title">
-                                        Delivery Charge
-                                    </div>
-                                    <div className="delivery-amount">
-                                        50
-                                    </div>
-                                </div>
-                                <hr/>
-                                <div className="total-amount-container">
-                                    <h6 className="title">
-                                        Total amount
-                                    </h6>
-                                    <h6 className="total-amount">
-                                        Rs.{totalAmount&&totalAmount}
-                                    </h6>
-                                </div>
-                                <hr/>
-                            </div>:
 
-                            <div className="item-details">
-                                Some item out of stock check cart
-                            </div>
-                         }
-
-                    </div>
-                </div>
             </>
         );
     }

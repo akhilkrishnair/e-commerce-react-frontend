@@ -17,6 +17,7 @@ import { access_token } from "../../App";
 import ForgotPassword from "../Forgot_Password";
 import ResetPassword from "../Reset_password";
 import EmailVerificationWithParam from "../Email_verification";
+import OrderSuccess from "../OrderSuccess";
 
 
 
@@ -143,8 +144,13 @@ class Router extends PureComponent{
                             <Route path="/user/dashbord/orders/:order_id/" element={<Order_Details/>} />
                         }
                         
-                             <Route path="/:category/:slug/:color/:size/" element={<UserDetailWrapper current_user={this.state.currentUser} cart_counter={this.cartCount} />} />
-                        <Route path="/*" element={<Empty_Page/>} />
+                             <Route path="/:category/:slug/:color/:size/:id/" element={<UserDetailWrapper current_user={this.state.currentUser} cart_counter={this.cartCount} />} />
+                             <Route path="/*" element={<Empty_Page/>} />
+                        {
+                            this.state.currentUser&&
+                            <Route path="/user/order/success/" element={<OrderSuccess/>} />
+                        }
+
 
                          {
                             this.state.cartCount&&

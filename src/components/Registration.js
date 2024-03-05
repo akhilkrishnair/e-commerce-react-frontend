@@ -23,6 +23,10 @@ class Registration extends Component {
         };
     };
 
+    componentDidMount(){
+        window.scrollTo(0,0)
+    }
+
     handleChange = (e) => {
         const { name, value } = e.target;
         this.setState({ [name]: value });
@@ -43,7 +47,7 @@ class Registration extends Component {
         this.setState({loading:true})
 
         try{
-            const response = await axios.post(baseUrl+'user/registration/',
+            await axios.post(baseUrl+'user/registration/',
             registrationData)
             this.setState({registration:true})                    
 

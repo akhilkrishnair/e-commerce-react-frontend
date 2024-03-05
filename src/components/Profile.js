@@ -53,7 +53,7 @@ class Profile extends PureComponent {
 
     render() {
         const {profile, orderAddress} = this.state
-
+        console.log(this.state)
         return (
             <div className="profile-main-container">
 
@@ -63,9 +63,10 @@ class Profile extends PureComponent {
                         profile?
                         <div className="profile-pic">
                             <img src={profile.profile_image[1]==="m"?
-                                "http://127.0.0.1:8000/"+profile.profile_image:
+                                "http://127.0.0.1:8000"+profile.profile_image:
                                 profile.profile_image
-                            } />
+                            
+                            }  />
                         </div>:null
 
                     }
@@ -89,16 +90,16 @@ class Profile extends PureComponent {
 
                     <div className="user-order-address"><br/><br/>
                     
+                    <h5>Order Address</h5>
                          {
                             orderAddress&&orderAddress.map((oa,index)=>(
                                 <>
-                                    <h5>Order Address</h5><br/>
                                     <div className="each-order-address">
                                         <h6>Address {index+1}</h6>
                                         <div>{oa.full_name}</div>
                                         <div>{oa.mobile}</div>
                                         <div>{oa.state}, {oa.city_district_town}, {oa.pincode}</div>
-                                    </div>
+                                    </div><br/>
                                 </>
                             ))
                          }

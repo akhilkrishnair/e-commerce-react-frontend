@@ -64,7 +64,7 @@ class Dashbord extends Component {
                     <NavLink 
                     to={'/user/dashbord/orders/'} 
                     className="dashbord-link" >
-                        Order
+                        Orders
                     </NavLink>
                     <hr/>
 

@@ -58,7 +58,7 @@ class Wishlist extends Component {
                     this.state.wishlistProducts.map((p)=>(                       
                         <div key={p.id} className="wishlist-product-container">
                             <Link 
-                            to={`/${p.product_variant.product_color_variant.product.category.slug}/${p.product_variant.product_color_variant.product.slug}/${p.product_variant.product_color_variant.color.name}/${p.product_variant.size.name}/`}
+                            to={`/${p.product_variant.product_color_variant.product.category.slug}/${p.product_variant.product_color_variant.product.slug}/${p.product_variant.product_color_variant.color.name}/${p.product_variant.size.name}/${p.product_variant.product_color_variant.product.id}/`}
                             className="wishlist-product-image"
                             >
                                <div className="image">

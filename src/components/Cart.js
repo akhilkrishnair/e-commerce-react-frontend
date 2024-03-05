@@ -1,4 +1,5 @@
 import axios from "axios";
+import '../components/css/Cart.css';
 import { PureComponent } from "react";
 import { Link } from "react-router-dom";
 import { baseUrl } from "../App";
@@ -9,6 +10,7 @@ class Cart extends PureComponent {
         this.state = {
             cart: [],
             cartChecked: false,
+            totalAmount:0,
         };
     };
 
@@ -17,42 +19,52 @@ class Cart extends PureComponent {
     };
 
 
-    fetchCart() {
-        this.props.fetch_cart().then((res)=>{
+    fetchCart = async ()=> {
+        await this.props.fetch_cart().then((res)=>{
             this.setState({cart:res});
             this.setState({cartChecked:this.props.cart_checked});
+            this.amountCalculation(res);
         });
+
     };
+
+    amountCalculation = (cart)=> {
+        let total = 0
+        cart.map((cp) => {
+            total +=  cp.quantity*(cp.product_variant.price - cp.product_variant.price/100*cp.product_variant.offer)
+        })
+        this.setState({totalAmount:total})
+    }
 
    
 
-    increamentCart=(cart_id,product_variant_id)=>{
+    increamentCart= async (cart_id,product_variant_id)=>{
         
-        axios.post(baseUrl+'cart/increament-qty/',
-         {
-           cart_id:cart_id,
-           product_variant_id:product_variant_id,  
-         }
-        ).then((res)=>{
-            this.fetchCart();
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
+        await axios.post(baseUrl+'cart/increament-qty/',
+            {
+            cart_id:cart_id,
+            product_variant_id:product_variant_id,  
+            }
+            ).then((res)=>{
+                this.fetchCart();
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
     };
 
 
-    decreamentCart(cart_id){       
-        axios.post(baseUrl+'cart/decreament-qty/',
-         {
-           cart_id:cart_id,
-         }
-        ).then((res)=>{
-            this.fetchCart();
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
+    decreamentCart = async (cart_id) => {       
+        await axios.post(baseUrl+'cart/decreament-qty/',
+            {
+            cart_id:cart_id,
+            }
+            ).then((res)=>{
+                this.fetchCart();
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
     };
 
 
@@ -72,6 +84,7 @@ class Cart extends PureComponent {
 
 
     render() {
+
         return (
             <div className="cart-main-container">
                 {!this.state.cartChecked && <h6 className="text-center">Loading .....</h6>}
@@ -84,14 +97,6 @@ class Cart extends PureComponent {
                                 <div className="col-10">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
                                         <h3 className="fw-normal mb-0 text-black">Shopping Cart</h3>
-                                        <div>
-                                            <p className="mb-0">
-                                                <span className="text-muted">Sort by:</span>{" "}
-                                                <a href="#!" className="text-body">
-                                                    price <i className="fas fa-angle-down mt-1"></i>
-                                                </a>
-                                            </p>
-                                        </div>
                                     </div>
 
                                     {
@@ -102,7 +107,7 @@ class Cart extends PureComponent {
                                                     <div className="row d-flex justify-content-between align-items-center">
                                                         <Link 
                                                         to={        
-                                                            `/${cp.product_variant.product_color_variant.product.category.slug}/${cp.product_variant.product_color_variant.product.slug}/${cp.product_variant.product_color_variant.color.name}/${cp.product_variant.size.name}/`
+                                                            `/${cp.product_variant.product_color_variant.product.category.slug}/${cp.product_variant.product_color_variant.product.slug}/${cp.product_variant.product_color_variant.color.name}/${cp.product_variant.size.name}/${cp.product_variant.product_color_variant.product.id}/`
                                                             }
 
                                                         className=" col-md-2 col-lg-2 col-xl-2">
@@ -178,26 +183,15 @@ class Cart extends PureComponent {
                                             </div>
                                         ))}
 
-                                    <div className="card mb-4">
-                                        <div className="card-body p-4 d-flex flex-row">
-                                            <div className="form-outline flex-fill">
-                                                <input type="text" id="form1" className="form-control form-control-lg" />
-                                                <label className="form-label" htmlFor="form1">
-                                                    Discound code
-                                                </label>
-                                            </div>
-                                            <button type="button" className="btn btn-outline-warning btn-lg ms-3">
-                                                Apply
-                                            </button>
-                                        </div>
-                                    </div>
 
                                     <div className="card">
-                                        <div className="card-body">
+                                        <div className="card-body d-flex justify-content-between align-items-center">
                                             <Link to={'/user/order/checkout/'} className="btn btn-warning btn-block btn-lg">
                                                 Proceed to Pay
                                             </Link>
+                                            <h5 className=" p-1 me-5">Total Amount : Rs. {this.state.totalAmount}</h5>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>

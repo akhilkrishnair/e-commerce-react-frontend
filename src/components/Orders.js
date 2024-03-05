@@ -35,6 +35,7 @@ class Orders extends Component {
 
 
     render() {
+        console.log(this.state)
         return (
             <>
                 <h4 className="text-center mb-5" >Orders</h4>
@@ -43,7 +44,7 @@ class Orders extends Component {
                     this.state.orderProducts.map((p)=>(                       
                         <div key={p.id} className="wishlist-product-container">
                             <Link 
-                            to={`/${p.product_variant.product_color_variant.product.category.slug}/${p.product_variant.product_color_variant.product.slug}/${p.product_variant.product_color_variant.color.name}/${p.product_variant.size.name}/`}
+                            to={`/${p.product_variant.product_color_variant.product.category.slug}/${p.product_variant.product_color_variant.product.slug}/${p.product_variant.product_color_variant.color.name}/${p.product_variant.size.name}/${p.product_variant.product_color_variant.product.id}/`}
                             className="wishlist-product-image"
                             >
                                <div className="image">
@@ -73,6 +74,12 @@ class Orders extends Component {
                                     
                                 </h6>
                                 <p>Order ID : {p.order_id}</p>
+                                <p>Date : {p.ordered_date}</p>
+                                {
+                                   p.status === 'Cancelled'? 
+                                    <p className="text-danger">Status : {p.status}</p>
+                                    :<p className="text-success">Status : {p.status}</p>
+                                }
                             </div>
 
                             <Link to={`/user/dashbord/orders/${p.order_id}/`} className="btn btn-primary h-25">

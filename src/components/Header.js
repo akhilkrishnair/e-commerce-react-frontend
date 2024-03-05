@@ -62,7 +62,7 @@ class Header extends Component {
         this.setState({[name]:value});
     }
     
-    searchItemSend = () => {
+    searchItemSend = (e) => {
         this.props.product_search(this.state.searchItems)
     }
     
@@ -87,8 +87,8 @@ class Header extends Component {
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                             </button>
-                            <div className="collapse navbar-collapse ms-3" id="navbarSupportedContent">
-                            <ul className="ms-5 navbar-nav me-auto mb-2 mb-lg-0">
+                            <div className="collapse navbar-collapse ms-4" id="navbarSupportedContent">
+                            <ul className="ms-4 navbar-nav me-auto mb-2 mb-lg-0">
                                 
                                 <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -118,7 +118,7 @@ class Header extends Component {
                                     }
                                 </ul>
                                 </li>
-                                <li className="nav-item ms-3">
+                                <li className="nav-item ms-1">
                                 <Link className="nav-link active" aria-current="page" to={'/'} >Home</Link>
                                 </li>
 
@@ -128,7 +128,7 @@ class Header extends Component {
                                             <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >
                                                 Cart 
                                                 <span className="p-1" >
-                                                    <FaCartArrowDown/> {this.props.cart_count&&this.props.cart_count}
+                                                    <FaCartArrowDown/> {this.props.cart_count&&this.props.cart_count>0?this.props.cart_count:null}
                                                 </span> 
                                             </Link>
                                         </li>
@@ -137,7 +137,7 @@ class Header extends Component {
 
 
                             </ul>
-                            <form className="d-flex" role="search">
+                            <div className="d-flex col-lg-6" role="search">
                                 <input className="form-control me-2" name="searchItems" 
                                 type="search" placeholder="Search" aria-label="Search"
                                 onChange={this.searchItems}
@@ -147,7 +147,7 @@ class Header extends Component {
                                     type="submit"
                                     onClick={this.searchItemSend}
                                     to={`/search/?query=${this.state.searchItems}`}>Search</Link>
-                            </form>
+                            </div>
                             </div>
                         </div>
 

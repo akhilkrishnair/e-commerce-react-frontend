@@ -18,7 +18,7 @@ class PaymentComponent extends PureComponent {
     };
 
     handleOrderSuccess = () => {
-        this.setState({orderSuccess:'/user/dashbord/orders'})
+        this.setState({orderSuccess:"/user/order/success/"})
     };
 
     initiatePayment = async () => {
