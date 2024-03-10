@@ -30,7 +30,6 @@ class Profile extends PureComponent {
         axios.get(baseUrl+'user/profile/')
         .then((res) => {
             this.setState({profile:res.data})
-            console.log(res)
         }).catch((err) => {
             console.log(err);
         })
@@ -41,9 +40,7 @@ class Profile extends PureComponent {
         .then((res) => {
             if (res.data[0]){
                 this.setState({orderAddress:res.data});
-            }
-            console.log(res)
-            
+            }            
         }).catch((err) => {
             console.log(err);
         })
@@ -53,7 +50,6 @@ class Profile extends PureComponent {
 
     render() {
         const {profile, orderAddress} = this.state
-        console.log(this.state)
         return (
             <div className="profile-main-container">
 

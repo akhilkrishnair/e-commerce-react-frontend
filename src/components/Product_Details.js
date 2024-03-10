@@ -447,7 +447,7 @@ class Product_Details extends PureComponent {
 
                             </div>
                             <div className="product-details-container">
-                                <h5>
+                                <h5 className='product-title'>
                                     {   
                                         singleProduct.product_color_variant.color.name !== 'no-color'?
                                         singleProduct.product_color_variant.product.name +" ("+                        
@@ -460,7 +460,7 @@ class Product_Details extends PureComponent {
                                     }
                                 </h5>
                                 <br/>
-                                <h6  >Rs.
+                                <h6 className='product-price' >Rs.
                                     {
                                         singleProduct.price-
                                         singleProduct.price/100*singleProduct.offer
@@ -517,7 +517,7 @@ class Product_Details extends PureComponent {
                                                     {sv.size.name}
                                                 </NavLink>
                                             ))
-                                        };
+                                        }
 
                                     </div>
 
@@ -532,9 +532,12 @@ class Product_Details extends PureComponent {
                                         {
                                             this.state.productDescription.map((pd, index) => (
                                                 <div key={pd.id} className={`each-description ${index % 2 === 0?"right":"left"}`}>
-                                                    <div className='description-img'>
-                                                        <img src={pd.image} alt={pd.discription_title} />
-                                                    </div>
+                                                    {
+                                                        pd.image?
+                                                        <div className='description-img'>
+                                                            <img src={pd.image} alt={pd.discription_title} />
+                                                        </div>:null
+                                                    }
                                                     <div className='description-details'>
                                                         <h6>{pd.discription_title}</h6>
                                                         <p>{pd.description}</p>
@@ -551,10 +554,10 @@ class Product_Details extends PureComponent {
                         // ))                          
                     }
             
-              </div>
-              <hr/>
+               </div>
                
-
+              <br/><br/>
+              <hr/>
               <h4 id='review-and-rating' className='text-center'>Review and Rating</h4><hr/>
 
                 {    
@@ -644,7 +647,7 @@ class Product_Details extends PureComponent {
                                             this.state.productReviewSubmitted&&
                                             <div className='review-submit-response'>review submited</div>
                                         }
-                                        <button type='submit' className='btn btn-success w-25'>Submit</button>
+                                        <button type='submit' className='btn btn-sm btn-success w-25'>Submit</button>
                                     </div>:
                                     <div className=' submit-btn-container'>
                                         <div className='btn btn-success d-flex justify-content-center w-25'>

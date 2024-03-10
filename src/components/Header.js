@@ -74,7 +74,7 @@ class Header extends Component {
     render() { 
         return (
             <div className="header-section">
-                    <nav className="navbar bg-primary navbar-expand-lg " data-bs-theme="dark" >
+                    <nav className="navbar bg-dark navbar-expand-lg " data-bs-theme="dark" >
                         <div className="container-fluid">
                             <h3>
                                 <Link className="navbar-brand mx-5" 
@@ -99,7 +99,7 @@ class Header extends Component {
                                         this.state.currentUser?
                                             <>
                                                 <li>
-                                                    <span className="dropdown-item" >Hi  
+                                                    <span className="dropdown-item" >Hi 
                                                         {
                                                             this.state.first_name && this.state.last_name?
                                                             " "+this.state.first_name+" "+this.state.last_name:
@@ -124,7 +124,7 @@ class Header extends Component {
 
                                 {
                                     this.state.currentUser&&
-                                        <li className="nav-item ms-3">
+                                        <li className="nav-item ms-1">
                                             <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >
                                                 Cart 
                                                 <span className="p-1" >

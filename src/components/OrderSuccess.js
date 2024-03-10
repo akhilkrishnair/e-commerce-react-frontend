@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
 import { Link } from "react-router-dom";
 import success from '../images/logos/order_success.png';
-
+import './css/OrderSuccess.css';
 
 
 class OrderSuccess extends PureComponent {
@@ -47,7 +47,7 @@ class OrderSuccess extends PureComponent {
 
 const style = {
     container:{
-        'width':'40%',
+        'width':`${window.innerWidth > 500?'40%':'95%'}`,
         'padding':'45px',
         'backgroundColor':'white',
         'display':'flex','flexDirection':'column','justifyContent':'center','alignItems':'center',
@@ -56,7 +56,7 @@ const style = {
     },
     status:{
         'textDecoration':'none',
-        'width':'30%',
+        'width':`${window.innerWidth > 500?'30%':'50%'}`,
         'padding':'10px',
         'backgroundColor':'#ec2d89',
         'color':'white',

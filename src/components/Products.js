@@ -3,6 +3,7 @@ import axios from "axios";
 import "./css/Products.css";
 import { Link, NavLink, useParams, useSearchParams } from "react-router-dom";
 import { baseUrl } from "../App";
+import { FaHeart } from "react-icons/fa";
 
 
 class Products extends PureComponent {
@@ -11,11 +12,13 @@ class Products extends PureComponent {
         this.state = {
             productVariants: [],
             productCategories:[],
-            productLoader:true,
+            productLoader:false,
             totalItems:0,
             prevPage:null,
             nextPage:null,
             currentPage:1,
+            wishlist:null,
+            wishlistActionLoader:false,
         };
     }
 
@@ -24,24 +27,37 @@ class Products extends PureComponent {
         this.fetchCategory();
         const {category} = this.props
         this.fetchProductVariants(category);
+
     }
 
     componentDidUpdate(prevValue){
         const {category,query} = this.props
-        if (category === 'search' && query !== prevValue.query){
-            this.searchProduct(query)
-            this.setState({currentPage:1})
+ 
+        if(category !== prevValue.category||query!==prevValue.query){
+            if (category === 'search' && query !== prevValue.query){
+                this.searchProduct(query)
+                this.setState({currentPage:1})
+            }else{
+                this.fetchProductVariants(category);
+            }
         }
     };
 
 
     fetchProductVariants = async (category,page=null) => {
         
-        if (category==='search'){           
-            this.searchProduct(this.props.query)
+        if (category==='search'){  
+            const search_page = parseInt(this.props.page)
+            if(search_page){
+                this.setState({currentPage:search_page})
+            } 
+            this.searchProduct(this.props.query,this.props.page)
+        }else if(category===undefined&&this.props.page){
+            this.setState({currentPage:this.props.page})
+            this.changePage(this.props.page)
         }else{
             this.setState({productLoader:true})
-    
+            this.setState({currentPage:1})
             let url = baseUrl+"product-variants/"
     
             if (category){
@@ -59,10 +75,12 @@ class Products extends PureComponent {
                 .then((response) => {
                     this.setState({ productVariants: response.data.results });
                     this.setState({totalItems:response.data.count});
+                    if (this.props.currentUser){
+                        this.fetchWishlist()
+                    }
      
                 })
                 .catch((error) => {
-                    console.log(error);
                 }).then(()=>{
                     this.setState({productLoader:false})
                 })
@@ -77,7 +95,6 @@ class Products extends PureComponent {
         .then((res) => {
             this.setState({productCategories:res.data})
         }).catch((error)=>{
-            console.log(error)
         })
     };
 
@@ -85,6 +102,7 @@ class Products extends PureComponent {
 
 
     searchProduct = (search_item,page=null) => {
+        this.setState({productLoader:true})
         let url = `${baseUrl}product-variants/?query=${search_item}`
         if(page){
             url = `${baseUrl}product-variants/?page=${page}&query=${search_item}`
@@ -97,9 +115,139 @@ class Products extends PureComponent {
             this.setState({productVariants:res.data.results});
             this.setState({totalItems:res.data.count})
         }).catch((error)=> {
-            console.log(error);
+        }).then(() => {
+            this.setState({productLoader:false});
         });
+
     }
+
+
+
+    fetchWishlist = async () => {   
+        await axios
+        .get(baseUrl+'wishlist/')
+        .then((res)=>{
+            this.setState({wishlist:res.data});
+
+        }).catch((error)=>{
+        }).then(()=>{
+            this.setState({wishlistActionLoader:false})    
+        })
+
+    };
+
+
+    createPopUp = (message, duration) => {
+        const popUpElement = document.createElement('div');
+        popUpElement.textContent = message;
+        popUpElement.id = 'wishlist-message-box'
+        popUpElement.style.position = 'fixed';
+        popUpElement.style.bottom = '20%';
+        popUpElement.style.left = '50%';
+        popUpElement.style.transition = '0.4s lenear'
+        popUpElement.style.transform = 'translate(-50%, -50%)';
+        popUpElement.style.backgroundColor = '#292929';
+        popUpElement.style.fontWeight = 'bold'
+        popUpElement.style.color = '#14ab4f';
+        popUpElement.style.padding = '15px';
+        popUpElement.style.borderRadius = '5px';
+        popUpElement.style.zIndex = '99';
+      
+        document.body.appendChild(popUpElement);
+      
+        setTimeout(() => {
+          popUpElement.remove();
+        }, duration);
+      }
+
+
+    addToWishlist = (event,product_variant_id) => {
+        
+        let message_box = document.getElementById('wishlist-message-box')
+        if (message_box){
+            message_box.remove()
+        }
+        event.preventDefault();
+
+        let loader_element = document.getElementsByClassName('wishlist-action-loader '+product_variant_id)[0]
+        let wishlist_button_container = document.getElementsByClassName('wishlist-button-container '+product_variant_id)[0]
+        loader_element.style.display = 'block'
+        wishlist_button_container.style.display = 'none'
+        
+
+        const wishlistData = {            
+            product_variant:product_variant_id,
+        };
+    
+        axios.post(baseUrl+'wishlist/add/',
+        wishlistData        
+        ).then((res)=>{
+            this.fetchWishlist()
+            const prodVar = this.state.productVariants.map((pv) => 
+                pv.id===product_variant_id? {...pv, in_wishlist:true}:pv
+            );
+            this.setState({productVariants:prodVar})
+        }).catch((err) => {
+        }).then(()=>{
+            loader_element.style.display = 'none'
+            wishlist_button_container.style.display = 'block'
+            this.createPopUp('Added to your wishlist',2000)
+        })
+    };
+
+
+    removeWishlist =  (event,product_id)=> {  
+        
+        let message_box = document.getElementById('wishlist-message-box')
+        if (message_box){
+            message_box.remove()
+        }
+
+        event.preventDefault();
+        let loader_element = document.getElementsByClassName('wishlist-action-loader '+product_id)[0]
+        let wishlist_button_container = document.getElementsByClassName('wishlist-button-container '+product_id)[0]
+        loader_element.style.display = 'block'
+        wishlist_button_container.style.display = 'none'
+     
+        let wishlist = null
+
+
+        try{
+            wishlist = this.state.wishlist.find(ws => ws.product_variant.id === product_id)
+        }catch (error){
+        }
+        
+
+
+        if(wishlist){
+
+            const data = {
+                wishlist_id:wishlist.id
+            }
+    
+            axios
+            .post(baseUrl+'wishlist/delete/',
+            data)
+            .then((res)=>{
+                this.fetchWishlist();
+                const prodVar = this.state.productVariants.map((pv) => 
+                    pv.id===product_id? {...pv, in_wishlist:false}:pv
+                );
+                this.setState({productVariants:prodVar})
+            }).catch((err)=>{
+            }).then(()=>{
+                loader_element.style.display = 'none'
+                wishlist_button_container.style.display = 'block' 
+                this.createPopUp('Removed from your wishlist',2000)
+   
+            })
+            
+        }else{
+            loader_element.style.display = 'none'
+            wishlist_button_container.style.display = 'block'
+        }
+    }
+
 
 
 
@@ -116,6 +264,7 @@ class Products extends PureComponent {
                 this.fetchProductVariants(category,page)
             }
         }else{
+            
             let url = `${baseUrl}product-variants/?page=${page}`
             axios
             .get(url)
@@ -123,12 +272,27 @@ class Products extends PureComponent {
                 this.setState({productVariants: response.data.results});
                 this.setState({totalItems:response.data.count});
             }).catch((error)=>{
-                console.log(error)
             })
             window.scrollTo(0,0)           
         }
+       
+    }
 
+
+    wishlistCheck = (product) => {
         
+        if(this.props.currentUser){
+            if (product.in_wishlist){               
+                return <FaHeart className={`text-success wishlist-remove-btn ${product.id}`} onClick={ event => this.removeWishlist(event,product.id)}/>
+            }else{
+                return <FaHeart className={`wishlist-remove-btn ${product.id}`} onClick={ event => this.addToWishlist(event,product.id)}/>
+            }
+        }else{
+            return <Link to={'/user/login/'} className={`text-success wishlist-remove-btn ${product.id}`}>
+                       <FaHeart className={`wishlist-remove-btn ${product.id}`}/>
+                   </Link>
+        }
+      
     }
 
 
@@ -136,15 +300,14 @@ class Products extends PureComponent {
     render() { 
 
         const {category,query} = this.props
-
+        parseInt(category)
         const {productCategories,
             productVariants,
             productLoader,
             totalItems,
             currentPage
         }  = this.state
-
-        const item_per_page = 6
+        const item_per_page = 3
         let pages_nums = Math.ceil(totalItems/item_per_page)
 
         const pageRange = 2;
@@ -165,18 +328,31 @@ class Products extends PureComponent {
 
         for (let i = startPage; i <= endPage; i++) {
             pages.push(
-                currentPage===i?
-                <button
-                key={i} 
+                currentPage==i?
+                <Link
+                key={i}
+                to={
+                    category==='search'?
+                    `/search/?query=${query}`:
+                    category===undefined?`/?page=${i}`:
+                    `/${category}/?page=${i}`
+                }
                 className="btn btn-sm btn-outline-primary me-1 active">
                     {i}
-                </button>
-                :<button
+                </Link>
+
+                :<Link
                 key={i} 
+                to={
+                    category==='search'?
+                    `/search/?query=${query}`:
+                    category===undefined?`/?page=${i}`:
+                    `/${category}/?page=${i}`
+                }
                 className="btn btn-sm btn-outline-primary me-1"
                 onClick={() => this.changePage(i)}>
                     {i}
-                </button>                
+                </Link>                
             )
         }
 
@@ -216,14 +392,24 @@ class Products extends PureComponent {
                             productVariants&&!productLoader&&
                             productVariants.map((product) => (
                                 <Link
-                                    className="product-details-link mt-3" 
+                                    className={`product-details-link mb-5 ${window.innerWidth > 500?"mt-3":"mt1"}` }
                                     key={product.id}
                                     to={`/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/${product.product_color_variant.product.id}/`}
                                 >
-                                    <div className="each-product-container card  mx-2 mb-5" style={{ width: "14rem" ,height:"360px"}}>
+                                    <div className="each-product-container card  mx-2" >
                                       
+                                        <div className={`product-add-wishlist-icon`}>
+
+                                            {<div className={`wishlist-action-loader ${product.id}`}></div>}
+                                             
+                                            <div className={`wishlist-button-container ${product.id}`}>
+                                                {this.wishlistCheck(product)}
+                                            </div>
+
+                                        </div>
+
                                         <img
-                                            style={{ width: "8rem", margin: "10px auto" }}
+                                            
                                             src={
                                                 product.product_color_variant.image1
                                                     ? product.product_color_variant.image1
@@ -232,23 +418,32 @@ class Products extends PureComponent {
                                             className="card-img-top"
                                             alt="..."
                                         />
+
+                                        
                         
-                                        <div className="card-body">
-                                            <h6 className="card-title">
-                                                {product.product_color_variant.product.name +
-                                                    " (" +
-                                                    product.product_color_variant.color.name +
-                                                    ", " +
-                                                    product.size.name +
-                                                    ")"}
-                                            </h6>
+                                        <div className={window.innerWidth > 500?"card-body":""}>
+
                                             <h6 className="card-title">Rs.{
                                                     product.price-
                                                     product.price/100*product.offer                                    
                                                 }
+                                                <span className="text-secondary text-decoration-line-through ms-2">Rs.{product.price}</span>
+                                                <span className="text-success ms-2" >{product.offer}%</span>
                                             </h6>
+
+                                            <p className="card-title">
+                                                {product.product_color_variant.product.name +
+                                                    " (" +
+                                                    product.product_color_variant.color.name+
+                                                    ", " +
+                                                    product.size.name +
+                                                    ")"}
+                                            </p>
+
                                         </div>
                                     </div>
+
+
                                 </Link>
                             ))
                         }
@@ -265,23 +460,35 @@ class Products extends PureComponent {
                             !productLoader&&productVariants.length>0&&
                             <div className="w-100 d-flex justify-content-center mt-3">
 
-                                <button 
+                                <Link 
+                                 to={
+                                    category==='search'?
+                                    `/search/?query=${query}&page=${currentPage!==1?currentPage-1:currentPage}`:
+                                    category===undefined?`/?page=${currentPage!==1?currentPage-1:currentPage}`:
+                                    `/${category}/?page=${currentPage!==1?currentPage-1:currentPage}`
+                                }
                                 className="btn btn-sm btn-outline-primary me-2"
                                 onClick={() => this.changePage(
                                     currentPage!==1?currentPage-1:currentPage
                                 )}>
                                     prev
-                                </button>
+                                </Link>
 
                                 {pages}
 
-                                <button 
+                                <Link 
+                                 to={
+                                    category==='search'?
+                                    `/search/?query=${query}&page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
+                                    category===undefined?`/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
+                                    `/${category}/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`
+                                }
                                 className="btn btn-sm btn-outline-primary ms-1"
                                 onClick={()=>this.changePage(
                                     currentPage!==pages_nums?currentPage+1:currentPage
                                 )}>
                                     next
-                                </button>
+                                </Link>
 
                             </div>
                         }
@@ -294,10 +501,11 @@ class Products extends PureComponent {
     }
 }
 
-export default function FilterHandler(){
+export default function FilterHandler({currentUser}){
     const {category,} = useParams();
     const [searchParams] = useSearchParams();
     const query =  searchParams.get('query');
-    return <Products query={query} category={category} />
+    const page = searchParams.get('page')
+    return <Products query={query} category={category} page={page} currentUser={currentUser} />
 };
 

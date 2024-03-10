@@ -185,11 +185,11 @@ class Cart extends PureComponent {
 
 
                                     <div className="card">
-                                        <div className="card-body d-flex justify-content-between align-items-center">
-                                            <Link to={'/user/order/checkout/'} className="btn btn-warning btn-block btn-lg">
+                                        <div className= {`card-body ${window.innerWidth>500?'d-flex justify-content-between align-items-center':'d-block'}`}>
+                                            <Link to={'/user/order/checkout/'} className={`btn btn-warning btn-block btn-lg`}>
                                                 Proceed to Pay
                                             </Link>
-                                            <h5 className=" p-1 me-5">Total Amount : Rs. {this.state.totalAmount}</h5>
+                                            <h5 className={`${window.innerWidth>500?" p-1 me-5":"mt-2"}`}>Total Amount : Rs. {this.state.totalAmount}</h5>
                                         </div>
                                         
                                     </div>

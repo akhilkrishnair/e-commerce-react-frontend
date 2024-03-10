@@ -18,6 +18,7 @@ import ForgotPassword from "../Forgot_Password";
 import ResetPassword from "../Reset_password";
 import EmailVerificationWithParam from "../Email_verification";
 import OrderSuccess from "../OrderSuccess";
+import FilterHandler from "../Products";
 
 
 
@@ -118,8 +119,9 @@ class Router extends PureComponent{
                
                 <div className="main-container">
                     <Routes>
+                        <Route path="/" element={<FilterHandler currentUser={this.state.currentUser} />} />
                         <Route path="/" element={<Products search_item={this.state.searchItems} />} />
-                        <Route path="/:category/" element={<Products search_item={this.state.searchItems} />} />
+                        <Route path="/:category/" element={<Products  search_item={this.state.searchItems} />} />
                         <Route path="/user/registration/" element={<Registration />} />
                         <Route path="/user/forgot-password/" element={<ForgotPassword/>} />
                         <Route path="/user/reset-password/:userId/:token/" element={<ResetPassword/>}/>

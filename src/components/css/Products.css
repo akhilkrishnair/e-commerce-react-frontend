@@ -8,8 +8,12 @@
     text-decoration: none;
     transition: 0.4s;
 }
-.product-details-link:hover{
-    scale: 1.04;
+
+.product-details-link .each-product-container{
+    transition: 0.3s;
+}
+.product-details-link .each-product-container:hover{
+    box-shadow: 0 0 11px 1px rgb(186, 185, 185);
 }
 
 .categories-container{
@@ -49,9 +53,29 @@
     width: 86%;
     border-left: solid 1px grey;
 }
+
+.products-container .product-details-link .each-product-container{
+    width: 15rem;
+    height: 360px;
+    position: relative;
+
+}
+.product-details-link .each-product-container img{
+    width: 8rem;
+    margin: 10px auto;
+}
 .products-container .each-product-container .card-body{
     display: flex;
     flex-direction: column-reverse;
+}
+
+.product-add-wishlist-icon{
+    position: absolute;
+    right: 10px;
+    padding: 3px;
+}
+.product-add-wishlist-icon svg{
+    color: rgb(174, 172, 172);
 }
 
 
@@ -74,4 +98,82 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.product-add-wishlist-icon{
+    height: 30px;
+    width: 25px;
+}
+.wishlist-action-loader{
+    display: none;
+    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    border: 3px solid #f3f3f3; /* Light grey */
+    border-top: 3px solid #3498db; /* Blue */
+    border-right: 3px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+}
+
+
+
+
+
+
+
+/* media queries starts */
+@media (max-width:768px){
+
+    .category-product-container{
+         justify-content: center;
+    }
+
+    .category-product-container .categories-container h5,
+    .category-product-container .categories-container{
+        display: none;
+    }
+
+    .category-product-container .products-container{
+        border-left: none;
+    }
+
+    .products-container .product-details-link .each-product-container{
+        width: 16rem;
+    }
+
+    .product-details-link .each-product-container img{
+        width: 6rem;
+        margin: 10px auto;
+    }
+}
+
+
+@media (max-width:500px){
+    .category-product-container{
+        padding: 0;
+    }
+    .products-container .product-details-link{
+        display: flex;
+        justify-content: center;
+    }
+    .products-container .product-details-link .each-product-container{
+        width: 10rem;
+        height: 260px;
+        padding: 10px;
+    }
+    .product-details-link .each-product-container img{
+        width: 6rem;
+        margin: 10px auto;
+    } 
+    .product-details-link .each-product-container div{
+       height: 100px;
+    }     
+    .product-details-link .each-product-container h6{
+        font-weight: 400;
+    }
+}
+
+
+
+
 
