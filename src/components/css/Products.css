@@ -79,6 +79,20 @@
 }
 
 
+.filter-by-price{
+    text-decoration: none;
+    color: rgb(26, 26, 26);
+    padding: 5px 10px;
+    outline: solid 1px grey;
+    margin-left: 10px;
+    border-radius: 5px;
+}
+.filter-by-price.active{
+    background-color: rgb(84, 84, 84);
+    color: white;
+}
+
+
 .products-loader-container{
     height: 100vh;
     padding-top: 100px;
@@ -86,8 +100,9 @@
 .products-loader-container .products-loader{
     margin-left: 40%;
     margin-top: 15%;
-    border: 10px solid #f3f3f3; /* Light grey */
-    border-top: 10px solid #3498db; /* Blue */
+    border: 10px solid rgb(236, 236, 236); /* Light grey */
+    border-top: 10px solid #3498db; 
+    border-right: 10px solid #3498db; 
     border-radius: 50%;
     width: 80px;
     height: 80px;

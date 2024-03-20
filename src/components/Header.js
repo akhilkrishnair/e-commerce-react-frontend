@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Component } from "react";
 import { Link } from "react-router-dom";
-import { FaCartArrowDown } from "react-icons/fa";
+import {  FaUser,FaHome, FaShoppingBag,  } from "react-icons/fa";
 import '../components/css/Header.css';
 import { access_token,baseUrl } from "../App";
 
@@ -71,15 +71,15 @@ class Header extends Component {
 
 
      
-    render() { 
+    render() {
+        
         return (
             <div className="header-section">
                     <nav className="navbar bg-dark navbar-expand-lg " data-bs-theme="dark" >
                         <div className="container-fluid">
                             <h3>
                                 <Link className="navbar-brand mx-5" 
-                                   to={"/"}
-                                   
+                                   to={"/"}   
                                 >
                                     E-Shop
                                 </Link>
@@ -89,47 +89,46 @@ class Header extends Component {
                             </button>
                             <div className="collapse navbar-collapse ms-4" id="navbarSupportedContent">
                             <ul className="ms-4 navbar-nav me-auto mb-2 mb-lg-0">
-                                
-                                <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Dashbord
-                                </a>
-                                <ul className="dropdown-menu">
-                                    {
-                                        this.state.currentUser?
-                                            <>
-                                                <li>
-                                                    <span className="dropdown-item" >Hi 
-                                                        {
-                                                            this.state.first_name && this.state.last_name?
-                                                            " "+this.state.first_name+" "+this.state.last_name:
-                                                            " "+this.state.email
-                                                        }
-                                                    </span>
-                                                </li>
-                                                <li><Link className="dropdown-item" to={'/user/dashbord/profile/'} >Profile</Link></li>
 
-                                            </>:
-                                            <>
+
+                                {
+                                !this.state.currentUser?
+                                <li className="nav-item dropdown">
+                                <a className="nav-link active dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <FaUser className="fs-5" /> 
+                                </a>
+                                    
+                                        
+                                        <ul className='dropdown-menu'>
+                                    
                                                 <li><Link className="dropdown-item" to={"/user/registration"} >Register</Link></li>
                                                 <li><Link className="dropdown-item"  to={"/user/login/"}>Log in</Link></li>
-                                            </>
                                         
-                                    }
-                                </ul>
+                                        </ul>
+                                </li>:
+
+                                <li className="nav-item text-light ms-1">
+                                    <Link className="nav-link active" to={'/user/dashbord/profile/'} > <FaUser className="fs-5" /> </Link>
                                 </li>
+                                }
+
                                 <li className="nav-item ms-1">
-                                <Link className="nav-link active" aria-current="page" to={'/'} >Home</Link>
+                                <Link className="nav-link active" aria-current="page" to={'/'} ><FaHome className="fs-5" /></Link>
                                 </li>
 
                                 {
                                     this.state.currentUser&&
                                         <li className="nav-item ms-1">
                                             <Link className="nav-link active" aria-current="page" to={'/user/cart/'} >
-                                                Cart 
-                                                <span className="p-1" >
-                                                    <FaCartArrowDown/> {this.props.cart_count&&this.props.cart_count>0?this.props.cart_count:null}
-                                                </span> 
+                                                    
+                                                    <span className="p-1" >
+                                                        <FaShoppingBag className="fs-5" /> 
+                                                        {
+                                                            this.props.cart_count>0&&
+                                                            <span className="header-cart-icon">{this.props.cart_count}</span> 
+                                                        }
+                                                    </span> 
+
                                             </Link>
                                         </li>
 
@@ -138,8 +137,8 @@ class Header extends Component {
 
                             </ul>
                             <div className="d-flex col-lg-6" role="search">
-                                <input className="form-control me-2" name="searchItems" 
-                                type="search" placeholder="Search" aria-label="Search"
+                                <input className="form-control me-2 border-light" name="searchItems" 
+                                type="search" placeholder="Search products" aria-label="Search"
                                 onChange={this.searchItems}
                                 />
                                 <Link 

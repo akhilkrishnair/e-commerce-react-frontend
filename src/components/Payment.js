@@ -13,7 +13,8 @@ class PaymentComponent extends PureComponent {
         super(props);
         this.state = {
             orderSuccess:null,
-            loader:false
+            loader:false,
+            razorOrderLimitError:""
         };
     };
 
@@ -23,13 +24,15 @@ class PaymentComponent extends PureComponent {
 
     initiatePayment = async () => {
         this.setState({loader:true})
-        const {order_address_id,
-        
+
+        const {order_address_id,       
             cart_counter,
             fetch_cart} = this.props
         try {
             const response = await axios.post( baseUrl+'razorpay-payment-request/',
             {order_address_id:order_address_id})
+
+            this.setState({amount:response.data.razor_order.amount})
 
             const options = {
                 key: 'rzp_test_L8VApKZTzn8SO7',
@@ -82,20 +85,22 @@ class PaymentComponent extends PureComponent {
                     }
                 }               
             };
-
+            
             const rzp = new window.Razorpay(options);
             rzp.open();
             
 
         } catch (error) {
             console.error('Error initiating payment:', error);
-            if (error.response.data.message = "stock_error"){
+            if (error.response.data.message === "stock_error"){
                 this.props.out_of_stock_handle(true)
+            }else{
+                this.setState({razorOrderLimitError:error.response.data.message})
             }
-            console.log()
         } finally {
             this.setState({loader:false})
         };
+
 
     };
 
@@ -109,12 +114,15 @@ class PaymentComponent extends PureComponent {
                     {   
                         !this.state.loader?
                         <div className='w-50'>
-                            <button className='btn btn-primary w-100' onClick={this.initiatePayment}>Pay Now</button>
+                            <button className='btn btn-primary w-100' onClick={this.initiatePayment}>
+                                {
+                                    this.state.razorOrderLimitError?this.state.razorOrderLimitError:"Pay Now"
+                                }                    
+                            </button>
                         </div>:
                         <div className='w-50'>
                             <div className='payment-loader'></div>
                         </div>
-
                     }
                 </>
 

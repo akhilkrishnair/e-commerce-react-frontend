@@ -21,7 +21,7 @@ class Footer extends Component {
                         ><i className="fab fa-instagram"></i></a>
 
                     <a className="btn btn-outline-light btn-floating m-1" href="#!" role="button"
-                        ><i className="fab fa-linkedin-in"></i></a>
+                        ><i className="fab fa-linkedin"></i></a>
 
                     <a className="btn btn-outline-light btn-floating m-1" href="#!" role="button"
                         ><i className="fab fa-github"></i></a>
@@ -32,8 +32,8 @@ class Footer extends Component {
 
                 
                 <div className="text-center p-3" style={{backgroundColor : "rgba(0, 0, 0, 0.2)"}}>
-                    © 2024 Copyright:
-                    <a className="text-white" href="https://mdbootstrap.com/">Eshop.com</a>
+                    © 2024 Copyright :
+                    <span clpssName="text-white"> Eshop.com</span>
                 </div>
             
             </footer>

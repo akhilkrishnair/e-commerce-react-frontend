@@ -19,75 +19,118 @@ class Products extends PureComponent {
             currentPage:1,
             wishlist:null,
             wishlistActionLoader:false,
+            currentUser:false,
+            activeFilter:'',
         };
     }
 
     componentDidMount() {
+        this.fetchProfile();
         window.scrollTo(0,0);
         this.fetchCategory();
-        const {category} = this.props
-        this.fetchProductVariants(category);
-
+        this.fetchWishlist();
+        const {category,price,page} = this.props
+        this.fetchProductVariants(category,page?parseInt(page):false,price);
+        this.handleActiveClass(price);
     }
 
     componentDidUpdate(prevValue){
         const {category,query} = this.props
  
-        if(category !== prevValue.category||query!==prevValue.query){
-            if (category === 'search' && query !== prevValue.query){
-                this.searchProduct(query)
-                this.setState({currentPage:1})
-            }else{
-                this.fetchProductVariants(category);
-            }
-        }
-    };
-
-
-    fetchProductVariants = async (category,page=null) => {
-        
-        if (category==='search'){  
-            const search_page = parseInt(this.props.page)
-            if(search_page){
-                this.setState({currentPage:search_page})
-            } 
-            this.searchProduct(this.props.query,this.props.page)
-        }else if(category===undefined&&this.props.page){
-            this.setState({currentPage:this.props.page})
-            this.changePage(this.props.page)
-        }else{
-            this.setState({productLoader:true})
+        if (category === 'search' && query !== prevValue.query){
+            this.searchProduct(query)
             this.setState({currentPage:1})
-            let url = baseUrl+"product-variants/"
-    
-            if (category){
-                this.setState({currentPage:1})
-                url = `${baseUrl}product-variants/?category=${category}`
-            }
-    
-            if(page){
-                this.setState({currentPage:page})
-                url = `${baseUrl}product-variants/?category=${category}&page=${page}`
-            }
-    
-            axios
-                .get(url)
-                .then((response) => {
-                    this.setState({ productVariants: response.data.results });
-                    this.setState({totalItems:response.data.count});
-                    if (this.props.currentUser){
-                        this.fetchWishlist()
+        }
+
+    };
+
+
+    fetchProfile = () => {
+        axios
+        .get("http://127.0.0.1:8000/api/user/profile/")
+        .then((res) => {
+            this.setState({ currentUser: true });
+        })
+        .catch((error) => {
+            console.log(error);
+            this.setState({ currentUser: false });
+        });
+    }
+
+    changeCategory = (category) => {
+        this.setState({currentPage:1})
+        this.setState({activeFilter:''})
+        let url = `${baseUrl}product-variants/?category=${category}`
+        this.productVariantFetch(url)
+    }
+
+
+    fetchProductVariants = (category,page=null,price=null) => {
+
+        const _page = parseInt(this.props.page)
+        const price_filter = this.props.price
+
+        if (category==='search'){  
+            if(_page){
+                this.setState({currentPage:_page})
+            } 
+            this.searchProduct(this.props.query,_page)
+        }else{
+            this.setState({currentPage:1})
+
+            this.setState({productLoader:true})           
+            let url = ''
+
+            if (category) {
+                if (category&&page){
+                    this.setState({currentPage:page})
+                    if(price_filter){
+                        url = `${baseUrl}product-variants/?category=${category}&page=${page?page:_page}&price=${price_filter}` 
+                    }else{
+                        url = `${baseUrl}product-variants/?category=${category}&page=${page?page:_page}` 
+                    }               
+                }
+                if (category&&!page){
+                    this.setState({currentPage:1})
+                    if(price){
+                        if (price_filter){
+                            this.setState({currentPage:page===false?1:page?page:_page})
+                            url = `${baseUrl}product-variants/?category=${category}${_page?`&page=${page===false?1:page?page:_page}`:''}&price=${price?price:price_filter}`                   
+                        }else{
+                            url = `${baseUrl}product-variants/?category=${category}${page?`&page=${page}`:''}&price=${price}` 
+                        }
+                    }else{
+                        url = `${baseUrl}product-variants/?category=${category}`
                     }
-     
-                })
-                .catch((error) => {
-                }).then(()=>{
-                    this.setState({productLoader:false})
-                })
+                }
+
+            }
+            
+            this.productVariantFetch(url)
 
         }
         
     };
+
+  
+    productVariantFetch = (url) => {
+        axios
+        .get(url)
+        .then((response) => {
+            this.setState({ productVariants: response.data.results });
+            this.setState({totalItems:response.data.count});
+            if (this.props.currentUser){
+                this.fetchWishlist()
+            }
+            console.log(response)
+
+        })
+        .catch((error) => {
+        }).then(()=>{
+            this.setState({productLoader:false})
+            window.scrollTo(0,0)
+        })
+    }
 
 
     fetchCategory = () => {
@@ -98,8 +141,24 @@ class Products extends PureComponent {
         })
     };
 
+    
+    productPriceFilter = () => {
+        const cate =  this.props.category
+        axios
+        .get(`${baseUrl}product-variants/?category=${cate}&price=low`)
+        .then((response) => {
+            console.log("product filter pr",response)
+        })
+        .catch((error) => {
+        }).then(()=>{
 
+        })
 
+    }
+
+    handleActiveClass = (filter) => {
+        this.setState({activeFilter:filter})
+    }
 
     searchProduct = (search_item,page=null) => {
         this.setState({productLoader:true})
@@ -159,7 +218,7 @@ class Products extends PureComponent {
           popUpElement.remove();
         }, duration);
       }
-
+      
 
     addToWishlist = (event,product_variant_id) => {
         
@@ -218,7 +277,6 @@ class Products extends PureComponent {
         }
         
 
-
         if(wishlist){
 
             const data = {
@@ -239,7 +297,7 @@ class Products extends PureComponent {
                 loader_element.style.display = 'none'
                 wishlist_button_container.style.display = 'block' 
                 this.createPopUp('Removed from your wishlist',2000)
-   
+                
             })
             
         }else{
@@ -281,7 +339,7 @@ class Products extends PureComponent {
 
     wishlistCheck = (product) => {
         
-        if(this.props.currentUser){
+        if(this.state.currentUser){
             if (product.in_wishlist){               
                 return <FaHeart className={`text-success wishlist-remove-btn ${product.id}`} onClick={ event => this.removeWishlist(event,product.id)}/>
             }else{
@@ -298,16 +356,15 @@ class Products extends PureComponent {
 
 
     render() { 
-
-        const {category,query} = this.props
-        parseInt(category)
+        const {category,query,price} = this.props
         const {productCategories,
             productVariants,
             productLoader,
             totalItems,
-            currentPage
+            currentPage,
+            activeFilter
         }  = this.state
-        const item_per_page = 3
+        const item_per_page = 8
         let pages_nums = Math.ceil(totalItems/item_per_page)
 
         const pageRange = 2;
@@ -328,7 +385,7 @@ class Products extends PureComponent {
 
         for (let i = startPage; i <= endPage; i++) {
             pages.push(
-                currentPage==i?
+                currentPage===i?
                 <Link
                 key={i}
                 to={
@@ -346,7 +403,7 @@ class Products extends PureComponent {
                 to={
                     category==='search'?
                     `/search/?query=${query}`:
-                    category===undefined?`/?page=${i}`:
+                    category&&price?`/${category}/?page=${i}&price=${price}`:
                     `/${category}/?page=${i}`
                 }
                 className="btn btn-sm btn-outline-primary me-1"
@@ -371,7 +428,7 @@ class Products extends PureComponent {
                                     key={pc.id} 
                                     to={`/${pc.slug}/`} 
                                     className="each-category" 
-                                    onClick={()=> this.fetchProductVariants(pc.slug)} >
+                                    onClick={()=> this.changeCategory(pc.slug)} >
                                         <div>
                                             {pc.name}
                                         </div>
@@ -380,119 +437,154 @@ class Products extends PureComponent {
                             }
                         
                         </div>
-                    <div className="products-container pt-4">
-
-                        {
-                            query&&category==='search'&&
-                            <h4 className="text-center mb-5 w-100" >searched for "{query}"</h4>
-                        }
 
 
-                        {
-                            productVariants&&!productLoader&&
-                            productVariants.map((product) => (
-                                <Link
-                                    className={`product-details-link mb-5 ${window.innerWidth > 500?"mt-3":"mt1"}` }
-                                    key={product.id}
-                                    to={`/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/${product.product_color_variant.product.id}/`}
-                                >
-                                    <div className="each-product-container card  mx-2" >
-                                      
-                                        <div className={`product-add-wishlist-icon`}>
 
-                                            {<div className={`wishlist-action-loader ${product.id}`}></div>}
-                                             
-                                            <div className={`wishlist-button-container ${product.id}`}>
-                                                {this.wishlistCheck(product)}
+                        <div className="products-container pt-4">
+                            
+                            {
+                                category !== 'search'&&
+                                <div className="w-100 ms-2 mb-5">  
+                                    <Link
+                                    className={`filter-by-price ${activeFilter==='low'?'active':''}`}
+                                    to={`/${category}/?page=1&price=low`}
+                                    onClick={
+                                        () => {
+                                            this.fetchProductVariants(category,false,'low')
+                                            this.handleActiveClass('low')
+                                        }
+                                    } 
+                                    >
+                                        Price low to high
+                                    </Link>
+                                
+                                    <Link
+                                    className={`filter-by-price ${activeFilter==='high'?'active':''}`}
+                                    to={`/${category}/?page=1&price=high`}
+                                    onClick={() => {
+                                        this.fetchProductVariants(category,false,'high')
+                                        this.handleActiveClass('high')
+                                    }}
+                                    >
+                                        Price high to low
+                                    </Link>               
+                               </div>
+                            }
+
+
+                            {
+                                query&&category==='search'&&
+                                <h4 className="text-center mb-5 w-100" >searched for "{query}"</h4>
+                            }
+
+
+                            {
+                                productVariants&&!productLoader&&
+                                productVariants.map((product) => (
+                                    <Link
+                                        className={`product-details-link mb-5 ${window.innerWidth > 500?"mt-3":"mt1"}` }
+                                        key={product.id}
+                                        to={`/${product.product_color_variant.product.category.slug}/${product.product_color_variant.product.slug}/${product.product_color_variant.color.name}/${product.size.name}/${product.product_color_variant.product.id}/`}
+                                    >
+                                        <div className="each-product-container card  mx-2" >
+                                        
+                                            <div className={`product-add-wishlist-icon`}>
+
+                                                {<div className={`wishlist-action-loader ${product.id}`}></div>}
+                                                
+                                                <div className={`wishlist-button-container ${product.id}`}>
+                                                    {this.wishlistCheck(product)}
+                                                </div>
+
                                             </div>
 
-                                        </div>
-
-                                        <img
-                                            
-                                            src={
-                                                product.product_color_variant.image1
-                                                    ? product.product_color_variant.image1
-                                                    : product.product_color_variant.product.image_main
-                                            }
-                                            className="card-img-top"
-                                            alt="..."
-                                        />
-
-                                        
-                        
-                                        <div className={window.innerWidth > 500?"card-body":""}>
-
-                                            <h6 className="card-title">Rs.{
-                                                    product.price-
-                                                    product.price/100*product.offer                                    
+                                            <img
+                                                
+                                                src={
+                                                    product.product_color_variant.image1
+                                                        ? product.product_color_variant.image1
+                                                        : product.product_color_variant.product.image_main
                                                 }
-                                                <span className="text-secondary text-decoration-line-through ms-2">Rs.{product.price}</span>
-                                                <span className="text-success ms-2" >{product.offer}%</span>
-                                            </h6>
+                                                className="card-img-top"
+                                                alt="..."
+                                            />
 
-                                            <p className="card-title">
-                                                {product.product_color_variant.product.name +
-                                                    " (" +
-                                                    product.product_color_variant.color.name+
-                                                    ", " +
-                                                    product.size.name +
-                                                    ")"}
-                                            </p>
-
-                                        </div>
-                                    </div>
-
-
-                                </Link>
-                            ))
-                        }
-
-                        {
-                            productLoader&&
-                            <div className="products-loader-container">
-                                <div className="products-loader "></div>
-                            </div>
-                        }
-
+                                            
                             
-                        {
-                            !productLoader&&productVariants.length>0&&
-                            <div className="w-100 d-flex justify-content-center mt-3">
+                                            <div className={window.innerWidth > 500?"card-body":""}>
 
-                                <Link 
-                                 to={
-                                    category==='search'?
-                                    `/search/?query=${query}&page=${currentPage!==1?currentPage-1:currentPage}`:
-                                    category===undefined?`/?page=${currentPage!==1?currentPage-1:currentPage}`:
-                                    `/${category}/?page=${currentPage!==1?currentPage-1:currentPage}`
-                                }
-                                className="btn btn-sm btn-outline-primary me-2"
-                                onClick={() => this.changePage(
-                                    currentPage!==1?currentPage-1:currentPage
-                                )}>
-                                    prev
-                                </Link>
+                                                <h6 className="card-title">Rs.{
+                                                        product.price-
+                                                        product.price/100*product.offer                                    
+                                                    }
+                                                    <span className="text-secondary text-decoration-line-through ms-2">Rs.{product.price}</span>
+                                                    <span className="text-success ms-2" >{product.offer}%</span>
+                                                </h6>
 
-                                {pages}
+                                                <p className="card-title">
+                                                    {product.product_color_variant.product.name +
+                                                        " (" +
+                                                        product.product_color_variant.color.name+
+                                                        ", " +
+                                                        product.size.name +
+                                                        ")"}
+                                                </p>
 
-                                <Link 
-                                 to={
-                                    category==='search'?
-                                    `/search/?query=${query}&page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
-                                    category===undefined?`/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
-                                    `/${category}/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`
-                                }
-                                className="btn btn-sm btn-outline-primary ms-1"
-                                onClick={()=>this.changePage(
-                                    currentPage!==pages_nums?currentPage+1:currentPage
-                                )}>
-                                    next
-                                </Link>
+                                            </div>
+                                        </div>
 
-                            </div>
-                        }
-                    </div>
+
+                                    </Link>
+                                ))
+                            }
+
+                            {
+                                productLoader&&
+                                <div className="products-loader-container">
+                                    <div className="products-loader "></div>
+                                </div>
+                            }
+
+                                
+                            {
+                                !productLoader&&productVariants.length>0&&
+                                <div className="w-100 d-flex justify-content-center mt-3">
+
+                                    <Link 
+                                    to={
+                                        category==='search'?
+                                        `/search/?query=${query}&page=${currentPage!==1?currentPage-1:currentPage}`:
+                                        category===undefined?`/?page=${currentPage!==1?currentPage-1:currentPage}`:
+                                        price?`/${category}/?page=${currentPage!==1?currentPage-1:currentPage}&price=${price}`:
+                                        `/${category}/?page=${currentPage!==1?currentPage-1:currentPage}`
+                                    }
+                                    className="btn btn-sm btn-outline-primary me-2"
+                                    onClick={() => this.changePage(
+                                        currentPage!==1?currentPage-1:currentPage
+                                    )}>
+                                        prev
+                                    </Link>
+
+                                    {pages}
+
+                                    <Link 
+                                    to={
+                                        category==='search'?
+                                        `/search/?query=${query}&page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
+                                        category===undefined?`/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`:
+                                        price?`/${category}/?page=${currentPage !==pages_nums?currentPage+1:currentPage}&price=${price}`:
+                                        `/${category}/?page=${currentPage!==pages_nums?currentPage+1:currentPage}`
+                                    }
+                                    className="btn btn-sm btn-outline-primary ms-1"
+                                    onClick={()=>this.changePage(
+                                        currentPage!==pages_nums?currentPage+1:currentPage
+                                    )}>
+                                        next
+                                    </Link>
+
+                                </div>
+                            }
+                        </div>
 
 
                 </div>
@@ -501,11 +593,12 @@ class Products extends PureComponent {
     }
 }
 
-export default function FilterHandler({currentUser}){
+export default function FilterHandler(){
     const {category,} = useParams();
     const [searchParams] = useSearchParams();
     const query =  searchParams.get('query');
     const page = searchParams.get('page')
-    return <Products query={query} category={category} page={page} currentUser={currentUser} />
+    const price = searchParams.get('price')
+    return <Products query={query} category={category} page={page} price={price} />
 };
 

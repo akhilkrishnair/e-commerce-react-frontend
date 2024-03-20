@@ -7,7 +7,7 @@ import { Navigation,  Mousewheel } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { access_token,baseUrl } from '../App';
-import {FaArrowLeft,FaArrowRight} from 'react-icons/fa';
+import {FaArrowLeft,FaArrowRight, FaCartArrowDown, FaCartPlus, FaCheck, FaCheckCircle, FaCheckDouble, FaCheckSquare, FaRegCheckCircle, FaUserCheck} from 'react-icons/fa';
 
 class Product_Details extends PureComponent {
     
@@ -19,6 +19,7 @@ class Product_Details extends PureComponent {
             colorVariant:[],
             sizeVariant:[],
             productReviewText:"",
+            productReviewError:"",
             productDescriptionLoading:false,
             productDescription:null,
             productReviewLoading:false,
@@ -227,6 +228,9 @@ class Product_Details extends PureComponent {
                     this.setState({productReviewSubmitted:true})
                 }).catch((error)=>{
                     console.log('err', error)
+                    if (error.response.status === 401){
+                        this.setState({productReviewError:"Login required"})
+                    }
                 }).then(()=>{
                     this.setState({productReviewLoading:false})
                 });
@@ -399,7 +403,7 @@ class Product_Details extends PureComponent {
                                                 </div>:  
                                                 this.state.inCart?
                                                 <div className="add-to-cart ">
-                                                    <NavLink to={'/user/cart/'} className="btn btn-success p-3" >&#x2714; &nbsp; View Cart</NavLink>
+                                                    <NavLink to={'/user/cart/'} className="btn btn-success p-3" ><FaCheckCircle/> &nbsp; View Cart</NavLink>
                                                 </div> :
                                                 <div className="add-to-cart ">
                                                     <button className="btn btn-success p-3" onClick={()=> this.addToCart(singleProduct.id)} >Add to Cart</button>
@@ -422,7 +426,7 @@ class Product_Details extends PureComponent {
                                                 
                                                 {this.state.inWishlist&&
                                                 <div className="add-to-wishlist">
-                                                    <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary p-3">&#x2714; &nbsp; View Wishlist</NavLink>
+                                                    <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary p-3"><FaCheckCircle/> &nbsp; View Wishlist</NavLink>
                                                 </div>}
 
                                                 { this.state.loaderAddWishlist&&
@@ -558,7 +562,7 @@ class Product_Details extends PureComponent {
                
               <br/><br/>
               <hr/>
-              <h4 id='review-and-rating' className='text-center'>Review and Rating</h4><hr/>
+              <h4 id='review-and-rating' className='text-center'>Reviews and Rating</h4><hr/>
 
                 {    
                     
@@ -599,7 +603,7 @@ class Product_Details extends PureComponent {
                                         <button
                                         onClick={() => this.changeReviewPage(
                                             currentPage>1?currentPage-1:currentPage)} 
-                                        className='btn btn-sm btn-outline-primary me-3'>
+                                        className='btn btn-sm btn-outline-dark me-3'>
                                             <FaArrowLeft/>
                                         </button>
                                     }
@@ -609,7 +613,7 @@ class Product_Details extends PureComponent {
                                             <button 
                                             key={page}
                                             onClick={() => this.changeReviewPage(page)}
-                                            className={`me-1 btn btn-sm ${this.state.reviewPaginator.currentPage===page?"btn-primary": "btn-outline-primary"} `}>
+                                            className={`me-1 btn btn-sm ${this.state.reviewPaginator.currentPage===page?"btn-dark": "btn-outline-dark"} `}>
                                             {page}</button>
                                         ))
                                     }
@@ -620,7 +624,7 @@ class Product_Details extends PureComponent {
                                         onClick={() => this.changeReviewPage(
                                             currentPage !==pages?currentPage+1:currentPage
                                         )}
-                                        className='btn btn-sm btn-outline-primary ms-2'>
+                                        className='btn btn-sm btn-outline-dark ms-2'>
                                             <FaArrowRight/>
                                         </button>
                                     }
@@ -646,6 +650,10 @@ class Product_Details extends PureComponent {
                                         {
                                             this.state.productReviewSubmitted&&
                                             <div className='review-submit-response'>review submited</div>
+                                        }
+                                        {
+                                            this.state.productReviewError&&
+                                            <div className='text-danger review-submit-response'>!{this.state.productReviewError}</div>
                                         }
                                         <button type='submit' className='btn btn-sm btn-success w-25'>Submit</button>
                                     </div>:
