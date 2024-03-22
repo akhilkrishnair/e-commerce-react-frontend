@@ -122,7 +122,6 @@ class Products extends PureComponent {
             if (this.props.currentUser){
                 this.fetchWishlist()
             }
-            console.log(response)
 
         })
         .catch((error) => {

@@ -32,8 +32,8 @@ class Footer extends Component {
 
                 
                 <div className="text-center p-3" style={{backgroundColor : "rgba(0, 0, 0, 0.2)"}}>
-                    © 2024 Copyright :
-                    <span clpssName="text-white"> Eshop.com</span>
+                    © 2024 
+                    <span clpssName="text-white"> Eshop</span>
                 </div>
             
             </footer>

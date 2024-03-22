@@ -7,6 +7,8 @@ import {baseUrl} from '../App';
 import { Link } from "react-router-dom";
 import { CollectionLoader } from "./loader_components/CollectionLoader";
 import {  FaCommentDots, FaCreditCard, FaShippingFast, FaUndo } from "react-icons/fa";
+import {Swiper, SwiperSlide} from "swiper/react";
+import { Navigation } from "swiper/modules";
 
 
 
@@ -16,13 +18,16 @@ class Home extends PureComponent {
         super(props);
         this.state = { 
             categories:null,
-            bestDealProducts:null
+            bestDealProducts:null,
+            recentProducts:null,
         };
     }
 
     componentDidMount(){
+        window.scrollTo(0,0)
         this.fetchCategory();
         this.fetchBestDealProducts();
+        this.fetchRecentProducts();
     }
     
     fetchCategory = () => {
@@ -46,8 +51,25 @@ class Home extends PureComponent {
         
     }
 
+    
+    fetchRecentProducts = () => {
+        axios
+        .get(baseUrl+'product/recent-products/')
+        .then((response) => {
+            console.log(response)
+            window.localStorage.removeItem("recentProducts")
+            if (response.data.length > 0){
+                this.setState({recentProducts:response.data})
+            }
+        }).catch((error) => {
+            console.log(error)
+            console.log(JSON.parse(window.localStorage.getItem("recentProducts")))
+            this.setState({recentProducts:JSON.parse(window.localStorage.getItem("recentProducts"))})
+        });
+    };
+
+
     imageChangeHandle = (e,new_img) => {
-        console.log(e.target,new_img)
         e.target.src = new_img
     }
     mouseLeaveHandle = (e,prev_image) => {
@@ -55,11 +77,13 @@ class Home extends PureComponent {
     }
 
     render() {
-        window.scrollTo(0,0)
+
         const {
             categories,
-            bestDealProducts
+            bestDealProducts,
+            recentProducts
         } = this.state
+        console.log("recent ",recentProducts)
         return (
             <>
                 <div className="home-corousile-container">
@@ -145,9 +169,9 @@ class Home extends PureComponent {
                                 className="each-collection-container"
                                 to={`/${c.slug}/`}>
                                 <div className="collection-img-container">
-                                    <img src={c.image}/>
+                                    <img src={c.image} alt={c.slug}/>
                                 </div>
-                                <h6 className="text-center my-3">{c.name}</h6>
+                                <h6 className="text-center">{c.name}</h6>
 
                             </Link>
                         ))
@@ -163,6 +187,7 @@ class Home extends PureComponent {
                         {
                             bestDealProducts&&bestDealProducts.map((bdp) => (
                                 <Link
+                                target="_blank"
                                     to={
                                         `/${bdp.product_color_variant.product.category.slug}/${bdp.product_color_variant.product.slug}/${bdp.product_color_variant.color.name}/${bdp.size.name}/${bdp.product_color_variant.product.id}/`
                                     } 
@@ -189,7 +214,8 @@ class Home extends PureComponent {
                                                 bdp.product_color_variant.image1?
                                                 bdp.product_color_variant.image1:
                                                 bdp.product_color_variant.product.image_main
-                                            }/>
+                                            }
+                                            alt={bdp.product_color_variant.product.slug}/>
                                         
                                     </div>
                                     <div className="best-deal-product-variant-details">
@@ -207,6 +233,71 @@ class Home extends PureComponent {
                     </div>
                 </div>
 {/* today best deal section ends */}
+
+
+{/* recent products section starts */}
+                {
+                    recentProducts&&
+                    
+                    <>
+                        <h3 className="bg-white mt-5 p-3">Recently viewed Products</h3>                   
+                        <Swiper
+                        className="recent-product-swiper"
+                        cssMode={true}
+                        loop={false}
+                        slidesPerView={4}
+                        navigation={true}
+                        modules={[Navigation]} 
+                        width={100*11}
+                        >
+
+                            {
+                                recentProducts.map((rp) => (
+                                    
+                                        <SwiperSlide  className="each-recent-product">
+                                            <Link
+                                             to={`/${rp.product.product_color_variant.product.category.slug}/${rp.product.product_color_variant.product.slug}/${rp.product.product_color_variant.color.name}/${rp.product.size.name}/${rp.product.product_color_variant.product.id}/`} >
+                                                <div className="recent-product-image-container" >
+                                                    <img src={
+                                                        rp.product.product_color_variant.image1?
+                                                        rp.product.product_color_variant.image1:
+                                                        rp.product.product_color_variant.product.image_main
+                                                    }
+                                                    alt={rp.product.product_color_variant.product.slug}
+                                                    />
+                                                </div>
+                                                <div className="recent-product-details">
+                                                    <div className="recent-product-title">
+                                                        {
+                                                        `${rp.product.product_color_variant.product.name} 
+                                                        (${rp.product.product_color_variant.color.name}, ${rp.product.size.name})`
+                                                        }
+                                                    </div>
+                                                    <div className="recent-product-price-detail">
+                                                        <span className="selling-price">
+                                                            Rs.{rp.product.price-(rp.product.price/100*rp.product.offer)}
+                                                        </span>
+                                                        <span className="original-price">
+                                                            Rs.{
+                                                                rp.product.price
+                                                            }
+                                                        </span>
+                                                        <span className="offer">
+                                                            {rp.product.offer}%
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        </SwiperSlide>
+                                    
+                                ))
+                            }
+                        </Swiper>
+                    </>
+                }
+{/* recent products section ends */}
+
+
 
             </>
         );

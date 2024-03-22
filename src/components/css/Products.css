@@ -56,7 +56,7 @@
 
 .products-container .product-details-link .each-product-container{
     width: 15rem;
-    height: 360px;
+    height: 100%;
     position: relative;
 
 }

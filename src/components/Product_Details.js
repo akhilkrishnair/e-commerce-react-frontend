@@ -1,13 +1,13 @@
 import './css/product_details.css';
 import axios from "axios";
 import React ,{ PureComponent } from "react";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, NavLink, json, useParams } from "react-router-dom";
 import {Swiper,SwiperSlide} from 'swiper/react';
 import { Navigation,  Mousewheel } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { access_token,baseUrl } from '../App';
-import {FaArrowLeft,FaArrowRight, FaCartArrowDown, FaCartPlus, FaCheck, FaCheckCircle, FaCheckDouble, FaCheckSquare, FaRegCheckCircle, FaUserCheck} from 'react-icons/fa';
+import {FaArrowLeft,FaArrowRight, FaCheckCircle} from 'react-icons/fa';
 
 class Product_Details extends PureComponent {
     
@@ -61,6 +61,34 @@ class Product_Details extends PureComponent {
     }; 
 
 
+
+    addToRecentProducts = (product_id) => {
+
+        const data = {
+            product:product_id
+        }
+        axios
+        .post(baseUrl+'product/recent-products/',
+        data)
+        .then((response) => {
+            console.log(response)
+        }).catch((error) => {
+            console.log(error)
+
+            let recent_products_local = []           
+            if (window.localStorage.getItem("recentProducts")){
+                recent_products_local = JSON.parse(window.localStorage.getItem("recentProducts"))     
+                console.log("recent product ",recent_products_local)
+            }
+            if(!recent_products_local.find(rp => rp.id === this.state.singleProduct.id)){
+                recent_products_local.push({product:this.state.singleProduct})
+                window.localStorage.setItem("recentProducts",JSON.stringify(recent_products_local))
+            }
+            
+        })
+    }
+
+
     filterProductVariant = () => {
 
         const {slug,color,size} = this.props;
@@ -71,7 +99,8 @@ class Product_Details extends PureComponent {
         });
         this.setState({singleProduct:singleProduct[0]});
         
-
+        this.addToRecentProducts(singleProduct[0].id)
+        
         const colorVariant = this.state.allProducts.filter((p) => {
             return p.product_color_variant.product.slug === slug && 
                     p.size.name === size                   
@@ -94,7 +123,7 @@ class Product_Details extends PureComponent {
             this.filterProductVariant();
         })
         .catch((error) => {
-            console.log("eerroorr "+error)
+            console.log("error ",error)
         });
     };
 
@@ -255,6 +284,7 @@ class Product_Details extends PureComponent {
         const {itemPerPage,currentPage} = this.state.reviewPaginator
         const {singleProduct} = this.state
 
+
         let pages = 0
         if (this.state.productReview){
             pages = Math.round(this.state.productReview.length/itemPerPage)
@@ -290,6 +320,7 @@ class Product_Details extends PureComponent {
                         
                         singleProduct&&
                         <React.Fragment key={singleProduct.id}>
+                            {/* {this.addToRecentProducts(singleProduct.id)} */}
                             <div  className="product-image-container">
                                 <div className="current-image">
                                     <img 
