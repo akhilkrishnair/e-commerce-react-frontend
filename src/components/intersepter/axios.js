@@ -11,7 +11,6 @@ const refresh_token = localStorage.getItem('refresh_token')
             axios.post('http://127.0.0.1:8000/api/user/token/refresh/', {      
             refresh:refresh_token
          });
-         console.log("axios res ",response)
          if (response.status === 200) {
             axios.defaults.headers.common.Authorization = `Bearer ${response.data.access}`;
             localStorage.setItem('access_token', response.data.access);

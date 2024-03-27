@@ -71,14 +71,11 @@ class Product_Details extends PureComponent {
         .post(baseUrl+'product/recent-products/',
         data)
         .then((response) => {
-            console.log(response)
         }).catch((error) => {
-            console.log(error)
 
             let recent_products_local = []           
             if (window.localStorage.getItem("recentProducts")){
                 recent_products_local = JSON.parse(window.localStorage.getItem("recentProducts"))     
-                console.log("recent product ",recent_products_local)
             }
             if(!recent_products_local.find(rp => rp.id === this.state.singleProduct.id)){
                 recent_products_local.push({product:this.state.singleProduct})
@@ -123,7 +120,6 @@ class Product_Details extends PureComponent {
             this.filterProductVariant();
         })
         .catch((error) => {
-            console.log("error ",error)
         });
     };
 
@@ -136,7 +132,6 @@ class Product_Details extends PureComponent {
                 this.setState({productDescription:res.data})
             }
         }).catch((err) => {
-            console.log(err)
         })
     }
 
@@ -160,7 +155,6 @@ class Product_Details extends PureComponent {
             this.props.cartCount();
         })
         .catch((error)=>{
-            console.log(error)
             this.setState({loaderAddCart:false})
         })
     };
@@ -191,7 +185,6 @@ class Product_Details extends PureComponent {
             .then((res)=>{
                 this.setState({inCart:res.data.incart});          
             }).catch((error)=>{
-                console.log(error)
             }).then(() => {
                 this.setState({loaderAddCart:false})
             });
@@ -209,7 +202,6 @@ class Product_Details extends PureComponent {
             .then((res)=>{
                 this.setState({inWishlist:res.data.in_wishlist});           
             }).catch((error)=>{
-                console.log(error)
             }).then(()=>{
                 this.setState({loaderAddWishlist:false})
             })
@@ -226,7 +218,6 @@ class Product_Details extends PureComponent {
                 this.setState({productReview:res.data})
             }
         }).catch((err) => {
-            console.log(err)
         }).then(()=>{
             this.setState({productReviewLoading:false})
         })
@@ -256,7 +247,6 @@ class Product_Details extends PureComponent {
                     this.fetchProductReviews();
                     this.setState({productReviewSubmitted:true})
                 }).catch((error)=>{
-                    console.log('err', error)
                     if (error.response.status === 401){
                         this.setState({productReviewError:"Login required"})
                     }

@@ -35,7 +35,6 @@ class Home extends PureComponent {
         .then((response) => {
             this.setState({categories:response.data})
         }).catch((error) => {
-            console.log(error)
         })
     }
 
@@ -46,7 +45,6 @@ class Home extends PureComponent {
         .then((response) => {
             this.setState({bestDealProducts:response.data.results})
         }).catch((error) => {
-            console.log(error)
         })
         
     }
@@ -56,14 +54,11 @@ class Home extends PureComponent {
         axios
         .get(baseUrl+'product/recent-products/')
         .then((response) => {
-            console.log(response)
             window.localStorage.removeItem("recentProducts")
             if (response.data.length > 0){
                 this.setState({recentProducts:response.data})
             }
         }).catch((error) => {
-            console.log(error)
-            console.log(JSON.parse(window.localStorage.getItem("recentProducts")))
             this.setState({recentProducts:JSON.parse(window.localStorage.getItem("recentProducts"))})
         });
     };
@@ -83,7 +78,6 @@ class Home extends PureComponent {
             bestDealProducts,
             recentProducts
         } = this.state
-        console.log("recent ",recentProducts)
         return (
             <>
                 <div className="home-corousile-container">
@@ -248,7 +242,7 @@ class Home extends PureComponent {
                         slidesPerView={4}
                         navigation={true}
                         modules={[Navigation]} 
-                        width={100*11}
+                        width={ window.innerWidth > 600 ? 100*11: 100*8}
                         >
 
                             {

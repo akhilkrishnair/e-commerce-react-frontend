@@ -36,7 +36,6 @@ class ForgotPassword extends PureComponent{
         data).then((res) => {
             this.setState({linkSend:true})      
         }).catch((error)=>{
-            console.log(error.response.data)
             if (error.response.data.error){
                 this.setState({errors:error.response.data.error})
             }

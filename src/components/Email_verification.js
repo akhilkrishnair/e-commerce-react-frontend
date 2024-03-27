@@ -49,7 +49,6 @@ class EmailVerification extends PureComponent{
 
 
     render(){
-        console.log(this.props)
         const {emailVerified,loading} = this.state
         return(
              

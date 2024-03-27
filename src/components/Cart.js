@@ -49,7 +49,6 @@ class Cart extends PureComponent {
                 this.fetchCart();
             })
             .catch((err)=>{
-                console.log(err)
             })
     };
 
@@ -63,7 +62,6 @@ class Cart extends PureComponent {
                 this.fetchCart();
             })
             .catch((err)=>{
-                console.log(err)
             })
     };
 
@@ -78,7 +76,6 @@ class Cart extends PureComponent {
             this.props.cart_counter();
         })
         .catch((err)=>{
-            console.log(err)
         })
     };
 

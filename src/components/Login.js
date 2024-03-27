@@ -55,7 +55,6 @@ class Login extends Component {
                 return response;
             })
             .catch((error) => {
-                console.log(error)
                 this.setState({ currentUser: false });
                 this.setState({ error: error.response.data });
                 this.setState({loader:false})

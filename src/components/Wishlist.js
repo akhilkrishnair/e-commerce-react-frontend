@@ -28,7 +28,6 @@ class Wishlist extends Component {
             
         })
         .catch((error)=> {
-            console.log(error)
             this.setState({checkedData:true})
         })
     };
@@ -43,7 +42,6 @@ class Wishlist extends Component {
             this.fetchWishlist();
         })
         .catch((error)=>{
-            console.log(error)
         })
     };
 

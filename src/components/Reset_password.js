@@ -38,18 +38,15 @@ class ResetPassword extends PureComponent{
              data)
             .then((res) => {
 
-                console.log(res)
                 localStorage.setItem("refresh_token", res.data.refresh)
                 localStorage.setItem("access_token", res.data.access)
                 window.location.href = "/"
 
              }).catch((error)=>{
-                 console.log(error)
              }).then(()=>{
                 this.setState({loader:false})
              })
         }else{
-            console.log("password and confirm password does not match")
             this.setState({loader:false})
         }
     }

@@ -52,7 +52,6 @@ class Registration extends Component {
             this.setState({registration:true})                    
 
         } catch (error){
-            console.log(error)
             if (error.response.data.non_field_errors){
                 this.setState({errorPassword:error.response.data.non_field_errors[0]})
             }else{

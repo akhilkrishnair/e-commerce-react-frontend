@@ -52,7 +52,6 @@ class Products extends PureComponent {
             this.setState({ currentUser: true });
         })
         .catch((error) => {
-            console.log(error);
             this.setState({ currentUser: false });
         });
     }
@@ -146,7 +145,6 @@ class Products extends PureComponent {
         axios
         .get(`${baseUrl}product-variants/?category=${cate}&price=low`)
         .then((response) => {
-            console.log("product filter pr",response)
         })
         .catch((error) => {
         }).then(()=>{

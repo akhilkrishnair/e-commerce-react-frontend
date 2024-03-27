@@ -35,7 +35,6 @@ class Orders extends Component {
 
 
     render() {
-        console.log(this.state)
         return (
             <>
                 <h4 className="text-center mb-5" >Orders</h4>

@@ -33,7 +33,6 @@ class Order_Details extends PureComponent {
         this.ws = new WebSocket(`${webSocketUrl}${user_id}/`)
 
         this.ws.onopen = () => {
-            console.log('connection opened')
         }
 
         this.ws.onmessage = (e) => {
@@ -44,7 +43,6 @@ class Order_Details extends PureComponent {
         }
 
         this.ws.onclose = () => {
-            console.log('connection closed')
         }
         
     }
@@ -64,7 +62,6 @@ class Order_Details extends PureComponent {
             }
         })
         .catch((error) => {
-            console.log(error);
         })
     }
 

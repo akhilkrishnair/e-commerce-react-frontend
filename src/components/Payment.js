@@ -57,10 +57,8 @@ class PaymentComponent extends PureComponent {
                     ).then((res)=>{
                         fetch_cart();
                         cart_counter();
-                        console.log('order succ ', this.state)
                         this.handleOrderSuccess();
                     }).catch((error)=>{
-                        console.log(error)
                     }); 
           
                 },
@@ -78,9 +76,7 @@ class PaymentComponent extends PureComponent {
                        .post(baseUrl+"razorpay-payment-fail/",
                        {payment_id:response.data.cart_payment.payment_id})
                        .then((resp) => {
-                        console.log(resp)
                        }).catch((err) => {
-                        console.log(err)
                        })
                     }
                 }               

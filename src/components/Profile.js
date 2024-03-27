@@ -31,7 +31,6 @@ class Profile extends PureComponent {
         .then((res) => {
             this.setState({profile:res.data})
         }).catch((err) => {
-            console.log(err);
         })
     }
 
@@ -42,7 +41,6 @@ class Profile extends PureComponent {
                 this.setState({orderAddress:res.data});
             }            
         }).catch((err) => {
-            console.log(err);
         })
     }
 

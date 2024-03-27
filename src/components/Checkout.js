@@ -61,7 +61,6 @@ class Checkout extends PureComponent {
     resetState(){
         let initial_address = this.state.address
         initial_address = {...address_data}
-        console.log("initial ",initial_address)
         this.setState({...this.state.address,address:initial_address})
         
         this.selectedAddressClose();
@@ -85,7 +84,6 @@ class Checkout extends PureComponent {
             this.setState({orderAddress:res.data})
         })
         .catch((err)=>{
-            console.log(err)
         })
     }
 
@@ -116,7 +114,6 @@ class Checkout extends PureComponent {
         add_address = updatingAdrs
         this.setState({...this.state.address,address:add_address})
         
-        console.log(this.state.address)
     }
 
     showHideAddAddress=(action,address_id)=>{
@@ -146,7 +143,6 @@ class Checkout extends PureComponent {
         let add_address = this.state.address
         add_address[name] = value
         this.setState({...this.state.address,address:add_address})
-        console.log("onchange ", this.state.address)
     }
 
     addressSubmit =(action)=>{
@@ -180,12 +176,10 @@ class Checkout extends PureComponent {
                         post(baseUrl+"order-address/",
                         addressData 
                         ).then((response)=>{
-                            console.log(response.data)
                             this.setState({addAddressForm:false})
                             this.resetState();
                             this.fetchOrderAddress();
                         }).catch((error)=>{
-                            console.log(error)
                         })
                         this.setState({addressSubmiting:true})
                         break;
@@ -195,13 +189,11 @@ class Checkout extends PureComponent {
                         put(baseUrl+`order-address/${id}/`,
                         addressData
                         ).then((response)=>{
-                            console.log(response.data)
                             this.setState({addAddressForm:false})
                             this.setState({updateAddressBtn:false})
                             this.resetState();
                             this.fetchOrderAddress();
                         }).catch((error)=>{
-                            console.log(error)
                         })
                         this.setState({addressSubmiting:true})
                         break;
@@ -210,13 +202,11 @@ class Checkout extends PureComponent {
                         axios.
                         delete(baseUrl+`order-address/${id}/`,
                         ).then((response)=>{
-                            console.log(response.data)
                             this.setState({addAddressForm:false})
                             this.setState({updateAddressBtn:false})
                             this.resetState();
                             this.fetchOrderAddress();
                         }).catch((error)=>{
-                            console.log(error)                       
                         });
                         this.setState({addressSubmiting:true})
                         break;
@@ -252,16 +242,13 @@ class Checkout extends PureComponent {
         const data = {
             order_address_id:this.state.orderData.selectedOrderAddressId
         }
-        console.log(data)
 
         axios.
         post(baseUrl+"order/cash-on-delivery/",data)
         .then((res) => {
-            console.log(res)
             this.props.cart_counter();
             this.setState({orderSuccess:"/user/order/success/"})
         }).catch((err) => {
-            console.log(err)
         })
     }
 
