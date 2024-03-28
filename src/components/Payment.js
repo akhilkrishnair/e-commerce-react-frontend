@@ -65,7 +65,7 @@ class PaymentComponent extends PureComponent {
                 prefill: {
                     name: response.data.user.full_name,
                     email: response.data.user.email,
-                    contact: '99999999',
+                    contact: '',
                 },
                 theme: {
                     color: '#3399cc',

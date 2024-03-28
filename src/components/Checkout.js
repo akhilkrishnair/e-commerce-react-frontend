@@ -133,6 +133,7 @@ class Checkout extends PureComponent {
             case 'update':
                 this.setState({addAddressForm:true,updateAddressBtn:true});
                 this.updateAddress(address_id);
+
         }
     }
 

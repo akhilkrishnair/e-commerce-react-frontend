@@ -66,9 +66,9 @@ class Registration extends Component {
     render() {
         return (
             <>
-                <section className="p-5 bg-image registration-background">
+                <section className=" bg-image registration-background">
                     <div className="mask d-flex align-items-center h-25 gradient-custom-3 registration-container">
-                        <div className="container h-100">
+                        <div className="container-fluid h-100">
                             <div className="row d-flex justify-content-center align-items-center h-100">
                                 
                                 <div className="col-12 col-md-9 col-lg-7 col-xl-6">

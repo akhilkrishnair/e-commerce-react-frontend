@@ -47,7 +47,7 @@ class Products extends PureComponent {
 
     fetchProfile = () => {
         axios
-        .get("http://127.0.0.1:8000/api/user/profile/")
+        .get(baseUrl+"user/profile/")
         .then((res) => {
             this.setState({ currentUser: true });
         })
@@ -227,9 +227,11 @@ class Products extends PureComponent {
 
         let loader_element = document.getElementsByClassName('wishlist-action-loader '+product_variant_id)[0]
         let wishlist_button_container = document.getElementsByClassName('wishlist-button-container '+product_variant_id)[0]
-        loader_element.style.display = 'block'
-        wishlist_button_container.style.display = 'none'
-        
+
+        if(window.innerWidth > 700){
+            loader_element.style.display = 'block'
+            wishlist_button_container.style.display = 'none'
+        }
 
         const wishlistData = {            
             product_variant:product_variant_id,
@@ -262,9 +264,12 @@ class Products extends PureComponent {
         event.preventDefault();
         let loader_element = document.getElementsByClassName('wishlist-action-loader '+product_id)[0]
         let wishlist_button_container = document.getElementsByClassName('wishlist-button-container '+product_id)[0]
-        loader_element.style.display = 'block'
-        wishlist_button_container.style.display = 'none'
-     
+
+        if(window.innerWidth > 700){
+            loader_element.style.display = 'block'
+            wishlist_button_container.style.display = 'none'
+        
+        }
         let wishlist = null
 
 

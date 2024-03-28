@@ -13,7 +13,7 @@ import Cart from "../Cart";
 import Empty_Page from "../Empty_Page";
 import UserDetailWrapper from "../Product_Details";
 import Checkout from "../Checkout";
-import { access_token } from "../../App";
+import { access_token,baseUrl } from "../../App";
 import ForgotPassword from "../Forgot_Password";
 import ResetPassword from "../Reset_password";
 import EmailVerificationWithParam from "../Email_verification";
@@ -51,7 +51,7 @@ class Router extends PureComponent{
 
     fetchProfile = () => {
         axios
-        .get("http://127.0.0.1:8000/api/user/profile/")
+        .get(baseUrl+"user/profile/")
         .then((res) => {
             if (res.status===200){
                 this.setState({ currentUser: true });
@@ -69,7 +69,7 @@ class Router extends PureComponent{
 
     fetchCart = async ()=> {
         const cart = await  axios
-            .get("http://127.0.0.1:8000/api/cart/")
+            .get(baseUrl+"cart/")
             .then((res) => {                
                 this.setState({ cartItems: res.data });
                 this.setState({cartChecked:true});
@@ -92,7 +92,7 @@ class Router extends PureComponent{
     };
 
     cartCount=()=>{
-        axios.get('http://127.0.0.1:8000/api/cart/count/',
+        axios.get(baseUrl+'cart/count/',
         ).then((res) => {
             this.setState({cartCount:res.data});
         }).catch((err) => {

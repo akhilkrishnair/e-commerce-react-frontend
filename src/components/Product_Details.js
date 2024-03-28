@@ -1,7 +1,7 @@
 import './css/product_details.css';
 import axios from "axios";
 import React ,{ PureComponent } from "react";
-import { Link, NavLink, json, useParams } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 import {Swiper,SwiperSlide} from 'swiper/react';
 import { Navigation,  Mousewheel } from 'swiper/modules';
 import 'swiper/css';
@@ -47,7 +47,7 @@ class Product_Details extends PureComponent {
 
     componentDidUpdate(prevProps,prevState){
         if (this.props !== prevProps){           
-            this.filterProductVariant();
+            this.filterProductVariant(this.state.allProducts);
         };
         if (this.state !== prevState && access_token){
             this.fetchCart();
@@ -86,25 +86,29 @@ class Product_Details extends PureComponent {
     }
 
 
-    filterProductVariant = () => {
+    filterProductVariant = (res_data_from_fetch) => {
+        let product_variant = res_data_from_fetch
 
+        console.log("res data ",res_data_from_fetch)
+        console.log("filter area ",this.state)
         const {slug,color,size} = this.props;
-        const singleProduct = this.state.allProducts.filter((p) => {
+        const singleProduct = product_variant.filter((p) => {
             return p.product_color_variant.product.slug === slug && 
                     p.product_color_variant.color.name === color && 
                     p.size.name === size
         });
+        console.log("single prod ",singleProduct)
         this.setState({singleProduct:singleProduct[0]});
         
         this.addToRecentProducts(singleProduct[0].id)
         
-        const colorVariant = this.state.allProducts.filter((p) => {
+        const colorVariant = product_variant.filter((p) => {
             return p.product_color_variant.product.slug === slug && 
                     p.size.name === size                   
         }).sort();
         this.setState({colorVariant:colorVariant});
 
-        const sizeVariant = this.state.allProducts.filter((p) => {
+        const sizeVariant = product_variant.filter((p) => {
             return p.product_color_variant.product.slug === slug && 
                     p.product_color_variant.color.name === color                  
         }).sort((a,b) => a.size.name[0]-b.size.name[0]) ;
@@ -117,7 +121,7 @@ class Product_Details extends PureComponent {
         .get(`${baseUrl}product-variants/?product_id=${this.props.id}`)
         .then((response) => {
             this.setState({allProducts:response.data});
-            this.filterProductVariant();
+            this.filterProductVariant(response.data);
         })
         .catch((error) => {
         });
@@ -274,7 +278,6 @@ class Product_Details extends PureComponent {
         const {itemPerPage,currentPage} = this.state.reviewPaginator
         const {singleProduct} = this.state
 
-
         let pages = 0
         if (this.state.productReview){
             pages = Math.round(this.state.productReview.length/itemPerPage)
@@ -294,7 +297,7 @@ class Product_Details extends PureComponent {
         const current_page_first_index = current_page_last_index-itemPerPage
 
         const reviewFiltered = this.state.productReview&&this.state.productReview.slice(current_page_first_index,current_page_last_index)
-
+        console.log(this)
         return (
             <>               
                 <div className="product-main-container">   
@@ -310,7 +313,7 @@ class Product_Details extends PureComponent {
                         
                         singleProduct&&
                         <React.Fragment key={singleProduct.id}>
-                            {/* {this.addToRecentProducts(singleProduct.id)} */}
+
                             <div  className="product-image-container">
                                 <div className="current-image">
                                     <img 
@@ -596,7 +599,9 @@ class Product_Details extends PureComponent {
                                     <div key={pr.id} className='each-review-container'>
                                         <div className='user-details'>
                                             <div className='user-img'>
-                                                <img src={pr.user_info.user_image[1] !=='h'?'http://127.0.0.1:8000'+pr.user_info.user_image:pr.user_info.user_image} />
+                                                <img 
+                                                src={pr.user_info.user_image[1] !=='h'?'http://13.60.61.235'+pr.user_info.user_image:pr.user_info.user_image}
+                                                alt={pr.user_info.user_name} />
                                             </div>
                                             <h6 className='username'>{pr.user_info.user_name}</h6>
                                          
@@ -707,7 +712,7 @@ function UserDetailWrapper({cart_counter}) {
         color={color} 
         size={size}
         id={id} 
-    />;
+    />
 
 };
   

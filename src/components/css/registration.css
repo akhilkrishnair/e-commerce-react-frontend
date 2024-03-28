@@ -2,6 +2,10 @@
 .card-radius{
     border-radius: 15px;
 }
+
+.registration-background{
+  padding: 5%;
+}
 .registration-container{
     height: 400px;
 }
@@ -51,5 +55,10 @@ animation: spin 2s linear infinite;
   }
 
 
+@media (max-width:500px){
+    .registration-background{
+      padding: 0px;
+    }
+}
 
 
