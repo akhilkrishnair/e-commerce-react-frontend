@@ -7,8 +7,8 @@ import axios from "axios";
 
 
 export const access_token = localStorage.getItem('access_token')
-export const baseUrl = "http://13.60.61.235/api/"
-export const webSocketUrl = `ws://13.60.61.235/ws/order-updates/`
+export const baseUrl = "https://akhilkrishna.pythonanywhere.com/api/"
+export const webSocketUrl = `ws://akhilkrishna.pythonanywhere.com/ws/order-updates/`
 
 if (access_token){
     axios.defaults.withCredentials = true;

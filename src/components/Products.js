@@ -524,12 +524,11 @@ class Products extends PureComponent {
                                                 </h6>
 
                                                 <p className="card-title">
-                                                    {product.product_color_variant.product.name +
-                                                        " (" +
-                                                        product.product_color_variant.color.name+
-                                                        ", " +
-                                                        product.size.name +
-                                                        ")"}
+                                                    {
+                                                        `${product.product_color_variant.product.name} 
+                                                         (${product.product_color_variant.color.name !== "no-color" ? product.product_color_variant.color.name+", ":""}
+                                                         ${product.size.name})`
+                                                    }
                                                 </p>
 
                                             </div>

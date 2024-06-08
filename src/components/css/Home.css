@@ -136,10 +136,14 @@
     padding: 15px;
     border: solid 1px rgb(222, 221, 221);
     margin: 10px;
-    height: 100%;
+    height: auto;
 }
 .recent-product-swiper .each-recent-product a{
     text-decoration: none;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .recent-product-swiper .recent-product-image-container{
     width: 95%;
@@ -255,6 +259,10 @@
     }
     .best-deal-product-variant-details .price-and-offer{
         font-size: 14px;
+    }
+
+    .price-and-offer .offer{
+       display: block;
     }
 
 

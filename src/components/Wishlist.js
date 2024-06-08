@@ -80,8 +80,8 @@ class Wishlist extends Component {
                                 <h6>
                                     
                                         Rs.{
-                                            p.product_variant.product_color_variant.product.orginal_price-
-                                            p.product_variant.product_color_variant.product.orginal_price/100*p.product_variant.offer                                    
+                                            p.product_variant.price-
+                                            p.product_variant.price/100*p.product_variant.offer                                    
                                         }                                       
                                     
                                 </h6>

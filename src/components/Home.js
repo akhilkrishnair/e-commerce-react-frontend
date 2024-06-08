@@ -213,7 +213,7 @@ class Home extends PureComponent {
                                         
                                     </div>
                                     <div className="best-deal-product-variant-details">
-                                        <h6 className="title">{`${bdp.product_color_variant.product.name} (${bdp.product_color_variant.color.name}, ${bdp.size.name})`} </h6>
+                                        <h6 className="title">{`${bdp.product_color_variant.product.name} (${bdp.product_color_variant.color.name !=="no-color" ? bdp.product_color_variant.color.name +" ,":"" } ${bdp.size.name})`} </h6>
                                         <div className="price-and-offer">
                                             <span className="selling-price">Rs.{bdp.price-bdp.price/100*bdp.offer}</span>
                                             <span className="orginal-price">Rs.{bdp.price }</span>
@@ -264,7 +264,7 @@ class Home extends PureComponent {
                                                     <div className="recent-product-title">
                                                         {
                                                         `${rp.product.product_color_variant.product.name} 
-                                                        (${rp.product.product_color_variant.color.name}, ${rp.product.size.name})`
+                                                        (${rp.product.product_color_variant.color.name !=="no-color"?rp.product.product_color_variant.color.name +" ,":""}${rp.product.size.name})`
                                                         }
                                                     </div>
                                                     <div className="recent-product-price-detail">
