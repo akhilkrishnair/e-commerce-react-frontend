@@ -7,8 +7,7 @@ import axios from "axios";
 
 
 export const access_token = localStorage.getItem('access_token')
-export const baseUrl =  "http://127.0.0.1:8000/api/"
-// "https://akhilkrishna.pythonanywhere.com/api/" 
+export const baseUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
 export const webSocketUrl = `ws://akhilkrishna.pythonanywhere.com/ws/order-updates/`
 
 if (access_token){
