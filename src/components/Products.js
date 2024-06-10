@@ -479,7 +479,7 @@ class Products extends PureComponent {
                                 <h4 className="text-center mb-5 w-100" >searched for "{query}"</h4>
                             }
 
-
+                            
                             {
                                 productVariants&&!productLoader&&
                                 productVariants.map((product) => (
