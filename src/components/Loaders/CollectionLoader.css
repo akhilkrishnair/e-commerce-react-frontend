@@ -1,0 +1,35 @@
+.each-collection-loader-container{
+    width: 20%;
+    box-shadow: 0px 0px 3px 1px grey ;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+@keyframes collection-loader{
+   100%{
+      background-position: -100% 0;
+   }
+}
+
+.collection-img-loader-container{
+   animation: collection-loader 1s linear infinite  ;
+   background-color: rgb(193, 192, 192);
+   background: linear-gradient(90deg , rgb(193, 192, 192) 30%, rgb(214, 211, 211) 38%, rgb(214, 211, 211) 40%, rgb(193, 192, 192) 48%);
+   background-size: 200% 100%;
+   background-position: 200% 0;
+   width: 96%;
+   height: 145px;
+}
+
+.each-collection-loader-container .title-loader{
+    animation: collection-loader 1s linear infinite;
+    background-color: rgb(193, 192, 192);
+    background: linear-gradient(90deg , rgb(193, 192, 192) 30%, rgb(214, 211, 211) 38%, rgb(214, 211, 211) 40%, rgb(193, 192, 192) 48%);
+    background-size: 200% 100%;
+    background-position: 200% 0; 
+    height: 20px;
+    width: 60%;
+    margin-top: 20px;
+}

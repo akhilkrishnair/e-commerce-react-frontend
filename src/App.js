@@ -1,28 +1,69 @@
-import React, { Component } from "react";
-import "./App.css";
-import Router from "./components/router/Router";
+import React, { PureComponent } from "react";
+import "App.css";
+import PageRouter from "routes/PageRouter";
 import { HashRouter } from "react-router-dom";
-import axios from "axios";
+import { fetchUserProfile } from "api/user";
+import { UserContext,CartContext } from "contexts/contexts";
+import { fetchCartCount } from "api/cart";
 
 
-
-export const access_token = localStorage.getItem('access_token')
-export const baseUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
 export const webSocketUrl = `ws://akhilkrishna.pythonanywhere.com/ws/order-updates/`
 
-if (access_token){
-    axios.defaults.withCredentials = true;
-    axios.defaults.headers.common.Authorization = "Bearer "+ access_token
-}
 
+class App extends PureComponent {
+    constructor(props){
+        super(props)
+        this.state = {
+            userProfile:null,
+            cart:[],
+            cartCount:0
+        }
+    }
 
-class App extends Component {
+    componentDidMount(){
+
+        fetchUserProfile()
+        .then(res => this.setState({userProfile:res.data}))
+        .catch(err => {console.log(err)});
+
+        this.handleFetchCartCount();     
+    }
+
+    handleCartCountCalculate = (count) => {
+        this.setState({cartCount:count})
+    }
+
+    handleFetchCartCount = () => {
+        fetchCartCount().then(res => this.setState({cartCount:res.data}))
+    }
+
+    handleCartCountAfterOrder = () => {
+        this.setState({cartCount:0})
+    }
+
+    
     render() {
+
+
+        const {
+            handleFetchCartCount,
+            handleCartCountCalculate,
+            handleCartCountAfterOrder
+        } = this
+
+        const {userProfile,cartCount} = this.state
+
         return (
             <HashRouter>
-                <div className="App">
-                    <Router />
-                </div>
+                <UserContext.Provider value={userProfile}>
+                    <CartContext.Provider value={{
+                        cartCount,
+                        handleFetchCartCount,
+                        handleCartCountCalculate,
+                        handleCartCountAfterOrder}}>
+                        <PageRouter />
+                    </CartContext.Provider>
+                </UserContext.Provider>
             </HashRouter>
         );
     }

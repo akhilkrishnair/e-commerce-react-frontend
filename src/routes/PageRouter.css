@@ -1,0 +1,20 @@
+.main-container{
+    padding: 40px 20px;
+    margin-top: 80px;
+    min-height: 70vh;
+}
+
+
+@media (max-width:768px){
+    .main-container{
+        padding: 30px 10px;
+        margin-top: 56px;
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width:500px){
+    .main-container{
+        padding: 20px 0px;
+    }
+}

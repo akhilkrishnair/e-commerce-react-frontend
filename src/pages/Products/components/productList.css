@@ -1,0 +1,115 @@
+.product-details-link {
+    text-decoration: none;
+    transition: 0.4s;
+    width: 23%;
+}
+.product-details-link .each-product-container{
+    transition: 0.3s;
+    height: 100%;
+}
+.product-details-link .each-product-container img{
+    width: 12rem;
+    object-fit: cover;
+    margin: 30px auto;
+    margin-bottom: 35px;
+}
+.products-container .each-product-container .card-body{
+    display: flex;
+    flex-direction: column-reverse;
+}
+.product-image-wishlist-button-container .image-container {
+    width: 100%;
+}
+.product-image-wishlist-button-container .image-container img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: cover;
+    margin-left: 50%;
+    transform: translate(-50%, 0%);
+}
+.wishlist-button-container{
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.product-add-wishlist-icon{
+    display: flex;
+    justify-content: end;
+    margin-right: 15px;
+    margin-top: 10px;
+}
+
+
+
+@keyframes wishlist-icon{
+    0%{
+        width: 20%;
+        height: 20%;
+        opacity: 0.5;
+    }
+    100%{
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+}
+.product-add-wishlist-icon svg{
+    color: rgb(174, 172, 172);
+    width: 100%;
+    height: 100%;
+    animation: wishlist-icon 0.4s linear;
+}
+.product-add-wishlist-icon span{
+    width: 100%;
+    height: 100%;
+    animation: wishlist-icon 0.4s linear;
+}
+
+
+@keyframes wishlist-loading{
+    0%{
+        width: 20%;
+        height: 20%;
+        opacity: 1;
+        background-color: green;
+    }
+    100%{
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background-color: green;
+    }
+}
+.wishlist-action-loader{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: wishlist-loading 0.6s linear infinite;
+}
+
+
+
+/* media queries starts */
+
+@media (width >= 768px) and (width < 1024px){
+    .product-details-link {
+        text-decoration: none;
+        transition: 0.4s;
+        width: 40%;
+    }
+    .product-image-wishlist-button-container .image-container {
+        width: 70%;
+        margin: auto;
+    }
+}
+
+@media (width < 768px){
+    .product-details-link{
+        width: 100%;
+    }
+    .product-details-link .each-product-container {
+        padding: 5px 5px 15px 15px;
+    }
+}

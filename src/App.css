@@ -1,0 +1,12 @@
+@keyframes welcome{
+    0%{
+        opacity: 0.1;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+.main-container{
+    animation: welcome 0.8s linear;
+}
