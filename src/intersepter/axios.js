@@ -2,9 +2,9 @@ import axios from "axios";
 
 
 
-// export const baseUrl = "https://akhilkrishna.pythonanywhere.com"
+// const baseUrl = "https://akhilkrishna.pythonanywhere.com"
 
-// export const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
+// const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
 
 const baseUrl = "http://127.0.0.1:8000"
 
@@ -32,77 +32,83 @@ const subscribeTokenRefresh = (cb) => {
 };
 
 const processQueue = (token) => {
+
    refreshSubscribers.forEach((cb) => {
       if (token) {
-         cb.headers['Authorization'] = `Bearer ${token}`
-         axiosWithAuthentication(cb)
-         .then(res => Promise.resolve(res))
-         .catch(err => Promise.reject(err))
+         cb(token)
       }
    });
+
    isRefreshing = false
    refreshSubscribers = [];
 };
 
 
 axiosWithAuthentication.interceptors.request.use(
+
    async (config) => {
       if (!accessToken){
          return Promise.reject({response:{status:408}})
       }
-
       config.headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
       return config
    },
 
    (error) =>  Promise.reject(error)
+
 )
 
 axiosWithAuthentication.interceptors.response.use(
    (response) => response,
 
    async (error) => {
+
       const originalRequest = error.config;
 
       if(error.code === "ERR_NETWORK") return Promise.resolve(error)
+              
+      if (error.response.status === 401) {
 
-      if (error.response.status === 401 && !isRefreshing) {
+         if(!isRefreshing){
 
-         isRefreshing = true;
+            isRefreshing = true;
+   
+            return new Promise((resolve, reject) => {
+               
+               axios.post(`${baseApiUrl}user/token/refresh/`, 
+                  { refresh: localStorage.getItem("refresh_token") })
+   
+               .then((response) => {
+   
+                  localStorage.setItem("access_token", response.data.access);
+                  localStorage.setItem("refresh_token", response.data.refresh);
+   
+                  processQueue(response.data.access);
+                  
+                  return resolve(axiosWithAuthentication(originalRequest)) 
+
+               })
+               .catch((err) => {
+   
+                  localStorage.removeItem("access_token");
+                  localStorage.removeItem("refresh_token");
+   
+                  window.location.href = '/user/login/'
+   
+               })
+            });
+         }
 
          return new Promise((resolve, reject) => {
-            
-            axios.post(`${baseApiUrl}user/token/refresh/`, 
-               { refresh: localStorage.getItem("refresh_token") })
-
-            .then((response) => {
-
-               localStorage.setItem("access_token", response.data.access);
-               localStorage.setItem("refresh_token", response.data.refresh);
-
-               axiosWithAuthentication.defaults.headers.common["Authorization"] = `Bearer ${response.data.access}`;
-               originalRequest.headers["Authorization"] = `Bearer ${response.data.access}`;
-
-               processQueue(response.data.access);
-               
-               axiosWithAuthentication(originalRequest)
-               .then(refreshRes => resolve(refreshRes))
-               .catch(refreshErr => reject(refreshErr))
-
-            })
-            .catch((err) => {
-
-               localStorage.removeItem("access_token");
-               localStorage.removeItem("refresh_token");
-
-               window.location.href = '/user/login/'
-
-            })
+            subscribeTokenRefresh((token) => {
+              originalRequest.headers["Authorization"] = `Bearer ${token}`;
+              resolve(axiosWithAuthentication(originalRequest));
+            });
          });
       }
 
-      if (error.response.status === 401) subscribeTokenRefresh(originalRequest);
-      return Promise.resolve(error);
+      return Promise.reject(error);
+
    }
 );
 

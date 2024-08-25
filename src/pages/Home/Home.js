@@ -34,7 +34,6 @@ class Home extends PureComponent {
             this.setState({categories:response.data})
         })
         .catch((error) => {
-            console.log(error)
         })
     }
 

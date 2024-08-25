@@ -16,7 +16,7 @@ class App extends PureComponent {
         this.state = {
             userProfile:null,
             cart:[],
-            cartCount:0
+            cartCount:0,
         }
     }
 
@@ -34,7 +34,9 @@ class App extends PureComponent {
     }
 
     handleFetchCartCount = () => {
-        fetchCartCount().then(res => this.setState({cartCount:res.data}))
+        fetchCartCount().then(res => {
+            this.setState({cartCount:res.data})
+        })
     }
 
     handleCartCountAfterOrder = () => {
@@ -43,7 +45,6 @@ class App extends PureComponent {
 
     
     render() {
-
 
         const {
             handleFetchCartCount,
