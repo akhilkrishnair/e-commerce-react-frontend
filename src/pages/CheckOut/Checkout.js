@@ -6,6 +6,7 @@ import {axiosWithAuthentication} from "intersepter/axios";
 import withAuthentication from "utils/withAuthentication";
 import { fetchCart } from "api/cart";
 import indianStates from "utils/state";
+import { CartContext } from "contexts/contexts";
 
 
 const address_data = {
@@ -22,6 +23,9 @@ const address_data = {
 
 
 class Checkout extends PureComponent {
+
+    static contextType = CartContext
+    
     constructor(props) {
         super(props);
         this.state = { 
@@ -240,8 +244,10 @@ class Checkout extends PureComponent {
         axiosWithAuthentication
         .post("order/cash-on-delivery/",data)
         .then((res) => {
-            this.props.cart_counter();
+            console.log(res)
+            this.context.handleCartCountAfterOrder();
             this.setState({orderSuccess:"/user/order/success/"})
+
         }).catch((err) => {
         })
     }
