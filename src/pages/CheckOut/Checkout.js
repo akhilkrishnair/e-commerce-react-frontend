@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import {axiosWithAuthentication} from "intersepter/axios";
 import withAuthentication from "utils/withAuthentication";
 import { fetchCart } from "api/cart";
+import indianStates from "utils/state";
 
 
 const address_data = {
@@ -418,13 +419,17 @@ class Checkout extends PureComponent {
                                             {/* <!-- State input --> */}
                                             <div className="col">
                                             <div className="form-outline mb-3">
-                                                <input 
+                                                <select 
+                                                id="form7Example5"
+                                                class="form-select" 
                                                 onChange={this.onChangeAddressAdd} 
-                                                value={address.state}
                                                 name="state"
-                                                type="text" 
-                                                id="form7Example5" 
-                                                className="form-control form-control-sm" />
+                                                aria-label="Default select example">
+                                                    <option value="0" selected>Select state</option>
+                                                    {indianStates.map(iS => (
+                                                        <option value={iS}>{iS}</option>
+                                                    ))}
+                                                </select>
                                                 <label className="form-label" for="form7Example5">State</label>
                                             </div>
                                             </div>
