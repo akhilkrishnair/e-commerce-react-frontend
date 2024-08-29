@@ -27,9 +27,7 @@ class Payment extends PureComponent {
     initiatePayment = async () => {
         this.setState({loader:true})
 
-        const {order_address_id,       
-            cart_counter,
-            fetch_cart} = this.props
+        const {order_address_id}= this.props
         try {
             const response = await axiosWithAuthentication.post( 'razorpay-payment-request/',
             {order_address_id:order_address_id})
