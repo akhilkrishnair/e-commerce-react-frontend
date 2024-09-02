@@ -84,6 +84,8 @@ axiosWithAuthentication.interceptors.response.use(
                   localStorage.setItem("refresh_token", response.data.refresh);
    
                   processQueue(response.data.access);
+
+                  originalRequest.headers["Authorization"] = `Bearer ${response.data.access}`;
                   
                   return resolve(axiosWithAuthentication(originalRequest)) 
 
