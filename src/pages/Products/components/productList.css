@@ -10,11 +10,11 @@
     flex-direction: column;
 }
 .product-details-link .each-product-container img{
-    display: block;
     max-width: 90%;
     max-height: 98%;
-    margin: 30px auto;
-    margin-bottom: 35px;
+    margin-left: 50%;
+    margin-top: 50%;
+    transform: translate(-50%, -50%);
 }
 .products-container .each-product-container .card-body{
     display: flex;
