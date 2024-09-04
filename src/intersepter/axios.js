@@ -87,7 +87,7 @@ axiosWithAuthentication.interceptors.response.use(
 
                   originalRequest.headers["Authorization"] = `Bearer ${response.data.access}`;
                   
-                  return resolve(axiosWithAuthentication(originalRequest)) 
+                  resolve(axiosWithAuthentication(originalRequest)) 
 
                })
                .catch((err) => {
