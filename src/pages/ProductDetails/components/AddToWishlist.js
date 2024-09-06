@@ -2,6 +2,7 @@ import { PureComponent } from "react";
 import { accessToken } from "intersepter/axios";
 import { Link, NavLink } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
+import { RiHeartAddFill } from "react-icons/ri";
 
 
 class AddToWishlist extends PureComponent {
@@ -18,22 +19,22 @@ class AddToWishlist extends PureComponent {
             
         if(accessToken){
             if(loaderAddWishlist){
-                return <div className="add-to-wishlist-loader btn btn-primary">
+                return <div className="add-to-wishlist-loader btn btn-danger p-2">
                             <div className=" loader-in-button "></div>
                         </div>
             }
             if(inWishlist){
                 return <div className="add-to-wishlist">
-                            <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-primary p-3"><FaCheckCircle/> &nbsp; View Wishlist</NavLink>
+                            <NavLink to={'/user/dashbord/wishlist/'} className="btn btn-danger p-3"><FaCheckCircle/> View Wishlist</NavLink>
                         </div>
             }
             return <div className="add-to-wishlist">
-                        <button className="btn btn-primary p-3" onClick={()=> addToWishlist(singleProductId)} >Add to Wishlist</button>
+                        <button className="btn btn-danger p-3" onClick={()=> addToWishlist(singleProductId)} ><RiHeartAddFill/> Add to Wishlist</button>
                     </div>
 
         }
         return <div className="add-to-wishlist">
-                    <Link to={'/user/login/'} className="btn btn-primary p-3" >Add to Wishlist</Link>
+                    <Link to={'/user/login/'} className="btn btn-danger p-3" ><RiHeartAddFill/> Add to Wishlist</Link>
                 </div>  
     }
 

@@ -8,7 +8,7 @@ export class SelectColor extends PureComponent {
     render() {
         return (
             <div key={'color'} className="color-selection" >
-                <h6 className="me-4">Select Color :</h6>
+                <h6 className="me-4">Color </h6>
                 {
                     this.props.colorVariant && this.props.colorVariant.map((cv) => (
                         <NavLink 

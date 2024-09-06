@@ -73,18 +73,30 @@ class ProductDetails extends PureComponent {
     }; 
 
     renderProductTitleAndPrice = (singleProduct) => {
+        const productName = singleProduct.product_color_variant.product.name
+        const color = singleProduct.product_color_variant.color.name
+        const size = singleProduct.size.name
+
+        let variantTitle = ""
+              
+        if (color !== 'no-color' && color !== null){
+            variantTitle += `(${color}`
+        }
+        if (size !== 'no-size' && size !== null){
+            if (variantTitle){
+                variantTitle += `, ${size})`
+            }else{
+                variantTitle += `(${size})`
+            }
+        }
+
+        const title = `${productName} ${variantTitle}`
+
+        
         return (
             <>
                 <h5 className='product-title'>
-                    {   
-                        singleProduct.product_color_variant.color.name !== 'no-color'?
-                        singleProduct.product_color_variant.product.name +" ("+                        
-                        singleProduct.product_color_variant.color.name+", "+
-                        singleProduct.size.name+")":
-                        
-                        singleProduct.product_color_variant.product.name +" ("+                                     
-                        singleProduct.size.name+")"
-                    }
+                    { title }
                 </h5>
                 <br/>
                 <h6 className='product-price' >Rs.
@@ -376,9 +388,10 @@ class ProductDetails extends PureComponent {
                                     {/* select color */}
                                     {singleProduct.product_color_variant.color.name !=="no-color"
                                     &&< SelectColor 
-                                    colorVariant={this.state.colorVariant} />}
+                                    colorVariant={this.state.colorVariant}/>}
                                     {/* select size */}
-                                    <SelectSize sizeVariant={this.state.sizeVariant} />
+                                    {singleProduct.size.name !== "no-size"&&
+                                    <SelectSize sizeVariant={this.state.sizeVariant}/>}
                                 </div>
                             
                                 {<ProductDiscription 

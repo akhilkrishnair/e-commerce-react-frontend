@@ -8,7 +8,7 @@ export class SelectSize extends PureComponent {
     render() {
         return (
             <div key={'size'} className="size-selection">
-                <h6 className="me-4">Select Size :</h6>
+                <h6 className="me-4">Size </h6>
                 {
                     this.props.sizeVariant && this.props.sizeVariant.map((sv) => (
                         <NavLink 
