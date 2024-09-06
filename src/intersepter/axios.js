@@ -54,8 +54,9 @@ axiosWithAuthentication.interceptors.request.use(
       return config
    },
 
-   (error) =>  Promise.reject(error)
-
+   (error) =>  {
+      return Promise.reject(error)
+   }
 )
 
 axiosWithAuthentication.interceptors.response.use(
