@@ -49,24 +49,24 @@ class CartItems extends PureComponent {
             cart&&cart.map((cp) => (              
                 <div key={cp.id} className="card rounded-3 mb-4">
                     <div className="card-body p-4">
-                        <div className="row d-flex justify-content-between align-items-center">
+                        <div className="cart-product-container">
                             <Link
                             to={        
                                 `/${cp.product_variant.product_color_variant.product.category.slug}/${cp.product_variant.product_color_variant.product.slug}/${cp.product_variant.product_color_variant.color.name}/${cp.product_variant.size.name}/${cp.product_variant.product_color_variant.product.id}/`
                                 }
 
-                            className=" col-md-2 col-lg-2 col-xl-2">
+                            className="cart-product-img-container">
                                 <img
                                     src={
                                         cp.product_variant.product_color_variant.image1?
                                         cp.product_variant.product_color_variant.image1:
                                         cp.product_variant.product_color_variant.product.image_main
                                     }
-                                    className="img-fluid rounded-3 w-75"
+                                    className="img-fluid rounded-3"
                                     alt={"Cotton T-shirt"}
                                 />
                             </Link>
-                            <div className="col-md-3 col-lg-3 col-xl-3">
+                            <div className="cart-details-container cart-product-variant">
                                 <p className=" fw-normal mb-2">
                                     {`${cp.product_variant.product_color_variant.product.name}`}
                                 </p>
@@ -76,7 +76,7 @@ class CartItems extends PureComponent {
                                 </p>
                             </div>
 
-                            <div className="col-md-3 col-lg-3 col-xl-2 d-flex">
+                            <div className="cart-details-container cart-increament-decreament-btn">
                                 {  
                                     <>
                                         <QuantityDecreamentButton 
@@ -100,24 +100,24 @@ class CartItems extends PureComponent {
                                 }
                             </div>
 
-                            <div className="cart-product-stock-status-container">
+                            <div className="cart-details-container cart-product-stock-status-container">
                                 {
                                     cp.product_variant.stock < 5&&
                                     <p className="text-danger">only {cp.product_variant.stock} items left</p>
                                 }
                             </div>
 
-                            <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                            <div className="cart-details-container cart-product-price">
                                 <h6 className="mb-0">
                                     Rs.{cp.product_variant.price-
                                         cp.product_variant.price/100*cp.product_variant.offer}
 
                                     <div className="text-secondary text-decoration-line-through my-2">Rs.{cp.product_variant.price}</div>
-                                    <div className="text-success mb-2" >{cp.product_variant.offer}%</div>
+                                    <div className="text-success" >{cp.product_variant.offer}%</div>
 
                                 </h6>
                             </div>
-                            <div className="col-md-1 col-lg-1 col-xl-1 text-end">
+                            <div className="cart-details-container cart-delete-btn text-end">
                                 {
                                     <div>
                                         <div hidden={true} className="delete-loader"></div>

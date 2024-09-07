@@ -49,8 +49,8 @@
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    border: dotted 2px blue;
-    animation: spin 0.5s linear infinite;
+    border: dotted 3px blue;
+    animation: spin 2s linear infinite;
 }
 
 .wishlist-product-delete-btn-container {
