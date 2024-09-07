@@ -2,13 +2,13 @@ import axios from "axios";
 
 
 
-const baseUrl = "https://akhilkrishna.pythonanywhere.com"
+// const baseUrl = "https://akhilkrishna.pythonanywhere.com"
 
-const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
+// const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
 
-// const baseUrl = "http://127.0.0.1:8000"
+const baseUrl = "http://127.0.0.1:8000"
 
-// const baseApiUrl =  "http://127.0.0.1:8000/api/" 
+const baseApiUrl =  "http://127.0.0.1:8000/api/" 
 
 
 // without authentication axios

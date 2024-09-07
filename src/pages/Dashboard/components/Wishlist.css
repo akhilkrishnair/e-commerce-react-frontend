@@ -17,13 +17,15 @@
 }
 
 .wishlist-product-image .image{
+    height: 115px;
     width: 45%;
-    height: auto;
-    
+    display: flex;
+    justify-content: center;
+    align-items: center;   
 }
 .wishlist-product-image .image img{
-    width: 100%;
-    height: auto;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .trash-btn-container{
