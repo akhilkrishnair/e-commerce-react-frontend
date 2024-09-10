@@ -31,6 +31,7 @@ class Home extends PureComponent {
         axiosWithoutAuthentication
         .get('categories/')
         .then((response) => {
+            console.log("category ",response)
             this.setState({categories:response.data})
         })
         .catch((error) => {

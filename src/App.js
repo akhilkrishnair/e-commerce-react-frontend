@@ -23,7 +23,10 @@ class App extends PureComponent {
     componentDidMount(){
 
         fetchUserProfile()
-        .then(res => this.setState({userProfile:res.data}))
+        .then(res => {
+            console.log("profile",res)
+            this.setState({userProfile:res.data})
+        })
         .catch(err => {console.log(err)});
 
         this.handleFetchCartCount();     

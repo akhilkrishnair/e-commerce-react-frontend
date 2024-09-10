@@ -18,6 +18,7 @@ import { axiosWithoutAuthentication, axiosWithAuthentication } from 'intersepter
 import { CartContext } from 'contexts/contexts';
 import { checkProductInWishlist, productAddToWishlist } from 'api/wishlist';
 import { checkProductInCart, productAddToCart } from 'api/cart';
+import { renderProductVariant } from 'utils/productUtills';
 
 
 class ProductDetails extends PureComponent {
@@ -77,18 +78,20 @@ class ProductDetails extends PureComponent {
         const color = singleProduct.product_color_variant.color.name
         const size = singleProduct.size.name
 
-        let variantTitle = ""
+        const variantTitle = renderProductVariant(singleProduct) 
               
-        if (color !== 'no-color' && color !== null){
-            variantTitle += `(${color}`
-        }
-        if (size !== 'no-size' && size !== null){
-            if (variantTitle){
-                variantTitle += `, ${size})`
-            }else{
-                variantTitle += `(${size})`
-            }
-        }
+        // if (color !== 'no-color' && color !== null){
+        //     variantTitle += `(${color}`
+        // }
+        // if (size !== 'no-size' && size !== null){
+        //     if (variantTitle){
+        //         variantTitle += `, ${size})`
+        //     }else{
+        //         variantTitle += `(${size})`
+        //     }
+        // }else{
+        //     variantTitle += ')'
+        // }
 
         const title = `${productName} ${variantTitle}`
 
@@ -255,7 +258,7 @@ class ProductDetails extends PureComponent {
 
     fetchProductReviews = () => {
         const product_id = this.state.singleProduct.product_color_variant.product.id
-        axiosWithoutAuthentication
+        axiosWithAuthentication
         .get(`product/reviews/?product_id=${product_id}`)
         .then((res) => {
             if (res.data.length>0){
@@ -276,8 +279,6 @@ class ProductDetails extends PureComponent {
 
         e.preventDefault();
         
-        if(this.context) return
-
         this.setState({productReviewLoading:true})
         const review = this.state.productReviewText
         const product_id = this.state.singleProduct.product_color_variant.product.id

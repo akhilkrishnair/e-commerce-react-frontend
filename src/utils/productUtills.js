@@ -4,11 +4,36 @@ export const renderProductName = (rp) => {
     if(!rp) return
 
     let productName = rp.product.product_color_variant.product.name
-    let productVariantName = `(${rp.product.product_color_variant.color.name !=="no-color"?rp.product.product_color_variant.color.name +" ,":""}${rp.product.size.name})`
+    let productVariantName = renderProductVariant(rp.product)
     if(productName.length > 40){
         return `${productName.slice(0,40)} ${productVariantName}`
     }
     return `${productName} ${productVariantName}`
+}
+
+// render product variants like size and color
+export const renderProductVariant = (singleProduct) => {
+    if(!singleProduct) return
+    
+    const color = singleProduct.product_color_variant.color.name
+    const size = singleProduct.size.name
+
+    let variantTitle = ""
+          
+    if (color !== 'no-color' && color !== null){
+        variantTitle += `(${color}`
+    }
+    if (size !== 'no-size' && size !== null){
+        if (variantTitle){
+            variantTitle += `, ${size})`
+        }else{
+            variantTitle += `(${size})`
+        }
+    }else{
+        variantTitle += ')'
+    }
+
+    return variantTitle
 }
 
 // render product price with calculated offer price

@@ -16,7 +16,7 @@ class TodayBestDeal extends PureComponent {
             <>
             {bestDealProducts&&
             <div className="today-best-deal-container">
-                <h3 className="mb-4 ms-3">Todays's best deal</h3>
+                <h3 className="mb-4 ms-3">Today's best deal</h3>
 
                 <div className="best-deal-product-variants-container">
                     {
