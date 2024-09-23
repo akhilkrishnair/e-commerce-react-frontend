@@ -31,8 +31,8 @@ class EmailVerification extends PureComponent{
 
             if (response.status === 200){
 
-                localStorage.setItem('refresh_token', response.data.refresh)
-                localStorage.setItem('access_token', response.data.access)
+                localStorage.setItem('refreshToken', response.data.refresh)
+                localStorage.setItem('accessToken', response.data.access)
                 window.location.href = '/'
             }
 

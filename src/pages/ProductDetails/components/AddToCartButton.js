@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react'
-import { accessToken } from 'intersepter/axios'
+import { token } from 'intersepter/axios'
 import { NavLink,Link } from 'react-router-dom'
-import { FaCheckCircle } from 'react-icons/fa'
 import { IoBagAdd,IoBagCheck } from "react-icons/io5";
 
 
@@ -29,7 +28,7 @@ export class AddToCartButton extends PureComponent {
 
     renderAddToCartComponent = () => {
         const {singleProduct,loaderAddCart,inCart} = this.props
-        if(accessToken){
+        if(token){
             if(loaderAddCart){
                 return <div className="add-to-cart-loader btn btn-warning p-2">
                             <div className=" loader-in-button "></div>

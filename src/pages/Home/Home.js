@@ -3,7 +3,7 @@ import './Home.css';
 import home_img_2 from 'assets/images/home/evo_laptops.jpg'
 import home_img_3 from 'assets/images/home/sony_camera_ads 1 .jpg'
 import {  FaCommentDots, FaCreditCard, FaShippingFast, FaUndo } from "react-icons/fa";
-import  { axiosWithoutAuthentication,axiosWithAuthentication, accessToken } from "intersepter/axios";
+import  { axiosWithoutAuthentication,axiosWithAuthentication, token } from "intersepter/axios";
 import TodayBestDeal from "./components/TodayBestDeal";
 import RecentlyViewedProducts from "./components/RecentlyViewedProducts";
 import OurCollection from "./components/OurCollection";
@@ -31,7 +31,6 @@ class Home extends PureComponent {
         axiosWithoutAuthentication
         .get('categories/')
         .then((response) => {
-            console.log("category ",response)
             this.setState({categories:response.data})
         })
         .catch((error) => {
@@ -49,10 +48,11 @@ class Home extends PureComponent {
 
     
     fetchRecentProducts = () => {
-        if(!accessToken){
+        if(!token){
             this.setState({recentProducts:JSON.parse(window.localStorage.getItem("recentProducts"))})
             return 
         }
+        
         axiosWithAuthentication
         .get('product/recent-products/')
         .then((response) => {
@@ -62,6 +62,7 @@ class Home extends PureComponent {
             }
         })
         .catch((error) => {
+            console.log(error)
         });
     };
 

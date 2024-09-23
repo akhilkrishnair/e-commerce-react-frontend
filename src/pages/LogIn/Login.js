@@ -38,13 +38,11 @@ class Login extends Component {
 
         handleUserLogin(LoginData)
         .then(response => {
-            console.log(response)
-            localStorage.setItem("access_token", response.data.access);
-            localStorage.setItem("refresh_token", response.data.refresh);
+            localStorage.setItem("accessToken", response.data.access);
+            localStorage.setItem("refreshToken", response.data.refresh);
             window.location.href = "/";
         })
         .catch(error => {
-            console.log(error)
             this.setState({ error: error.response.data });
             this.setState({loader:false})
         })

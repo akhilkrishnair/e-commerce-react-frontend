@@ -1,5 +1,5 @@
 import { PureComponent } from "react";
-import { accessToken } from "intersepter/axios";
+import { token } from "intersepter/axios";
 import { Link, NavLink } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { RiHeartAddFill } from "react-icons/ri";
@@ -17,7 +17,7 @@ class AddToWishlist extends PureComponent {
             addToWishlist,
             singleProductId} =  this.props
             
-        if(accessToken){
+        if(token){
             if(loaderAddWishlist){
                 return <div className="add-to-wishlist-loader btn btn-danger p-2">
                             <div className=" loader-in-button "></div>

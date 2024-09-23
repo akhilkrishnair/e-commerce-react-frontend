@@ -27,8 +27,8 @@ class Dashbord extends Component {
         )
         .then((res) => {
             this.setState({currentUser:false})
-            localStorage.removeItem('refresh_token')
-            localStorage.removeItem('access_token')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('accessToken')
             window.location.href = '/'
         }).catch((res) =>{
            this.setState({loading:false})

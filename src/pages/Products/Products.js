@@ -2,7 +2,7 @@ import { PureComponent } from "react";
 import "./Products.css";
 import { Link, NavLink, useParams, useSearchParams } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
-import { accessToken, axiosWithAuthentication } from "intersepter/axios";
+import { token, axiosWithAuthentication } from "intersepter/axios";
 import { UserContext } from "contexts/contexts";
 import { changeProductVariantsPage, 
     fetchProductCategories, fetchProductVariants, 
@@ -150,7 +150,7 @@ class Products extends PureComponent {
     };
 
     fetchWishlist = async () => { 
-        if(!accessToken){
+        if(!token){
             return 
         }  
         await axiosWithAuthentication

@@ -1,7 +1,7 @@
 import './ProductDetails.css';
 import React ,{ PureComponent } from "react";
 import { useParams } from "react-router-dom";
-import { accessToken } from 'intersepter/axios';
+import { token } from 'intersepter/axios';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import SelectSize from './components/SelectSize';
@@ -62,7 +62,7 @@ class ProductDetails extends PureComponent {
         if (this.props !== prevProps){           
             this.filterProductVariant(this.state.allProducts);
         };
-        if (this.state.singleProduct !== prevState.singleProduct && accessToken){
+        if (this.state.singleProduct !== prevState.singleProduct && token){
             this.handleFetchCart();
             this.handleFetchWishlist();
         };
@@ -75,23 +75,8 @@ class ProductDetails extends PureComponent {
 
     renderProductTitleAndPrice = (singleProduct) => {
         const productName = singleProduct.product_color_variant.product.name
-        const color = singleProduct.product_color_variant.color.name
-        const size = singleProduct.size.name
 
         const variantTitle = renderProductVariant(singleProduct) 
-              
-        // if (color !== 'no-color' && color !== null){
-        //     variantTitle += `(${color}`
-        // }
-        // if (size !== 'no-size' && size !== null){
-        //     if (variantTitle){
-        //         variantTitle += `, ${size})`
-        //     }else{
-        //         variantTitle += `(${size})`
-        //     }
-        // }else{
-        //     variantTitle += ')'
-        // }
 
         const title = `${productName} ${variantTitle}`
 
@@ -113,9 +98,8 @@ class ProductDetails extends PureComponent {
     }
 
     addToRecentProducts = (product_id) => {
-        if(!this.state.singleProduct) return
         
-        if(accessToken){
+        if(token){
             const data = {
                 product:product_id
             }

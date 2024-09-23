@@ -71,14 +71,14 @@ class Profile extends PureComponent {
                     <div className="profile-name-email"><br/><br/>
                         {
                             profile&&
-                            <h6>                                   
+                            <h6 key={'name'}>                                   
                                 {`Hello ${profile.first_name} ${profile.last_name}`}
                             </h6>
                         }
 
                         {
                             profile&&
-                            <h6>Email :                                    
+                            <h6 key={'e-mail'}>Email :                                    
                                 {profile.email}
                             </h6>
                         }

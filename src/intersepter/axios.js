@@ -1,27 +1,32 @@
+import { refreshAccessToken } from "api/user";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 
 
-const baseUrl = "https://akhilkrishna.pythonanywhere.com"
+// const baseUrl = "https://akhilkrishna.pythonanywhere.com"
+// const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
 
-const baseApiUrl =  "https://akhilkrishna.pythonanywhere.com/api/" 
-
-// const baseUrl = "http://127.0.0.1:8000"
-
-// const baseApiUrl =  "http://127.0.0.1:8000/api/" 
+const baseUrl = "http://127.0.0.1:8000"
+const baseApiUrl =  "http://127.0.0.1:8000/api/" 
 
 
 // without authentication axios
-const accessToken = localStorage.getItem('access_token')
-
 const axiosWithoutAuthentication = axios.create({
    baseURL:baseApiUrl
 })
 
 
 // with authentication axios
+const getAccessToken = () => localStorage.getItem('accessToken')
+
+const token = getAccessToken()
+
 const axiosWithAuthentication = axios.create({
-   baseURL:baseApiUrl
+   baseURL:baseApiUrl,
+   headers:{
+      Authorization:`Bearer ${token}`
+   }
 });
 
 let isRefreshing = false;
@@ -32,7 +37,6 @@ const subscribeTokenRefresh = (cb) => {
 };
 
 const processQueue = (token) => {
-
    refreshSubscribers.forEach((cb) => {
       if (token) {
          cb(token)
@@ -43,82 +47,76 @@ const processQueue = (token) => {
    refreshSubscribers = [];
 };
 
+const checkTokenExpired = (accessToken) => {
+   const decodedToken = jwtDecode(accessToken)
+   const currentTime = Date.now()/1000
+
+   const addOnMinute = 2
+   const newTime = decodedToken.exp + addOnMinute
+   return newTime < currentTime
+}
 
 axiosWithAuthentication.interceptors.request.use(
 
    async (config) => {
-      if (!accessToken){
-         return Promise.reject({response:{status:408}})
-      }
-      config.headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
-      return config
+
+      const accessToken = getAccessToken();
+
+      return new Promise((resolve,reject) => {
+
+         if (!accessToken) reject({response:{status:401}})
+
+         if (isRefreshing){
+
+            subscribeTokenRefresh((token) => {
+               config.headers.Authorization = `Bearer ${token}`;
+               resolve(config)
+            })
+
+         }else{
+
+            let updatedToken = ''
+            
+            if(checkTokenExpired(accessToken)){
+
+               isRefreshing = true
+
+               refreshAccessToken()
+               .then((response) => {
+
+                  updatedToken = response.data.access
+
+                  localStorage.setItem("accessToken", updatedToken);
+                  localStorage.setItem("refreshToken", response.data.refresh);
+
+                  config.headers.Authorization = `Bearer ${updatedToken}`
+
+                  processQueue(updatedToken)
+
+                  resolve(config)
+
+               }).catch((error) => {
+                  localStorage.removeItem("accessToken");
+                  localStorage.removeItem("refreshToken");   
+                  window.location.href = '#/user/login/'
+               })
+               
+            }else{
+               config.headers.Authorization = `Bearer ${updatedToken?updatedToken:accessToken}`
+               resolve(config)
+            }
+         }         
+      })
    },
 
-   (error) =>  {
-      return Promise.reject(error)
-   }
+   (error) =>  Promise.reject(error)
 )
 
-axiosWithAuthentication.interceptors.response.use(
-   (response) => response,
-
-   async (error) => {
-
-      const originalRequest = error.config;
-
-      if(error.code === "ERR_NETWORK") return Promise.resolve(error)
-              
-      if (error.response.status === 401) {
-
-         if(!isRefreshing){
-
-            isRefreshing = true;
-   
-            return new Promise((resolve, reject) => {
-               
-               axios.post(`${baseApiUrl}user/token/refresh/`, 
-                  { refresh: localStorage.getItem("refresh_token") })
-   
-               .then((response) => {
-   
-                  localStorage.setItem("access_token", response.data.access);
-                  localStorage.setItem("refresh_token", response.data.refresh);
-   
-                  processQueue(response.data.access);
-
-                  originalRequest.headers["Authorization"] = `Bearer ${response.data.access}`;
-                  
-                  resolve(axiosWithAuthentication(originalRequest)) 
-
-               })
-               .catch((err) => {
-   
-                  localStorage.removeItem("access_token");
-                  localStorage.removeItem("refresh_token");
-   
-                  window.location.href = '/user/login/'
-   
-               })
-            });
-         }
-
-         return new Promise((resolve, reject) => {
-            subscribeTokenRefresh((token) => {
-              originalRequest.headers["Authorization"] = `Bearer ${token}`;
-              resolve(axiosWithAuthentication(originalRequest));
-            });
-         });
-      }
-
-      return Promise.reject(error);
-
-   }
-);
 
 export {
+   token,
    baseUrl,
    baseApiUrl,
-   accessToken,
    axiosWithAuthentication,
    axiosWithoutAuthentication
 };

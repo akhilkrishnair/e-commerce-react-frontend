@@ -24,10 +24,9 @@ class App extends PureComponent {
 
         fetchUserProfile()
         .then(res => {
-            console.log("profile",res)
             this.setState({userProfile:res.data})
         })
-        .catch(err => {console.log(err)});
+        .catch(err => {});
 
         this.handleFetchCartCount();     
     }
@@ -39,7 +38,7 @@ class App extends PureComponent {
     handleFetchCartCount = () => {
         fetchCartCount().then(res => {
             this.setState({cartCount:res.data})
-        })
+        }).catch(err => {})
     }
 
     handleCartCountAfterOrder = () => {
