@@ -3,67 +3,67 @@ import "App.css";
 import PageRouter from "routes/PageRouter";
 import { HashRouter } from "react-router-dom";
 import { fetchUserProfile } from "api/user";
-import { UserContext,CartContext } from "contexts/contexts";
+import { UserContext, CartContext } from "contexts/contexts";
 import { fetchCartCount } from "api/cart";
 
-
-export const webSocketUrl = `ws://akhilkrishna.pythonanywhere.com/ws/order-updates/`
-
+export const webSocketUrl = `ws://akhilkrishna.pythonanywhere.com/ws/order-updates/`;
 
 class App extends PureComponent {
-    constructor(props){
-        super(props)
+    constructor(props) {
+        super(props);
         this.state = {
-            userProfile:null,
-            cart:[],
-            cartCount:0,
-        }
+            userProfile: null,
+            cart: [],
+            cartCount: 0,
+        };
     }
 
-    componentDidMount(){
-
+    async componentDidMount() {
         fetchUserProfile()
-        .then(res => {
-            this.setState({userProfile:res.data})
-        })
-        .catch(err => {});
+            .then((res) => {
+                this.setState({ userProfile: res.data });
+            })
+            .catch((err) => {});
 
-        this.handleFetchCartCount();     
+        this.handleFetchCartCount();
     }
 
     handleCartCountCalculate = (count) => {
-        this.setState({cartCount:count})
-    }
+        this.setState({ cartCount: count });
+    };
 
     handleFetchCartCount = () => {
-        fetchCartCount().then(res => {
-            this.setState({cartCount:res.data})
-        }).catch(err => {})
-    }
+        fetchCartCount()
+            .then((res) => {
+                this.setState({ cartCount: res.data });
+            })
+            .catch((err) => {});
+    };
 
     handleCartCountAfterOrder = () => {
-        this.setState({cartCount:0})
-    }
+        this.setState({ cartCount: 0 });
+    };
 
-    
     render() {
-
         const {
             handleFetchCartCount,
             handleCartCountCalculate,
-            handleCartCountAfterOrder
-        } = this
+            handleCartCountAfterOrder,
+        } = this;
 
-        const {userProfile,cartCount} = this.state
+        const { userProfile, cartCount } = this.state;
 
         return (
             <HashRouter>
                 <UserContext.Provider value={userProfile}>
-                    <CartContext.Provider value={{
-                        cartCount,
-                        handleFetchCartCount,
-                        handleCartCountCalculate,
-                        handleCartCountAfterOrder}}>
+                    <CartContext.Provider
+                        value={{
+                            cartCount,
+                            handleFetchCartCount,
+                            handleCartCountCalculate,
+                            handleCartCountAfterOrder,
+                        }}
+                    >
                         <PageRouter />
                     </CartContext.Provider>
                 </UserContext.Provider>

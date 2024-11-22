@@ -1,0 +1,36 @@
+.auth-guard-loader-container{
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.auth-guard-loader-container .auth-guard-loader{
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    border: dotted 5px rgb(97, 97, 220);
+    animation: loader 2s linear infinite ;
+}
+
+.auth-guard-loader-container h5{
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(75, 75, 170);
+}
+
+
+
+@keyframes loader {
+    0%{
+        rotate: 0deg;
+    }
+    100%{
+        rotate: 360deg;
+    }
+}

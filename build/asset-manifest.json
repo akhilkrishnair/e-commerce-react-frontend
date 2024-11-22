@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.5e359400.css",
-    "main.js": "/static/js/main.7bcf60a4.js",
+    "main.css": "/static/css/main.ad3f1194.css",
+    "main.js": "/static/js/main.69431007.js",
     "static/js/787.830efbcc.chunk.js": "/static/js/787.830efbcc.chunk.js",
     "static/media/evo_laptops.jpg": "/static/media/evo_laptops.7ef3304749f37927f6f3.jpg",
     "static/media/sony_camera_ads 1 .jpg": "/static/media/sony_camera_ads 1 .2906034869f7ebcbf8dc.jpg",
     "index.html": "/index.html",
-    "main.5e359400.css.map": "/static/css/main.5e359400.css.map",
-    "main.7bcf60a4.js.map": "/static/js/main.7bcf60a4.js.map",
+    "main.ad3f1194.css.map": "/static/css/main.ad3f1194.css.map",
+    "main.69431007.js.map": "/static/js/main.69431007.js.map",
     "787.830efbcc.chunk.js.map": "/static/js/787.830efbcc.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5e359400.css",
-    "static/js/main.7bcf60a4.js"
+    "static/css/main.ad3f1194.css",
+    "static/js/main.69431007.js"
   ]
 }

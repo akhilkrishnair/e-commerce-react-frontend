@@ -4,7 +4,6 @@ import "./Login.css";
 import withoutAuthentication from "utils/withoutAuthentication";
 import { handleUserLogin } from "api/user";
 
-
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -13,22 +12,22 @@ class Login extends Component {
             email: "",
             password: "",
             error: null,
-            loader:false
+            loader: false,
         };
-    };
+    }
 
-    componentDidMount(){
-        window.scrollTo(0,0)
+    componentDidMount() {
+        window.scrollTo(0, 0);
     }
 
     handleChange = (e) => {
-        this.setState({error:null})
+        this.setState({ error: null });
         const { name, value } = e.target;
         this.setState({ [name]: value });
     };
 
     handleSubmit = async (e) => {
-        this.setState({loader:true})
+        this.setState({ loader: true });
         e.preventDefault();
 
         const LoginData = {
@@ -37,17 +36,16 @@ class Login extends Component {
         };
 
         handleUserLogin(LoginData)
-        .then(response => {
-            localStorage.setItem("accessToken", response.data.access);
-            localStorage.setItem("refreshToken", response.data.refresh);
-            window.location.href = "/";
-        })
-        .catch(error => {
-            this.setState({ error: error.response.data });
-            this.setState({loader:false})
-        })
+            .then((response) => {
+                localStorage.setItem("accessToken", response.data.access);
+                localStorage.setItem("refreshToken", response.data.refresh);
+                window.location.href = "/";
+            })
+            .catch((error) => {
+                this.setState({ error: error.response.data });
+                this.setState({ loader: false });
+            });
     };
-
 
     render() {
         return (
@@ -106,32 +104,34 @@ class Login extends Component {
                                                 className="form-control form-control-sm"
                                                 required
                                             />
-                                            <br/>
-                                            <Link 
-                                            className="forgot-password"
-                                            to={`/user/forgot-password/`}>
+                                            <br />
+                                            <Link
+                                                className="forgot-password"
+                                                to={`/user/forgot-password/`}
+                                            >
                                                 forgot password?
                                             </Link>
                                         </div>
-                                        
-                                        
-                                        {
-                                            !this.state.loader?
+
+                                        {!this.state.loader ? (
                                             <button
                                                 className="login-submit-btn "
                                                 type="submit"
                                             >
                                                 Login
-                                            </button>:
-                                            <div className="login-submit-btn" >
-                                                <div class="loader"></div>
+                                            </button>
+                                        ) : (
+                                            <div className="login-submit-btn">
+                                                <div className="loader"></div>
                                             </div>
-                                        }
-                                       
+                                        )}
 
                                         <p className="text-center text-muted mt-4">
                                             New User?{" "}
-                                            <Link to={"/user/registration/"} className="fw-bold text-body">
+                                            <Link
+                                                to={"/user/registration/"}
+                                                className="fw-bold text-body"
+                                            >
                                                 <u>register here</u>
                                             </Link>
                                         </p>
