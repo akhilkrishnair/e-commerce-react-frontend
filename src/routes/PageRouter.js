@@ -1,99 +1,142 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, Suspense, lazy } from "react";
 import "./PageRouter.css";
-import { Header,Footer } from "components/components";
-import Products from 'pages/Products/Products'
-import Registration from "pages/Register/Registration";
-import Login from "pages/LogIn/Login";
-import { Routes, Route } from "react-router-dom";
-import Dashbord from "pages/Dashboard/Dashbord";
-import OrderDetails from "pages/OrderDetails/OrderDetails";
-import Cart from "pages/Cart/Cart";
-import PageNotFound from "pages/PageNotFound/PageNotFound";
-import UserDetailWrapper from "pages/ProductDetails/ProductDetails";
-import Checkout from "pages/CheckOut/Checkout";
-import ForgotPassword from "pages/ForgotPassword/ForgotPassword";
-import ResetPassword from "pages/ResetPassword/ResetPassword";
-import EmailVerificationWithParam from "pages/EmailVerification/EmailVerification";
-import OrderSuccess from "pages/OrderSuccess/OrderSuccess";
-import Home from "pages/Home/Home";
-import {UserContext} from "contexts/contexts";
 
+import { UserContext } from "contexts/contexts";
+import { Route, Routes } from "react-router-dom";
+import { Header, Footer } from "components/components";
+const Home = lazy(() => import("pages/Home/Home"));
 
-class PageRouter extends PureComponent{
+const Products = lazy(() => import("pages/Products/Products"));
+const Registration = lazy(() => import("pages/Register/Registration"));
+const Login = lazy(() => import("pages/LogIn/Login"));
+const Dashbord = lazy(() => import("pages/Dashboard/Dashbord"));
+const OrderDetails = lazy(() => import("pages/OrderDetails/OrderDetails"));
+const Cart = lazy(() => import("pages/Cart/Cart"));
+const PageNotFound = lazy(() => import("pages/PageNotFound/PageNotFound"));
+const UserDetailWrapper = lazy(() =>
+    import("pages/ProductDetails/ProductDetails")
+);
+const Checkout = lazy(() => import("pages/CheckOut/Checkout"));
+const ForgotPassword = lazy(() =>
+    import("pages/ForgotPassword/ForgotPassword")
+);
+const ResetPassword = lazy(() => import("pages/ResetPassword/ResetPassword"));
+const EmailVerificationWithParam = lazy(() =>
+    import("pages/EmailVerification/EmailVerification")
+);
+const OrderSuccess = lazy(() => import("pages/OrderSuccess/OrderSuccess"));
 
-    static contextType = UserContext
+class PageRouter extends PureComponent {
+    static contextType = UserContext;
 
     constructor(props) {
         super(props);
         this.state = {
             currentUser: false,
-            userProfile:null,
-            cartChecked:false,
-            cartItems:null,
-            cartCount:null,
-            searchItems:""          
+            userProfile: null,
+            cartChecked: false,
+            cartItems: null,
+            cartCount: null,
+            searchItems: "",
         };
     }
 
     productSearchManage = (key_words_obj) => {
         // setting the value to searchItem state
-        this.setState({searchItems:key_words_obj});
+        this.setState({ searchItems: key_words_obj });
     };
 
     logInData = (data) => {
         const { email, password, currentUser } = data;
-        this.setState({ currentUser: currentUser });
-        this.setState({ email: email });
-        this.setState({ password: password });
+        this.setState({
+            currentUser: currentUser,
+            email: email,
+            password: password,
+        });
     };
 
-
-    render() { 
+    render() {
         return (
-            <>  
-                <Header productSearch={this.productSearchManage} cartCount={this.state.cartCount}/>
-               
+            <>
+                <Header
+                    productSearch={this.productSearchManage}
+                    cartCount={this.state.cartCount}
+                />
+
                 <div className="main-container">
-                    <Routes>
+                    <Suspense fallback={"Loading....."}>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Home
+                                        search_item={this.state.searchItems}
+                                    />
+                                }
+                            />
 
-                        <Route path="/" element={<Home search_item={this.state.searchItems}/>} />
+                            <Route path="/:category/" element={<Products />} />
 
-                        <Route path="/:category/" element={<Products/>} />
+                            <Route
+                                path="/:category/:slug/:color/:size/:id/"
+                                element={<UserDetailWrapper />}
+                            />
 
-                        <Route path="/:category/:slug/:color/:size/:id/" element={<UserDetailWrapper/>} />
+                            <Route
+                                path="/user/registration/"
+                                element={<Registration />}
+                            />
 
-                        
-                        <Route path="/user/registration/" element={<Registration/>} />
+                            <Route
+                                path="/user/login/"
+                                element={<Login login_data={this.logInData} />}
+                            />
 
-                        <Route path="/user/login/" element={<Login login_data={this.logInData} />}/>
-                        
-                        <Route path="/user/:uidb64/email-verification/:token/" element={<EmailVerificationWithParam/>}/>
-                        
-                        <Route path="/user/forgot-password/" element={<ForgotPassword/>}/>
+                            <Route
+                                path="/user/:uidb64/email-verification/:token/"
+                                element={<EmailVerificationWithParam />}
+                            />
 
-                        <Route path="/user/reset-password/:userId/:token/" element={<ResetPassword/>}/>
+                            <Route
+                                path="/user/forgot-password/"
+                                element={<ForgotPassword />}
+                            />
 
-                        
-                        <Route path="/user/dashbord/:menu/" element={<Dashbord />} />
+                            <Route
+                                path="/user/reset-password/:userId/:token/"
+                                element={<ResetPassword />}
+                            />
 
+                            <Route
+                                path="/user/dashbord/:menu/"
+                                element={<Dashbord />}
+                            />
 
-                        <Route path="/user/cart/" element={<Cart />} />
+                            <Route path="/user/cart/" element={<Cart />} />
 
+                            <Route
+                                path="/user/dashbord/orders/:order_id/:orderId/"
+                                element={<OrderDetails />}
+                            />
 
-                        <Route path="/user/dashbord/orders/:order_id/:orderId/" element={<OrderDetails/>} />
-                        
-                        <Route path="/user/order/success/" element={<OrderSuccess/>} />              
-                    
-                        <Route path="/user/order/checkout/" element={<Checkout userProfile={this.context}/>} />
+                            <Route
+                                path="/user/order/success/"
+                                element={<OrderSuccess />}
+                            />
 
-                        
-                        <Route path="/*" element={<PageNotFound/>} />
-                        
-                    </Routes>
+                            <Route
+                                path="/user/order/checkout/"
+                                element={
+                                    <Checkout userProfile={this.context} />
+                                }
+                            />
 
+                            <Route path="/*" element={<PageNotFound />} />
+                        </Routes>
+                    </Suspense>
                 </div>
 
-               <Footer />
+                <Footer />
             </>
         );
     }

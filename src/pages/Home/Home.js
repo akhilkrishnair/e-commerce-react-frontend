@@ -1,5 +1,7 @@
 import { PureComponent } from "react";
 import "./Home.css";
+import "swiper/css";
+import "swiper/css/navigation";
 import home_img_2 from "assets/images/home/evo_laptops.jpg";
 import home_img_3 from "assets/images/home/sony_camera_ads 1 .jpg";
 import {

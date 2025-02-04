@@ -1,0 +1,64 @@
+.today-best-deal-container{
+    background-color: white;
+    padding: 20px 20px 40px 20px;
+    border: solid 1px rgb(211, 209, 209);
+    margin-top: 70px;
+}
+
+.best-deal-product-variants-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.best-deal-product-variants-container .best-deal-each-product-variant{
+    width: 25%;
+    padding: 10px;
+    margin-bottom: 130px;
+    text-decoration: none;
+}
+
+.best-deal-product-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 320px;
+    background-color: rgb(239, 238, 238);
+    margin-bottom: 20px;
+    margin: auto;
+}
+
+.best-deal-product-image-container img{
+    max-width: 60%;
+    max-height: 65%;
+    object-fit: cover;
+}
+
+.best-deal-product-variant-details{
+    word-wrap: break-word;
+    word-break: break-word;
+    width: 90%;
+    margin: auto;
+    margin-top: 20px;
+}
+.best-deal-product-variant-details .title{
+    color: rgb(21, 21, 21);
+}
+
+
+.price-and-offer .orginal-price{
+    text-decoration: line-through;
+    margin-right: 15px;
+    color: rgb(131, 131, 131);
+}
+.price-and-offer .selling-price{
+    margin-right: 15px;
+    font-weight: 500;
+    color: rgb(38, 38, 38);
+
+}
+.price-and-offer .offer{
+    font-weight: 500;
+    color: rgb(4, 133, 4);
+}
