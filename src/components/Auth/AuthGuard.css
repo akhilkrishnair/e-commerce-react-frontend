@@ -10,7 +10,7 @@
     width: 170px;
     height: 170px;
     border-radius: 50%;
-    border: dotted 5px rgb(97, 97, 220);
+    border: dotted 5px #0d6efd;
     animation: loader 2s linear infinite ;
 }
 
@@ -21,7 +21,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: rgb(75, 75, 170);
+    color: #0d6efd;
 }
 
 

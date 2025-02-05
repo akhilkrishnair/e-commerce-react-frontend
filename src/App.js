@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import "App.css";
-import PageRouter from "routes/PageRouter";
+import PageRouter from "PageRouter/PageRouter";
 import { HashRouter } from "react-router-dom";
 import { fetchUserProfile } from "api/user";
 import { UserContext, CartContext } from "contexts/contexts";

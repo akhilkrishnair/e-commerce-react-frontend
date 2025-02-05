@@ -2,8 +2,8 @@ import { refreshAccessToken } from "api/user";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const baseUrl = "http://127.0.0.1:8000";
-const baseApiUrl = "http://127.0.0.1:8000/api/";
+// const baseUrl = "http://127.0.0.1:8000";
+// const baseApiUrl = "http://127.0.0.1:8000/api/";
 
 // without authentication axios
 const axiosWithoutAuthentication = axios.create({

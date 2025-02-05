@@ -66,7 +66,7 @@
         width: 100%;
     }
 
-    .our-collection-container .each-collection-container {
+    /* .our-collection-container .each-collection-container {
         width: 37%;
         margin: 0px 5px 50px 5px;
 
@@ -126,7 +126,7 @@
     .recent-product-price-detail .offer{
         font-size: 15px;
         margin-right: -11px;
-    }
+    } */
 }
 
 
@@ -137,7 +137,7 @@
     .carousel-control-next, .carousel-control-prev{
         height: 390px;
     }
-    .our-collection-container .each-collection-container{
+    /* .our-collection-container .each-collection-container{
         width: 28%;
     }
     .each-collection-container .collection-img-container {
@@ -156,17 +156,12 @@
     .recent-product-swiper .swiper-button-prev{
         right: 0;
         top: 180px;
-    }
+    } */
 
 }
 
 
-@media (min-width:1200px){
-    .our-collection-container .each-collection-container h6{
-        font-size: 1.2rem;
-        padding-bottom: 15px;
-    }
-}
+
 
 
 

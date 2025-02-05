@@ -13,7 +13,7 @@ export default class AuthGuard extends PureComponent {
         await checkToken();
         setTimeout(() => {
             this.setState({ authChecked: true });
-        }, 2000);
+        }, 1000);
     }
     render() {
         if (this.state.authChecked) return this.props.children;

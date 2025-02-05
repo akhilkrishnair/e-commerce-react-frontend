@@ -85,3 +85,47 @@
     font-weight: bolder;
 }
 
+
+
+
+/* media queries */
+
+
+@media (width<600px){
+    
+    .recent-product-swiper .swiper-wrapper{
+        width: 96%;
+    }
+
+    .recent-product-swiper .swiper-button-next,
+    .recent-product-swiper .swiper-button-prev{
+        width: 8%;
+        height: 15%;
+        top: 42%;
+    }
+
+    .recent-product-swiper .swiper-button-next::after,
+    .recent-product-swiper .swiper-button-prev::after{
+    font-size: 14px;
+    font-weight: bolder;
+    }
+
+    .recent-product-price-detail .selling-price,
+    .recent-product-price-detail .original-price,
+    .recent-product-price-detail .offer{
+        font-size: 15px;
+        margin-right: -11px;
+    }
+}
+
+
+@media (min-width:768px) and (max-width:1024px){
+    .recent-product-swiper .swiper-button-next,
+    .recent-product-swiper .swiper-button-prev{
+        right: 0;
+        top: 180px;
+    }
+
+}
+
+

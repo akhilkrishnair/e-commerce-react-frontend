@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/651.88f169d8.chunk.css","mappings":"AACA,yBACI,yBACI,UACJ,CAEJ","sources":["pages/OrderSuccess/OrderSuccess.css"],"sourcesContent":["\r\n@media (max-width: 500px){\r\n    #order-success-container{\r\n        width: 100%;\r\n    }\r\n\r\n}"],"names":[],"sourceRoot":""}

@@ -26,3 +26,39 @@
     height: 100%;
     object-fit: cover;
 }
+
+
+
+
+/* media queries */
+
+@media (width<600px){
+    .our-collection-container .each-collection-container {
+        width: 37%;
+        margin: 0px 5px 50px 5px;
+
+    }
+    .each-collection-container .collection-img-container {
+        height: 65%;
+    }
+}
+
+@media (min-width:768px) and (max-width:1024px){
+    .our-collection-container .each-collection-container{
+        width: 28%;
+    }
+    .each-collection-container .collection-img-container {
+        height: 145px;
+    }
+    .each-collection-container h6{
+        margin-bottom: 20px ;
+    }
+
+}
+
+@media (min-width:1200px){
+    .our-collection-container .each-collection-container h6{
+        font-size: 1.2rem;
+        padding-bottom: 15px;
+    }
+}

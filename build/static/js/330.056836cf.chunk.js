@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkapp_name=self.webpackChunkapp_name||[]).push([[330],{6330:(e,s,n)=>{n.r(s),n.d(s,{default:()=>p});var a=n(2791),r=n(2202),d=n(184);class t extends a.PureComponent{render(){return(0,d.jsxs)("div",{className:"empty-page-container",children:[(0,d.jsx)(r.MXt,{}),(0,d.jsx)("h2",{children:"Page not found"}),(0,d.jsxs)("p",{children:["You requested page was not found! ",(0,d.jsx)("br",{}),"please check address and retry."]})]})}}const p=t}}]);
+//# sourceMappingURL=330.056836cf.chunk.js.map
